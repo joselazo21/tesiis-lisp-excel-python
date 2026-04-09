@@ -1,0 +1,1381 @@
+{
+  "facultad": "Matcom",
+  "periodo": "Primer Período 2025-2026",
+  "info_asignaturas": [
+    {
+      "anno": "D1 (1er Año Ciencia de Datos)",
+      "profesor_principal": "Roberto García",
+      "asignaturas": [
+        {
+          "nombre": "Álgebra Lineal",
+          "abreviatura": "AL",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Aux. Celia T. González",
+            "Inst. Dalianys Pérez"
+          ]
+        },
+        {
+          "nombre": "Lógica",
+          "abreviatura": "L",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Yudivián Almeida",
+            "Daniel",
+            "Deborah",
+            "Elena",
+            "Ariel"
+          ]
+        },
+        {
+          "nombre": "Introducción a la Programación",
+          "abreviatura": "IP",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Miguel Katrib",
+            "Roberto García"
+          ]
+        },
+        {
+          "nombre": "Análisis Matemático I",
+          "abreviatura": "AM I",
+          "horas_plan": 80,
+          "horas_real": 80,
+          "profesores": [
+            "Tit. Idania Urrutia",
+            "Inst. Oscar de Moya"
+          ]
+        },
+        {
+          "nombre": "Introducción a la Ciencia de Datos",
+          "abreviatura": "ICD",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": [
+            "Yudivián Almeida"
+          ]
+        },
+        {
+          "nombre": "Filosofía",
+          "abreviatura": "F",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": []
+        },
+        {
+          "nombre": "Educación Física I",
+          "abreviatura": "EF",
+          "horas_plan": 28,
+          "horas_real": 28,
+          "profesores": []
+        }
+      ]
+    },
+    {
+      "anno": "D2 (2do Año Ciencia de Datos)",
+      "profesor_principal": "Carlos León",
+      "asignaturas": [
+        {
+          "nombre": "Matemática y Aplicaciones",
+          "abreviatura": "MA",
+          "horas_plan": 80,
+          "horas_real": 80,
+          "profesores": [
+            "Ania Mesa"
+          ]
+        },
+        {
+          "nombre": "Probabilidades",
+          "abreviatura": "Prb",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Inst. Yanetsy E. Rodríguez"
+          ]
+        },
+        {
+          "nombre": "Bases de Datos",
+          "abreviatura": "BD",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Carlos León",
+            "Marlon Díaz"
+          ]
+        },
+        {
+          "nombre": "Estructura de Datos",
+          "abreviatura": "ED",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Alberto Raudel A."
+          ]
+        },
+        {
+          "nombre": "Visualización de Datos",
+          "abreviatura": "VD",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": []
+        },
+        {
+          "nombre": "Economía Política",
+          "abreviatura": "EP",
+          "horas_plan": 56,
+          "horas_real": 56,
+          "profesores": [
+            "Irana Veliz López"
+          ]
+        },
+        {
+          "nombre": "Educación Física III",
+          "abreviatura": "EF",
+          "horas_plan": 28,
+          "horas_real": 28,
+          "profesores": []
+        }
+      ]
+    },
+    {
+      "anno": "D3 (3er Año Ciencia de Datos)",
+      "profesor_principal": "Yudivian Almeida",
+      "asignaturas": [
+        {
+          "nombre": "Análisis Estadístico II",
+          "abreviatura": "AE2",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Tit. Vivian Sistach",
+            "Asist. Miguel A. Díaz"
+          ]
+        },
+        {
+          "nombre": "Muestreo y Diseño de Experimentos",
+          "abreviatura": "MDE",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Aux. Yanet García",
+            "Ad. Juan Miguel Pérez"
+          ]
+        },
+        {
+          "nombre": "Redes Neuronales",
+          "abreviatura": "RN",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Daniel",
+            "Marlon Díaz"
+          ]
+        },
+        {
+          "nombre": "Procesamiento del Lenguaje",
+          "abreviatura": "PL",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": [
+            "Daniel",
+            "Carla"
+          ]
+        },
+        {
+          "nombre": "Procesamiento de Grandes Volúmenes de Datos",
+          "abreviatura": "PGVD",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Deborah",
+            "Carla"
+          ]
+        },
+        {
+          "nombre": "Teoría Política",
+          "abreviatura": "TP",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": [
+            "Luis Manuel Díaz Román"
+          ]
+        }
+      ]
+    },
+    {
+      "anno": "D4 (4to Año Ciencia de Datos)",
+      "profesor_principal": "Yudivian",
+      "asignaturas": [
+        {
+          "nombre": "Inteligencia de Negocios",
+          "abreviatura": "IN",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Víctor Cardentey",
+            "Dennis González"
+          ]
+        },
+        {
+          "nombre": "Elementos de Inteligencia Artificial",
+          "abreviatura": "EIA",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": [
+            "Elena",
+            "Dennis Glez."
+          ]
+        },
+        {
+          "nombre": "Ciberseguridad y Privacidad",
+          "abreviatura": "CP",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Roberto García",
+            "Claudia Álvarez"
+          ]
+        },
+        {
+          "nombre": "Curso Optativo II",
+          "abreviatura": "CO2",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": []
+        },
+        {
+          "nombre": "Estudios de Ciencia, Tecnología y Sociedad",
+          "abreviatura": "ECTS",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": [
+            "Mayra Vistel"
+          ]
+        },
+        {
+          "nombre": "Seguridad Nacional / Defensa Nacional",
+          "abreviatura": "SN/DN",
+          "horas_plan": 68,
+          "horas_real": 68,
+          "profesores": [
+            "Yuri"
+          ]
+        }
+      ]
+    },
+    {
+      "anno": "C1 (1er Año Ciencia de la Computación)",
+      "profesor_principal": "Idania Urrutia",
+      "asignaturas": [
+        {
+          "nombre": "Álgebra I",
+          "abreviatura": "A I",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Aux. Celia T. González",
+            "Inst. Dalianys Pérez",
+            "Ad. Amanda Cordero"
+          ]
+        },
+        {
+          "nombre": "Lógica",
+          "abreviatura": "L",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Yudivián Almeida",
+            "Daniel",
+            "Deborah",
+            "Elena",
+            "Niley",
+            "Ariel"
+          ]
+        },
+        {
+          "nombre": "Programación",
+          "abreviatura": "P",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Alejandro Piad",
+            "Gabriel",
+            "Yeneit",
+            "Carlos David",
+            "Daniel Toledo",
+            "Alex Sierra",
+            "Johana Cambell"
+          ]
+        },
+        {
+          "nombre": "Análisis Matemático I",
+          "abreviatura": "AM I",
+          "horas_plan": 80,
+          "horas_real": 80,
+          "profesores": [
+            "Prof. Tit. Idania Urrutia",
+            "Asist. Ernesto A. López",
+            "Ad. David Guaty"
+          ]
+        },
+        {
+          "nombre": "Filosofía",
+          "abreviatura": "F",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": [
+            "Vivían Giro",
+            "Orozco, Ramon",
+            "David Romeu Herrera",
+            "AA Melissa"
+          ]
+        },
+        {
+          "nombre": "Educación Física I",
+          "abreviatura": "EF",
+          "horas_plan": 28,
+          "horas_real": 28,
+          "profesores": []
+        }
+      ]
+    },
+    {
+      "anno": "C2 (2do Año Ciencia de la Computación)",
+      "profesor_principal": "Ania Mesa",
+      "asignaturas": [
+        {
+          "nombre": "Estructuras de Datos y Algoritmos I",
+          "abreviatura": "EDA",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Alberto Fernández",
+            "Alex Sierra",
+            "Raudel"
+          ]
+        },
+        {
+          "nombre": "Matemática Discreta I",
+          "abreviatura": "MD",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Yudivián",
+            "Kevin Manzano"
+          ]
+        },
+        {
+          "nombre": "Arquitectura de computadoras",
+          "abreviatura": "AC",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Lachi, Carmen (supervisión)",
+            "Christopher",
+            "Aracelys"
+          ]
+        },
+        {
+          "nombre": "Ecuaciones Diferenciales Ordinarias",
+          "abreviatura": "EDO",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Asist. Ania Mesa",
+            "Ad. Jackson C. Vera"
+          ]
+        },
+        {
+          "nombre": "Matemática Numérica",
+          "abreviatura": "MN",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Aux. Damián Valdés",
+            "Ad. Amanda Noris",
+            "Ad. Juan Miguel Pérez"
+          ]
+        },
+        {
+          "nombre": "Teoría Política",
+          "abreviatura": "TP",
+          "horas_plan": 56,
+          "horas_real": 56,
+          "profesores": [
+            "Luis Felipe García Soto"
+          ]
+        },
+        {
+          "nombre": "Educación Física III",
+          "abreviatura": "EF3",
+          "horas_plan": 28,
+          "horas_real": 28,
+          "profesores": []
+        }
+      ]
+    },
+    {
+      "anno": "C3 (3er Año Ciencia de la Computación)",
+      "profesor_principal": "Yeneit",
+      "asignaturas": [
+        {
+          "nombre": "Redes de Computadoras",
+          "abreviatura": "RC",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Roberto Martí",
+            "Alejandro Beltrán (Nodo)"
+          ]
+        },
+        {
+          "nombre": "Ingeniería de Software",
+          "abreviatura": "IS",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Johana Cambell",
+            "Joana Cambell",
+            "Aracelis García"
+          ]
+        },
+        {
+          "nombre": "Modelos de Optimización",
+          "abreviatura": "MO",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "PT Aymée Marrero",
+            "PT Gemaiqzel Bouza",
+            "Ad. Javier Rodríguez"
+          ]
+        },
+        {
+          "nombre": "Bases de Datos II",
+          "abreviatura": "BD2",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Carlos León",
+            "Claudia Álvarez",
+            "Naomi Lahera",
+            "Massiel Paz"
+          ]
+        },
+        {
+          "nombre": "Programación Declarativa",
+          "abreviatura": "PD",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Hiran",
+            "Hiram",
+            "Daniel Toledo"
+          ]
+        },
+        {
+          "nombre": "Estadística",
+          "abreviatura": "Est",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Inst. Lázaro D. González",
+            "Ad. Erick Barceló",
+            "Ad. Jackson C. Vera"
+          ]
+        }
+      ]
+    },
+    {
+      "anno": "C4 (4to Año Ciencia de la Computación)",
+      "profesor_principal": "Carmen Fernández",
+      "asignaturas": [
+        {
+          "nombre": "Aprendizaje de Máquinas",
+          "abreviatura": "AM",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Suilán",
+            "Deborah",
+            "Naomi Lahera",
+            "Victor Cardentey"
+          ]
+        },
+        {
+          "nombre": "Diseño y Análisis de Algoritmos",
+          "abreviatura": "DAA",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Alejandro Piad",
+            "Gabriel",
+            "Ariel"
+          ]
+        },
+        {
+          "nombre": "Sistemas Distribuidos",
+          "abreviatura": "SD",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Roberto Martí",
+            "Alejandro Beltrán"
+          ]
+        },
+        {
+          "nombre": "Asignatura Electiva",
+          "abreviatura": "AE",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": []
+        },
+        {
+          "nombre": "Estudios de Ciencia, Tecnología y Sociedad",
+          "abreviatura": "ECTS",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": [
+            "Mayra Vistel"
+          ]
+        },
+        {
+          "nombre": "Seguridad Nacional / Defensa Nacionaol",
+          "abreviatura": "SN/DN",
+          "horas_plan": 68,
+          "horas_real": 68,
+          "profesores": [
+            "Yuri Viera"
+          ]
+        }
+      ]
+    },
+    {
+      "anno": "M1 (1er Año Matemática)",
+      "profesor_principal": "Roxana Cabrera",
+      "asignaturas": [
+        {
+          "nombre": "Introducción al Análisis Matemático",
+          "abreviatura": "IAM",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Tit. Roxana Cabrera",
+            "Ad. Damon Jorge"
+          ]
+        },
+        {
+          "nombre": "Introducción al Álgebra",
+          "abreviatura": "IA",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Aux. Celia T. González",
+            "Ad. Cristian Vigoa"
+          ]
+        },
+        {
+          "nombre": "Geometría Analítica",
+          "abreviatura": "GA",
+          "horas_plan": 80,
+          "horas_real": 80,
+          "profesores": [
+            "Tit. Ma. Cristina González",
+            "Ad. Nathaly Muñoz"
+          ]
+        },
+        {
+          "nombre": "Programación y Algoritmos",
+          "abreviatura": "PA",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Inst. Manuel Valiente",
+            "inst. Rocío"
+          ]
+        },
+        {
+          "nombre": "Introducción a la Matemática",
+          "abreviatura": "IM",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": [
+            "Tit. Rita A. Roldán"
+          ]
+        },
+        {
+          "nombre": "Filosofía",
+          "abreviatura": "F",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": []
+        },
+        {
+          "nombre": "Educación Física I",
+          "abreviatura": "EF",
+          "horas_plan": 28,
+          "horas_real": 28,
+          "profesores": []
+        }
+      ]
+    },
+    {
+      "anno": "M2 (2do Año Matemática)",
+      "profesor_principal": "Fidel Hernández Advíncula",
+      "asignaturas": [
+        {
+          "nombre": "Funciones de Varias Variables",
+          "abreviatura": "FVV",
+          "horas_plan": 128,
+          "horas_real": 128,
+          "profesores": [
+            "Aux. Valentina Badía",
+            "Ad. Carlos A. Núñez"
+          ]
+        },
+        {
+          "nombre": "Complementos de Álgebra Lineal",
+          "abreviatura": "CAL",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Tit. Fidel Hernández Advíncula",
+            "Inst. Miguel A. González",
+            "Ad. Rafael E. Saraiba"
+          ]
+        },
+        {
+          "nombre": "Seminario de Problemas II",
+          "abreviatura": "SP2",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": [
+            "Tit. Fidel Hernández Advíncula"
+          ]
+        },
+        {
+          "nombre": "Asignatura Electiva I",
+          "abreviatura": "AE",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": []
+        },
+        {
+          "nombre": "Economía Política",
+          "abreviatura": "EP",
+          "horas_plan": 56,
+          "horas_real": 56,
+          "profesores": [
+            "Irana Veliz López"
+          ]
+        },
+        {
+          "nombre": "Educación Física III",
+          "abreviatura": "EF",
+          "horas_plan": 28,
+          "horas_real": 28,
+          "profesores": []
+        }
+      ]
+    },
+    {
+      "anno": "M3 (3er Año Matemática)",
+      "profesor_principal": "Gemaiqzel Bouza",
+      "asignaturas": [
+        {
+          "nombre": "Funciones de variable Compleja",
+          "abreviatura": "FVC",
+          "horas_plan": 80,
+          "horas_real": 80,
+          "profesores": [
+            "Tit. Concepción Valdés",
+            "Ad. Emilio Hernández"
+          ]
+        },
+        {
+          "nombre": "Inferencia Estadística",
+          "abreviatura": "IE",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Tit. José Valdés Castro",
+            "Ad. Darío Palmero",
+            "Ad. Erick Barceló"
+          ]
+        },
+        {
+          "nombre": "Ecuaciones Diferenciales Ordinarias",
+          "abreviatura": "EDO",
+          "horas_plan": 96,
+          "horas_real": 96,
+          "profesores": [
+            "Tit. Raúl Guinovart",
+            "Inst. Alicia Pérez"
+          ]
+        },
+        {
+          "nombre": "Matemática Numérica",
+          "abreviatura": "MN",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": [
+            "Tit. Marta Lourdes Baguer",
+            "Asist. Fernando Rodríguez"
+          ]
+        },
+        {
+          "nombre": "Optimización Matemática I",
+          "abreviatura": "OM",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Tit. Aymée Marrero",
+            "Tit. Gemaiqzel Bouza",
+            "Ad. Merling Sabater"
+          ]
+        },
+        {
+          "nombre": "Teoría Política",
+          "abreviatura": "TP",
+          "horas_plan": 48,
+          "horas_real": 48,
+          "profesores": [
+            "Luis Manuel Diaz Román"
+          ]
+        }
+      ]
+    },
+    {
+      "anno": "M4 (4to Año Matemática)",
+      "profesor_principal": "No especificado",
+      "asignaturas": [
+        {
+          "nombre": "Medida e Integración",
+          "abreviatura": "MI",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "Tit. Rita Roldán"
+          ]
+        },
+        {
+          "nombre": "Geometría Diferencial",
+          "abreviatura": "GD",
+          "horas_plan": 80,
+          "horas_real": 80,
+          "profesores": [
+            "Tit. Giani Egaña",
+            "Inst. Ana Elena Pérez"
+          ]
+        },
+        {
+          "nombre": "Historia de la Matemática",
+          "abreviatura": "HM",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": [
+            "T. Carlos Sánchez"
+          ]
+        },
+        {
+          "nombre": "Estudios de Ciencia, Tecnología y Sociedad",
+          "abreviatura": "ECTS",
+          "horas_plan": 32,
+          "horas_real": 32,
+          "profesores": [
+            "Mayra Vistel"
+          ]
+        },
+        {
+          "nombre": "Asignatura Optativa II",
+          "abreviatura": "AO2",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": []
+        },
+        {
+          "nombre": "Asignatura Optativa III",
+          "abreviatura": "AO3",
+          "horas_plan": 64,
+          "horas_real": 64,
+          "profesores": []
+        }
+      ]
+    }
+  ],
+  "horarios": [
+    {
+      "carrera": "CIENCIA DE DATOS",
+      "grupo": "D111",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "F Aula 8",
+          "Martes": "ICD Aula 7",
+          "Miércoles": "AL Aula 7*",
+          "Jueves": "AM I Aula 7*",
+          "Viernes": "AL Aula 7*"
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "L Aula 6*",
+          "Martes": "AL Aula 6*",
+          "Miércoles": "EF SEDER",
+          "Jueves": "L Aula 7",
+          "Viernes": ""
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "IP Aula 7",
+          "Martes": "AM I Aula 6*",
+          "Miércoles": "AM I Aula 7*",
+          "Jueves": "IP Lab ICD 7 (s. impares) / F 8 (s. pares)",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE DATOS",
+      "grupo": "D211",
+      "tabla": [
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "ED c 7",
+          "Martes": "BD c 7",
+          "Miércoles": "MA (EDO) cp 6 (con C211)",
+          "Jueves": "BD cp 7",
+          "Viernes": ""
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "VD c 7",
+          "Martes": "EP c 7 (con M2)",
+          "Miércoles": "EP c 7 (con M2)",
+          "Jueves": "Prb cp 7",
+          "Viernes": ""
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "MA (EDO) c 6 (con C211)",
+          "Martes": "Prb c 7",
+          "Miércoles": "EF 4:45pm a 5:35pm",
+          "Jueves": "ED cp 7",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE DATOS",
+      "grupo": "D311",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "AE2 c 2",
+          "Martes": "RN c 2",
+          "Miércoles": "TP 4 (con M3, s. 2, 4, 6, 8, 10 12, 13, 14)",
+          "Jueves": "",
+          "Viernes": ""
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "MDE c 2",
+          "Martes": "PL c 2",
+          "Miércoles": "MDE cp 2",
+          "Jueves": "RN cp Lab2",
+          "Viernes": ""
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "PGVD c 2",
+          "Martes": "TP c 4 (con M3)",
+          "Miércoles": "AE2 cp Lab2",
+          "Jueves": "PGVD cp 7",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE DATOS",
+      "grupo": "D411",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "CP 2",
+          "Martes": "EIA 2",
+          "Miércoles": "CP 2",
+          "Jueves": "SN/DN 9 (Con C4)",
+          "Viernes": ""
+        },
+        {
+          "Turno": "2",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "IN 2",
+          "Martes": "SN/DN 9 (con C4)",
+          "Miércoles": "IN 2",
+          "Jueves": "SN/DN 9 (Con C4)",
+          "Viernes": ""
+        },
+        {
+          "Turno": "3",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "ECTS 9 (con C4 en Conf.) y 4 (con con M4 en Semin.)",
+          "Martes": "CO2",
+          "Miércoles": "EIA 2 (s. pares)",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C111",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "F Aula 6",
+          "Martes": "A I Aula 6*",
+          "Miércoles": "AM I Aula 6*",
+          "Jueves": "F Aula 6",
+          "Viernes": ""
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "L Aula 6*",
+          "Martes": "A I Aula 6*",
+          "Miércoles": "EF SEDER",
+          "Jueves": "L Aula 6*",
+          "Viernes": "A I Aula 6*"
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "P Aula 6",
+          "Martes": "AM I Aula 6*",
+          "Miércoles": "AM I Aula 6* (s. pares)",
+          "Jueves": "P Aula 6",
+          "Viernes": "P Lab"
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C121",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "P Aula 5",
+          "Martes": "A I Aula 5",
+          "Miércoles": "AM I Aula 5 (s. pares)",
+          "Jueves": "P Aula 5",
+          "Viernes": "A I Aula 5"
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "F Aula 5",
+          "Martes": "AM I Aula 5",
+          "Miércoles": "EF SEDER",
+          "Jueves": "L Aula 5",
+          "Viernes": "P Lab"
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "L Aula 5",
+          "Martes": "A I Aula 5",
+          "Miércoles": "AM I Aula 5",
+          "Jueves": "F Aula 5",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C122 (antiguo C112)",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "P Aula 5",
+          "Martes": "A I Aula 5",
+          "Miércoles": "AM I Aula 1 (s. pares)",
+          "Jueves": "L Aula 1",
+          "Viernes": "P Lab"
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "F Aula 5",
+          "Martes": "AM I Aula 5",
+          "Miércoles": "EF SEDER",
+          "Jueves": "AM I Aula 1",
+          "Viernes": "A I Aula 1"
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "L Aula 5",
+          "Martes": "A I Aula 1",
+          "Miércoles": "P Aula 1",
+          "Jueves": "F Aula 5",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C211",
+      "tabla": [
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "EDA I c 6",
+          "Martes": "MD c6",
+          "Miércoles": "EDO cp 6 (con D2)",
+          "Jueves": "MN cp 6",
+          "Viernes": "AC lab"
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "TP c 6",
+          "Martes": "MN c 6",
+          "Miércoles": "EDA I cp 6",
+          "Jueves": "TP c 6",
+          "Viernes": "MD cp 6"
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "EDO c 6 (con D2)",
+          "Martes": "AC c 6",
+          "Miércoles": "EF 4:45pm a 5:35pm",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C212",
+      "tabla": [
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "EDA I c 6",
+          "Martes": "MD c6",
+          "Miércoles": "EDO I cp 5",
+          "Jueves": "MN cp 5",
+          "Viernes": "AC lab"
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "TP c 6",
+          "Martes": "MN c 6",
+          "Miércoles": "EDA I cp 5",
+          "Jueves": "TP c 6",
+          "Viernes": "MD cp 5"
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "EDO c 6",
+          "Martes": "AC c 6",
+          "Miércoles": "EF 4:45pm a 5:35pm",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C311",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "BD2 Aula 9",
+          "Martes": "Est Aula 9",
+          "Miércoles": "BD2 cp Aula 9",
+          "Jueves": "MO Aula 9",
+          "Viernes": ""
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "IS c Aula 9",
+          "Martes": "PD c Aula 9",
+          "Miércoles": "IS c/s Aula 9",
+          "Jueves": "PD cp Aula 9",
+          "Viernes": ""
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "RC Aula 9",
+          "Martes": "MO Aula 9",
+          "Miércoles": "RC cp Aula 9",
+          "Jueves": "Est cp Aula 9",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C312",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "BD2 Aula 9",
+          "Martes": "Est Aula 9",
+          "Miércoles": "BD2 cp Aula 3",
+          "Jueves": "PD cp Aula 3",
+          "Viernes": ""
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "IS c Aula 9",
+          "Martes": "PD c Aula 9",
+          "Miércoles": "IS c/s Aula 3",
+          "Jueves": "MO Aula 3",
+          "Viernes": ""
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "RC Aula 9",
+          "Martes": "MO Aula 9",
+          "Miércoles": "RC cp Aula 3",
+          "Jueves": "Est cp Aula 3",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C411",
+      "tabla": [
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "AM 9",
+          "Martes": "DAA 9",
+          "Miércoles": "DAA 9",
+          "Jueves": "SN/DN 9 (con D4)",
+          "Viernes": ""
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "SD 9 (s. 1, 2, 3, 5, 6, 8, 9, 15, 16) / ECTS 9 (s. 4, 7, 10, 11, 12, 13, 14)",
+          "Martes": "SN/DN 9 (con D4)",
+          "Miércoles": "AM 9",
+          "Jueves": "SN/DN 9 (semana 1, con D4)",
+          "Viernes": ""
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "ECTS 9 (con M4 y D4, s. 1, 2, 3, 5, 6, 8, 9, 15, 16) / AM 9 (s. 4, 7, 10, 11, 12, 13, 14)",
+          "Martes": "AE 9",
+          "Miércoles": "SD 9",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "CIENCIA DE LA COMPUTACIÓN",
+      "grupo": "C412",
+      "tabla": [
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "AM 9",
+          "Martes": "DAA 9",
+          "Miércoles": "DAA 9",
+          "Jueves": "SN/DN 9 (con D4)",
+          "Viernes": ""
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "SD 9 (s. 1, 2, 3, 5, 6, 8, 9, 15, 16) / ECTS 9 (s. 4, 7, 10, 11, 12, 13, 14)",
+          "Martes": "SN/DN 9 (con D4)",
+          "Miércoles": "AM 1",
+          "Jueves": "SN/DN 9 (semana 1, con D4)",
+          "Viernes": ""
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "ECTS 9 (con M4 y D4, s. 1, 2, 3, 5, 6, 8, 9, 15, 16) / AM 9 (s. 4, 7, 10, 11, 12, 13, 14)",
+          "Martes": "AE",
+          "Miércoles": "SD 9",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "MATEMÁTICA",
+      "grupo": "M111",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "F Aula 8",
+          "Martes": "IM Aula 8",
+          "Miércoles": "IAM Aula 8",
+          "Jueves": "IA Aula 8",
+          "Viernes": "IA Aula 8"
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "PA Aula 8",
+          "Martes": "IAM Aula 8",
+          "Miércoles": "EF SEDER",
+          "Jueves": "PA Aula Lab",
+          "Viernes": "IAM Aula 8"
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "GA Aula 8",
+          "Martes": "GA Aula 8",
+          "Miércoles": "IA Aula 8",
+          "Jueves": "GA 8 (s. impares) / F 8 (s. pares)",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "MATEMÁTICA",
+      "grupo": "M211",
+      "tabla": [
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "CAL c 3",
+          "Martes": "CAL c 3",
+          "Miércoles": "",
+          "Jueves": "",
+          "Viernes": ""
+        },
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "FVV c 3",
+          "Martes": "FVV c 3",
+          "Miércoles": "FVV cp 3",
+          "Jueves": "CAL cp 3",
+          "Viernes": ""
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm to 4:15 pm",
+          "Lunes": "EP c 7 (con D2)",
+          "Martes": "EP c 7 (con D2)",
+          "Miércoles": "FVV cp 3",
+          "Jueves": "",
+          "Viernes": ""
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "EF 4:45pm a 5:35pm",
+          "Martes": "SP2",
+          "Miércoles": "",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "MATEMÁTICA",
+      "grupo": "M311",
+      "tabla": [
+        {
+          "Turno": "1",
+          "Horas": "9:15 am a 10:35 am",
+          "Lunes": "MN Aula 4 (s. impares)",
+          "Martes": "EDO Aula 4",
+          "Miércoles": "MN 4",
+          "Jueves": "FVC 4 (s. 1, 3, 5, 7, 9, 11, 15, 16) / TP 4 (con D3, s. 2, 4, 6, 8, 10 12, 13, 14)",
+          "Viernes": "FVC Aula 4"
+        },
+        {
+          "Turno": "2",
+          "Horas": "10:40 am a 12:00 am",
+          "Lunes": "FVC Aula 4",
+          "Martes": "OM Aula 4",
+          "Miércoles": "EDO Aula 4",
+          "Jueves": "IE Aula 4",
+          "Viernes": "EDO Aula 4"
+        },
+        {
+          "Turno": "3",
+          "Horas": "12:05 pm a 1:25 pm",
+          "Lunes": "IE Aula 4",
+          "Martes": "TP Aula 4 (con D3)",
+          "Miércoles": "IE Aula 4",
+          "Jueves": "OM Aula 4",
+          "Viernes": ""
+        }
+      ]
+    },
+    {
+      "carrera": "MATEMÁTICA",
+      "grupo": "M411",
+      "tabla": [
+        {
+          "Turno": "4",
+          "Horas": "1:30 pm a 2:50 pm",
+          "Lunes": "GD 4",
+          "Martes": "HM 4",
+          "Miércoles": "MI 4",
+          "Jueves": "AO2",
+          "Viernes": ""
+        },
+        {
+          "Turno": "5",
+          "Horas": "2:55 pm a 4:15 pm",
+          "Lunes": "MI 4",
+          "Martes": "HM 4",
+          "Miércoles": "GD 4",
+          "Jueves": "AO3",
+          "Viernes": ""
+        },
+        {
+          "Turno": "6",
+          "Horas": "4:20 pm a 5:40 pm",
+          "Lunes": "ECTS 9 (Con C4 y D4 en Conf.); 4 (con D4 en Seminarios)",
+          "Martes": "GD 4",
+          "Miércoles": "",
+          "Jueves": "",
+          "Viernes": ""
+        }
+      ]
+    }
+  ]
+}

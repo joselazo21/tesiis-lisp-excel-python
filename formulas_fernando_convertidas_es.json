@@ -1,0 +1,1085 @@
+{
+  "C111": [
+    {
+      "cell": "K4",
+      "original": "of:=[.J4]-[.L4]",
+      "excel": "=J4-L4"
+    },
+    {
+      "cell": "L4",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I4])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I4)"
+    },
+    {
+      "cell": "G5",
+      "original": "of:=[.J5]-[.L5]",
+      "excel": "=J5-L5"
+    },
+    {
+      "cell": "H5",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I5])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I5)"
+    },
+    {
+      "cell": "K6",
+      "original": "of:=[.J6]-[.L6]",
+      "excel": "=J6-L6"
+    },
+    {
+      "cell": "L6",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I6])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I6)"
+    },
+    {
+      "cell": "J7",
+      "original": "of:=[.J7]-[.L7]",
+      "excel": "=J7-L7"
+    },
+    {
+      "cell": "K7",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I7])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I7)"
+    },
+    {
+      "cell": "K8",
+      "original": "of:=[.J8]-[.L8]",
+      "excel": "=J8-L8"
+    },
+    {
+      "cell": "L8",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I8])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I8)"
+    },
+    {
+      "cell": "H9",
+      "original": "of:=[.J9]-[.L9]",
+      "excel": "=J9-L9"
+    },
+    {
+      "cell": "I9",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I9])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I9)"
+    },
+    {
+      "cell": "H10",
+      "original": "of:=[.J10]-[.L10]",
+      "excel": "=J10-L10"
+    },
+    {
+      "cell": "I10",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I10])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I10)"
+    },
+    {
+      "cell": "G11",
+      "original": "of:=[.J11]-[.L11]",
+      "excel": "=J11-L11"
+    },
+    {
+      "cell": "H11",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I11])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I11)"
+    },
+    {
+      "cell": "H12",
+      "original": "of:=[.J12]-[.L12]",
+      "excel": "=J12-L12"
+    },
+    {
+      "cell": "I12",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I12])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I12)"
+    },
+    {
+      "cell": "J13",
+      "original": "of:=[.J13]-[.L13]",
+      "excel": "=J13-L13"
+    },
+    {
+      "cell": "K13",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I13])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I13)"
+    },
+    {
+      "cell": "H14",
+      "original": "of:=[.J14]-[.L14]",
+      "excel": "=J14-L14"
+    },
+    {
+      "cell": "I14",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I14])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I14)"
+    }
+  ],
+  "C112": [
+    {
+      "cell": "K4",
+      "original": "of:=[.J4]-[.L4]",
+      "excel": "=J4-L4"
+    },
+    {
+      "cell": "L4",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I4])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I4)"
+    },
+    {
+      "cell": "I5",
+      "original": "of:=[.J5]-[.L5]",
+      "excel": "=J5-L5"
+    },
+    {
+      "cell": "J5",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I5])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I5)"
+    },
+    {
+      "cell": "J6",
+      "original": "of:=[.J6]-[.L6]",
+      "excel": "=J6-L6"
+    },
+    {
+      "cell": "K6",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I6])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I6)"
+    },
+    {
+      "cell": "J7",
+      "original": "of:=[.J7]-[.L7]",
+      "excel": "=J7-L7"
+    },
+    {
+      "cell": "K7",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I7])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I7)"
+    },
+    {
+      "cell": "I8",
+      "original": "of:=[.J8]-[.L8]",
+      "excel": "=J8-L8"
+    },
+    {
+      "cell": "J8",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I8])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I8)"
+    },
+    {
+      "cell": "J9",
+      "original": "of:=[.J9]-[.L9]",
+      "excel": "=J9-L9"
+    },
+    {
+      "cell": "K9",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I9])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I9)"
+    },
+    {
+      "cell": "H10",
+      "original": "of:=[.J10]-[.L10]",
+      "excel": "=J10-L10"
+    },
+    {
+      "cell": "I10",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I10])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I10)"
+    },
+    {
+      "cell": "G11",
+      "original": "of:=[.J11]-[.L11]",
+      "excel": "=J11-L11"
+    },
+    {
+      "cell": "H11",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I11])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I11)"
+    },
+    {
+      "cell": "F12",
+      "original": "of:=[.J12]-[.L12]",
+      "excel": "=J12-L12"
+    },
+    {
+      "cell": "G12",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I12])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I12)"
+    },
+    {
+      "cell": "G13",
+      "original": "of:=[.J13]-[.L13]",
+      "excel": "=J13-L13"
+    },
+    {
+      "cell": "H13",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I13])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I13)"
+    },
+    {
+      "cell": "F14",
+      "original": "of:=[.J14]-[.L14]",
+      "excel": "=J14-L14"
+    },
+    {
+      "cell": "G14",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I14])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I14)"
+    }
+  ],
+  "C113": [
+    {
+      "cell": "K4",
+      "original": "of:=[.J4]-[.L4]",
+      "excel": "=J4-L4"
+    },
+    {
+      "cell": "L4",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I4])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I4)"
+    },
+    {
+      "cell": "J5",
+      "original": "of:=[.J5]-[.L5]",
+      "excel": "=J5-L5"
+    },
+    {
+      "cell": "K5",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I5])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I5)"
+    },
+    {
+      "cell": "K6",
+      "original": "of:=[.J6]-[.L6]",
+      "excel": "=J6-L6"
+    },
+    {
+      "cell": "L6",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I6])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I6)"
+    },
+    {
+      "cell": "J7",
+      "original": "of:=[.J7]-[.L7]",
+      "excel": "=J7-L7"
+    },
+    {
+      "cell": "K7",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I7])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I7)"
+    },
+    {
+      "cell": "K8",
+      "original": "of:=[.J8]-[.L8]",
+      "excel": "=J8-L8"
+    },
+    {
+      "cell": "L8",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I8])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I8)"
+    },
+    {
+      "cell": "J9",
+      "original": "of:=[.J9]-[.L9]",
+      "excel": "=J9-L9"
+    },
+    {
+      "cell": "K9",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I9])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I9)"
+    },
+    {
+      "cell": "H10",
+      "original": "of:=[.J10]-[.L10]",
+      "excel": "=J10-L10"
+    },
+    {
+      "cell": "I10",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I10])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I10)"
+    },
+    {
+      "cell": "G11",
+      "original": "of:=[.J11]-[.L11]",
+      "excel": "=J11-L11"
+    },
+    {
+      "cell": "H11",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I11])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I11)"
+    },
+    {
+      "cell": "H12",
+      "original": "of:=[.J12]-[.L12]",
+      "excel": "=J12-L12"
+    },
+    {
+      "cell": "I12",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I12])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I12)"
+    },
+    {
+      "cell": "G13",
+      "original": "of:=[.J13]-[.L13]",
+      "excel": "=J13-L13"
+    },
+    {
+      "cell": "H13",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I13])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I13)"
+    },
+    {
+      "cell": "H14",
+      "original": "of:=[.J14]-[.L14]",
+      "excel": "=J14-L14"
+    },
+    {
+      "cell": "I14",
+      "original": "of:=COUNTIF([.$C$4:.$G$17];[.I14])",
+      "excel": "=CONTAR.SI($C$4:$G$17;I14)"
+    }
+  ],
+  "Aulas": [
+    {
+      "cell": "C4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L4",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$5]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$5]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$5]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$5=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$5=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$5=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L5",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$7]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$7]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$7]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$7=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$7=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$7=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L6",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$C$9]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$C$9]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$C$9]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$C$9=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$C$9=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$C$9=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D5]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D5]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D5=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D5=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.D$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.D$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.D$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=D$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=D$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=D$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.E$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.E$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.E$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=E$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=E$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=E$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.F$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.F$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.F$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=F$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=F$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=F$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.G$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.G$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.G$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=G$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=G$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=G$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.H$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.H$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.H$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=H$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=H$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=H$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.I$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.I$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.I$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=I$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=I$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=I$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.J$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.J$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.J$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=J$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=J$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=J$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.K$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.K$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.K$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=K$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=K$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=K$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L12",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D5]=[.L$2];[$C111.$B1] & \" \"; \"\"); IF([$C112.$D5]=[.L$2];[$C112.$B1] & \" \"; \"\"); IF([$C113.$D5]=[.L$2];[$C113.$B1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D5=L$2;C111!$B1 & \" \"; \"\"); SI(C112!$D5=L$2;C112!$B1 & \" \"; \"\"); SI(C113!$D5=L$2;C113!$B1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L13",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D7]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D7]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D7]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D7=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D7=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D7=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L14",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$D9]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$D9]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$D9]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$D9=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$D9=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$D9=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L20",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E5]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E5]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E5]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E5=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E5=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E5=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L21",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E7]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E7]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E7]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E7=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E7=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E7=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L22",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$E9]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$E9]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$E9]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$E9=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$E9=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$E9=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L28",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F5]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F5]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F5]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F5=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F5=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F5=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L29",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F7]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F7]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F7]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F7=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F7=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F7=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L30",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$F9]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$F9]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$F9]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$F9=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$F9=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$F9=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L36",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G5]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G5]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G5]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G5=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G5=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G5=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L37",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G7]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G7]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G7]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G7=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G7=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G7=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "C38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.C$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.C$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.C$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=C$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=C$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=C$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "D38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.D$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.D$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.D$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=D$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=D$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=D$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "E38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.E$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.E$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.E$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=E$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=E$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=E$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "F38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.F$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.F$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.F$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=F$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=F$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=F$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "G38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.G$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.G$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.G$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=G$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=G$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=G$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "H38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.H$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.H$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.H$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=H$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=H$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=H$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "I38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.I$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.I$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.I$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=I$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=I$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=I$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "J38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.J$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.J$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.J$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=J$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=J$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=J$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "K38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.K$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.K$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.K$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=K$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=K$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=K$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    },
+    {
+      "cell": "L38",
+      "original": "of:=SUBSTITUTE(TRIM(COM.MICROSOFT.CONCAT(IF([$C111.$G9]=[.L$2];[$C111.$B$1] & \" \"; \"\"); IF([$C112.$G9]=[.L$2];[$C112.$B$1] & \" \"; \"\"); IF([$C113.$G9]=[.L$2];[$C113.$B$1] & \" \"; \"\"))); \" \"; \",\")",
+      "excel": "=SUSTITUIR(ESPACIOS(CONCATENAR(SI(C111!$G9=L$2;C111!$B$1 & \" \"; \"\"); SI(C112!$G9=L$2;C112!$B$1 & \" \"; \"\"); SI(C113!$G9=L$2;C113!$B$1 & \" \"; \"\"))); \" \"; \",\")"
+    }
+  ]
+}

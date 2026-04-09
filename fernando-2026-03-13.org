@@ -1,0 +1,2062 @@
+#+title: Ohhhhh, qué impresionante
+#+author: 
+
+* journal                                                          :noexport:
+
+** <2026-03-13 vie> 
+   :LOGBOOK:
+   CLOCK: [2026-03-13 vie 14:57]--[2026-03-13 vie 16:25] =>  1:28
+   :END:
+   - contar lo que hice
+   - hicimos el macro def-parametro-de-horario
+   - y ahora ver lo de jose
+   - preguntaron por el case de Lisp :-o
+     - es case sensitive
+   - :-o el macro loco funciona :-O :emoji-con-estrellitas:
+   - y encontramos +un bug+ una pifia
+     - hay que cambiar el nombre del accessor de grupo en hoja
+     - o no tener una entidad grupo :shrugs:
+   - TAREAS
+     - *DECIDIR QUÉ HACER CON LA PIFIA*
+     - empezar a usar GAGM
+       - tarea concreta (leer y hacer)
+	 - leerse la tesis
+	 - y reescribir todas las definiciones de clases
+	   - usando =defnode=.
+       - posibilidades (no leer)
+	 - mandar la tesis
+	 - variante 2: mandar la documentación que se hizo después
+	 - var 3: las dos anteriores
+     - jose: ¡a dibujar! :-(
+     - tener un generate-code que reciba una hoja y la dibuje
+       - las reglas son:
+	 - todas las «celdas» llevan bordecito
+       - tablas en excel reciben:
+	 - filas, cols...  lo mismo que tienen las de lisp
+	 - pero también donde empiezan
+     - salma: ¡a programar!  ¡yéiiii!
+     - PARA TODOS: diseñar el lenguaje neutro
+       - variante 1
+	 - separar forma y contenido
+	   - en un lugar definido «los templates»
+	   - y en otro los datos
+** <2026-03-08 Sun> (yo solo 🥵)
+:LOGBOOK:
+CLOCK: [2026-03-08 Sun 17:06]--[2026-03-08 Sun 18:38] =>  1:32
+:END:
+ - hacer el macro para definir las entidades
+ - es un macro que define macros 🥵
+   - (me tomó mi tiempito ⏳🤨🥵 y una pequeña 🤏 revisión de los libros de Common Lisp)
+   - pero ya está hecho 😌.
+   - ahora solo hay que reproducirlo «con público» 🤓
+ - próximas tareas:
+   - hacer el macro que defina restricciones 😌     
+** <2026-03-07 Sat> (yo solo)
+:LOGBOOK:
+CLOCK: [2026-03-07 Sat 23:04]--[2026-03-07 Sat 23:35] =>  0:31
+:END:
+ - agregar al documento la creación (y documentación) de las entidades y restricciones.
+ - quitar la sección old code.
+** <2026-03-05 Thu> (yo solo)
+:LOGBOOK:
+CLOCK: [2026-03-05 Thu 21:31]--[2026-03-05 Thu 23:01] =>  1:30
+:END:
+ - organizar el código
+ - quitar todas las fechas anteriores
+ - dejar en el código solo que se use
+ - comprobar que el tangle funciona bien
+ - tareas pendientes
+   - hacer lo de las entidades
+** <2026-02-27 vie>
+   :LOGBOOK:
+   CLOCK: [2026-02-27 vie 14:37]--[2026-02-27 vie 16:19] =>  1:42
+   :END:
+   - revisar tareas
+   - copiar las tablas de asignaturas por año
+   - *TAREAS*
+     - jose y salma: hacer las hojas de todos los grupos :-o
+       - y darse cuenta ustedes solitos... \o/
+	 - de que eso es más fácil con macros
+     - jose y salma: (background) pensar que el macro puede ser algo como:
+       - versión 2
+	 (def-libro-completo c (11 12 13 21 22)
+                               (11 12 13)
+			       (11 12)
+			       (11 12)
+                             d (11) (11) (11) (11)
+			     m (11) (11) (11) (11)
+                             f (11 12) (11) (11) (11))
+       - versión 3
+	 (def-libro-completo c (3 2) (3) (2) (2)
+                             d (1) (1) (1) (1)
+			     m (1) (1) (1) (1)
+                             f (2) (1) (1) (1))
+     - jose y salma: terminar el resto de los elementos
+       - cañoneo
+       - modificadores
+     - tarea para jose (background)
+       - lenguaje orientado a tablas (para graficar las restricciones)
+     - PA LOS DOS
+       - hacer lo que pedí el miércoles :-/
+   - pensar el lenguaje de salma UwU
+** <2026-02-26 Thu> (yo solo)
+:LOGBOOK:
+CLOCK: [2026-02-26 Thu 22:49]--[2026-02-27 Fri 00:10] =>  1:21
+:END:
+ - arreglar las funciones en org-mode para graficar bien 🥵
+ - ahora en el contenido de las tablas hay que poner explícitamente el nombre de la primera columna
+
+** <2026-02-20 vie> [5/8]
+   :LOGBOOK:
+   CLOCK: [2026-02-20 vie 14:25]--[2026-02-20 vie 16:18] =>  1:53
+   :END:
+  - [ ] TAREA para Jose: mandarle el nombre de la biblioteca mágica de python para Excel
+  - [X] plan de trabajo (para hoy)
+    - +mejorar un poquito «el lenguaje»+,
+    - ignorar el plan de trabajo
+    - hablar de CLOS (para el initialize-instance :after)
+    - hacer macro para la definición de la hojas :-o
+    - buscar todas las asignaturas
+    - y reflexionar sobre el sentido de la vida
+    - tomar refresco
+  - [X] TAREA para Fernando: arreglar exportador
+  - [X] TAREA para salma y/o jose: asignaturas por año (ft. deepseek)
+    - esto debería ser fácil a partir de la información de deepseek
+    - porque ya eso es el :contenido-de-la-tabla
+  - [X] TAREA para salma: definir bien qué va en las hojas
+  - [ ] TAREA para jose: seguir con su mejor excel de la vida
+  - [ ] para la próxima vez
+    - ahora sí hacer el libro completo (sin restricciones)
+  - [X] TAREA PARA SALMA (EN EL BACKGROUND) ir pensando en su lenguaje de restricciones
+
+** <2026-02-19 Thu>
+:LOGBOOK:
+CLOCK: [2026-02-19 Thu 23:17]--[2026-02-20 Fri 00:22] =>  1:05
+:END:
+ - ordernarlo todo para hacer el tangle bien.
+ - agregar nuevas funcionalidades a las tablas.
+   - agregar row-contents
+     - ahora se puede agregar el contenido de la tabla
+ - proximos pasos
+   - modificar la tabla (de Salma) para que pueda aceptar el contenido.
+
+** <2026-02-16 lun>
+   - se hizo el macro gcode (y al final no se usó :paf:)
+   - se hizo la generación de código para output-org-mode
+     - tabla, hoja, libro
+   - tareas pendientes
+     - salma y jose
+       - dejar todo lo que estamos usando en un solo fichero
+	 - significa quitar todo lo viejo.
+	 - poner todo lo necesario para el macro defnode*
+	 - poner todo lo neceasrio para el macro gcode
+	 - poner  todo lo de la generación de código para org
+	 - poner la descripción del problemota grande
+	 - poner un «horario completo» (esta tarea está más abajo)
+       - *REESCRIBIR TODO EL LENGUAJITO BOBO CON GCODE Y EL NUEVO DEFCLASS**
+     - tarea para salma (para fortalecer su lisp 8-D)
+       - modificar el macro defclass* para que sea como ella dijo
+       - es ponerle otro key
+       - por ejemplo
+	 (defclass* persona ((nombre :accessor name) edad)
+           :ctr-args-type &key
+           :ctr-args-list (nombre &optional (edad 15)))
+     - tarea para jose
+       - hacer lo mismo que Fernando para excel :-/
+	 - esto es hacer un ficherito que cuando se ejecute, se obtenga el excel.
+     - tarea para salma (para tributar a los horarios :-D)
+       - describir el «libro» que serían los horarios dela facultad
+	 - esto es puro pico y pala :MONITO-TAPANDOSE-LOS-OJOS:
+
+** <2026-02-12 jue>
+   - configurar emacs TT
+   - definimos que exportamos en el tangle
+   - escribir el tutorial
+     1. abrir slime
+     2. cargar fichero-de-la-tesis-para-botar-2026-02-12.org
+     3. M-x org-babel-tangle (esto crea el fichero solo codigo-tesis.lisp)
+     4. desde el REPL cargar codigo-tesis.lisp
+     5. empezar a trastear el .org
+   - crear las celdas con defclass*
+   - crear las tablas con defclass*
+   - crear las hojas con defclass*
+   - vamos al generate-code
+   - empezamos la generación de código (copiando y pegando)
+   - proximas tareas
+     - para Salma y Jose
+       - terminar la generación de código en esos tres lenguajitos bobos
+     - para fernando (la próxima vez)
+       - [X] rezar porque hayas hecho bien la configuración de emacs :-/
+       - [ ] «arreglar» macro para la definición de las clases
+       - [ ] hacer un macro para el generate-code
+	 - y hacernos sentir tontos por todo el tiempo perdido
+       - [ ] revisar lo que hicieron salma y jose
+       - [ ] empezar la generación de código para las tablas y las hojas
+     - solo para Salma:
+       - definir los elementos de «tu lenguaje» para las restricciones
+     - solo para jose
+       - morirse con Excel :see:
+       - pensar en los macros para los bordes
+   - borrar la información comprometedora de fernando.
+
+
+
+* código
+
+** útiles
+*** mkstr, symb, keywd
+    #+begin_src lisp :results none :tangle codigo-tesis.lisp
+  (defun mkstr (&rest args)
+       "Returns a string with the concatenation of the args"
+       (string-upcase
+	(with-output-to-string (s)
+          (dolist (a args) (princ a s)))))
+
+  (defun symb (&rest args)
+       "Returns a symbol formed by the concatenation of the args."
+       (values (intern (apply #'mkstr args))))
+
+  (defun keywd (&rest args)
+       "Returns a keyword formed by the concatenation of the args."
+       (values (intern (apply #'mkstr args) :keyword)))
+  #+end_src
+*** función =ppme= para imprimir la macroexpansion de macros
+**** documentacion
+La idea es tener una función que podamos decirle (ppme (defclass* persona (nombre edad))) e imprima el resultado.
+
+🤔
+
+Para que se escriba así, sin tener que ponerle los apóstrofes, debería ser un macro 🤔.
+
+Mmmm...  por ahora voy a probar con la función y ponerle el apóstrofe.
+
+Quizás en un futuro, lo cambie, pero por ahora, se queda así 🤔.
+
+
+El nombre de la función es pretty-print-macro-expansion (ppme)
+**** código
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defun ppme (expr &optional (stream t))
+   (format stream "~s" (macroexpand-1 expr)))
+ #+end_src
+**** test
+ #+begin_src lisp :results output
+ (ppme '(defun sum (a b) (+ a b)))
+ #+end_src
+
+ #+RESULTS:
+ : (PROGN
+ :  (EVAL-WHEN (:COMPILE-TOPLEVEL) (SB-C:%COMPILER-DEFUN 'SUM T NIL NIL))
+ :  (SB-IMPL::%DEFUN 'SUM
+ :                   (SB-INT:NAMED-LAMBDA SUM
+ :                       (A B)
+ :                     (BLOCK SUM (+ A B)))))
+
+** macro defclass*
+*** código para expandir los slots y hacer el constructor
+**** código
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defun expansion-del-slot (s)
+   `(,s :accessor ,s :initarg ,(keywd s)))
+
+ (defun make-constructor (class-name slots &key (argument-type nil))
+   `(defun ,class-name ,(append (if argument-type 
+				    (list argument-type))
+			 slots)
+      (make-instance ',(symb 'clase- class-name)
+          ,@(loop for s in slots
+               collect (keywd s)
+               collect s))))
+ #+end_src
+**** tests
+ #+begin_src lisp :results output
+(format t "~s~%" (expansion-del-slot 'nombre))
+(format t "~s~%" (make-constructor 'persona '(nombre edad)))
+(format t "~s~%" (make-constructor 'persona '(nombre edad) :argument-type '&key))
+ #+end_src
+
+ #+RESULTS:
+ : (NOMBRE :ACCESSOR NOMBRE :INITARG :NOMBRE)
+ : (DEFUN PERSONA (NOMBRE EDAD)
+ :   (MAKE-INSTANCE 'CLASE-PERSONA :NOMBRE NOMBRE :EDAD EDAD))
+ : (DEFUN PERSONA (&KEY NOMBRE EDAD)
+ :   (MAKE-INSTANCE 'CLASE-PERSONA :NOMBRE NOMBRE :EDAD EDAD))
+
+*** codigo para el macro
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defmacro defclass* (class-name parents slots
+                       &key (ctr-args-type '&key))
+   `(progn
+      (defclass ,(symb 'clase- class-name) ,parents
+	,(loop for s in slots
+               collecting (expansion-del-slot s)))
+      ,(make-constructor class-name slots :argument-type ctr-args-type)))
+ #+end_src
+**** test
+ #+begin_src lisp :results output
+ (ppme '(defclass* persona ()
+         (nombre edad)))
+ #+end_src
+
+ #+RESULTS:
+ : (PROGN
+ :  (DEFCLASS CLASE-PERSONA NIL
+ :            ((NOMBRE :ACCESSOR NOMBRE :INITARG :NOMBRE)
+ :             (EDAD :ACCESSOR EDAD :INITARG :EDAD)))
+ :  (DEFUN PERSONA (&KEY NOMBRE EDAD)
+ :    (MAKE-INSTANCE 'CLASE-PERSONA :NOMBRE NOMBRE :EDAD EDAD)))
+** definición de las tablas, hojas y libros
+*** tabla
+Una tabla es el elemento fundamental de esto que estamos desarrollando
+**** definición de la clase de la tabla
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+      (defclass* tabla ()
+        (id
+         filas
+         columnas
+         alto-celda
+         ancho-celda
+         nombres-columnas
+         nombres-filas
+         contenido-de-la-tabla))
+
+      (defmethod print-object ((obj clase-tabla) stream)
+        (if (contenido-de-la-tabla obj)
+            (format stream "[Tabla (con contenido): ~a x ~a]"
+                (length (contenido-de-la-tabla obj))
+                (length (first (contenido-de-la-tabla obj))))
+            ;; else
+            (format stream "[Tabla: ~a x ~a]"
+                (filas obj)
+                (columnas obj))))
+
+     ;; ponemos un initialize-instance :after
+    (defmethod initialize-instance :after ((obj clase-tabla) 
+           				&key &allow-other-keys)
+      
+      (if (contenido-de-la-tabla obj)
+          ;; si nos pasaron contenido-de-la-tabla, sobreescribe todo lo demás
+          (progn   
+             (setf (columnas obj) (length (first (contenido-de-la-tabla obj))))
+             (setf (filas obj) (length (contenido-de-la-tabla obj))))
+          ;; else
+          (progn
+            (if (nombres-columnas obj)
+                ;; si nos pasaron los nombres de las columnas, sobreescribe columnas
+                (setf (columnas obj) (length (nombres-columnas obj))))
+            (if (nombres-filas obj)
+                ;; si nos pasaron los nombres de las filas, sobreescribe columnas
+                (setf (filas obj) (length (nombres-filas obj))))))
+      (if (null (columnas obj))
+          (error "Error al crear tabla.  Se debe especificar columnas, nombres-columnas, o contenido-de-la-tabla."))
+      (if (null (filas obj))
+          (error "Error al crear tabla.  Se debe especificar filas, nombres-filas, o contenido-de-la-tabla.")))
+ #+end_src
+**** test
+ #+begin_src lisp :results output
+  (let* ((t1 (tabla :filas 3 :columnas 14))
+        (t2 (tabla :filaqs 3 :columnas 6
+        	   :alto-celda 3
+        	   :ancho-celda 1))
+        (t3 (tabla :alto-celda 1
+        	   :contenido-de-la-tabla '(("Jose" 1 2 3)
+        				    ("Salma" 3 4 5)
+        				    ("Fernando" 6 7 8))))
+         (t4 (tabla :alto-celda 1
+        	          :nombres-columnas '("Jose" "Salma" "Fernando")
+                   :nombres-filas '(1 2 3 4)))
+         (t5 (tabla :alto-celda 1
+        	          :nombres-columnas '("Jose" "Salma" "Fernando"))))
+    (print t1)
+    (print t2)
+    (print t3)
+    (print t4)
+    (print t5))
+ #+end_src
+ 
+ #+RESULTS:
+ : 
+ : [Tabla: 3 x 14] 
+ : [Tabla: 3 x 6] 
+ : [Tabla (con contenido): 3 x 4] 
+ : [Tabla: 4 x 3] 
+ : [Tabla: NIL x 3] 
+
+*** hoja
+Una hoja puede tener información diversa, incluyendo varias tablas, y otros elementos.
+
+Por ahora, una hoja tiene 
+ - un grupo (que es una cadena)
+ - un horario (que es una tabla)
+ - un listado de asignatura (que es otra tabla)
+**** código
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defclass* hoja ()
+   (grupo
+    horario
+    asignaturas))
+
+ (defmethod print-object ((obj clase-hoja) stream)
+   (format stream "[Hoja: ~a, con ~a asignaturas]"
+           (grupo obj)
+           (filas (asignaturas obj))))
+ #+end_src
+**** test
+ #+begin_src lisp :results output
+ (let* ((h1 (hoja :grupo "C111" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7))))
+   (print h1))
+ #+end_src
+
+ #+RESULTS:
+ : 
+ : [Hoja: C111, con 7 asignaturas] 
+*** libro
+Un libro está formado por varias hojas
+**** código
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defclass* libro ()
+   (hojas))
+
+ (defmethod print-object ((obj clase-libro) stream)
+   (format stream "[Libro con ~a hojas]"
+           (length (hojas obj))))
+ #+end_src
+**** test
+ #+begin_src lisp :results output
+ (let* ((h1 (hoja :grupo "C111" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7)))
+	(h2 (hoja :grupo "C112" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7)))
+	(l1 (libro :hojas (list h1 h2))))
+   (print l1))
+ #+end_src
+
+ #+RESULTS:
+ : 
+ : [Libro con 2 hojas] 
+** ejemplo: construcción de un libro completo para C1 y C2
+*** función para definir la tabla horario de todos los grupos
+**** función para el horario generico
+Un horario genérico es una tabla que tiene 6 turnos y los 5 días de la semana.
+Le vamos a dar altura 3 a todas las celdas.
+***** codigo
+     #+begin_src lisp :results none :tangle codigo-tesis.lisp
+     (defun tabla-horarios-para-todo-el-mundo (grupo)
+       (tabla :id (concatenate 'string "Horario-" grupo)
+     	  :nombres-columnas '("Turnos"
+                                   "Lunes"
+                                   "Martes"
+                                   "Miércoles"
+                                   "Jueves"
+                                   "Viernes")
+     	  :alto-celda 3
+     	  :nombres-filas '("Turno 1"
+                                "Turno 2"
+                                "Turno 3"
+                                "Turno 4"
+                                "Turno 5"
+                                "Turno 6")))
+    #+end_src
+***** test
+     #+begin_src lisp :results output
+     (let* ((c111 (tabla-horarios-para-todo-el-mundo "C111")))
+       (print c111))
+     #+end_src
+
+     #+RESULTS:
+     : 
+     : [Tabla: 6 x 6] 
+*** macro def-tabla-asignatura (para la creación de las asignaturas de un año)
+**** descripción
+     Todas las funciones de tablas de asignatura tienen el mismo formato, solo cambia el nombre del año, y la lista de asignaturas.  Ahí se puede utilizar un macro que tenga más o menos el siguiente formato
+
+Un macro que sea algo como:
+
+#+begin_src lisp
+(def-tabla-asignatura d1 
+   (("Asignatura" "Frecuencia")
+    ("Álgebra Lineal-C" 1)
+    ("Álgebra Lineal-CP" 1)
+    ("Lógica-C" 1)
+    ("Lógica-CP" 1)
+    ("Introducción a la Programación-C" 1)
+    ("Introducción a la Programación-CP" 1)
+    ("Análisis Matemático I-C" 1)
+    ("Análisis Matemático I-CP" 1)
+    ("Introducción a la Ciencia de Datos-C" 1)
+    ("Introducción a la Ciencia de Datos-CP" 1)
+    ("Filosofía-C" 1)
+    ("Filosofía-CP" 1)
+    ("Educación Física I-C" 1)
+    ("Educación Física I-CP" 1)))
+#+end_src
+
+y que se expanda a:
+
+#+begin_src lisp
+(defun tabla-asignaturas-d1 (grupo)
+  "Crea la tabla de asignaturas para D1"
+  (tabla :id (concatenate 'string "Asignaturas-" grupo)
+         :contenido-de-la-tabla '(("Asignatura" "Frecuencia")
+                                 ("Álgebra Lineal-C" 1)
+                                 ("Álgebra Lineal-CP" 1)
+                                 ("Lógica-C" 1)
+                                 ("Lógica-CP" 1)
+                                 ("Introducción a la Programación-C" 1)
+                                 ("Introducción a la Programación-CP" 1)
+                                 ("Análisis Matemático I-C" 1)
+                                 ("Análisis Matemático I-CP" 1)
+                                 ("Introducción a la Ciencia de Datos-C" 1)
+                                 ("Introducción a la Ciencia de Datos-CP" 1)
+                                 ("Filosofía-C" 1)
+                                 ("Filosofía-CP" 1)
+                                 ("Educación Física I-C" 1)
+                                 ("Educación Física I-CP" 1))))
+#+end_src
+
+**** codigo
+#+begin_src lisp :results none :tangle codigo-tesis.lisp
+(defmacro def-tabla-de-asignaturas (anno asignaturas)
+  `(defun ,(symb 'tabla-asignaturas- anno) (grupo)
+     ,(mkstr "Crea la tabla de asignaturas para " anno)
+     (tabla :id (concatenate 'string "Asignaturas-" grupo)
+         :contenido-de-la-tabla ',asignaturas)))
+#+end_src
+**** test macroexpansion
+#+begin_src lisp :results output
+(ppme '(def-tabla-de-asignaturas m1 (("Asignatura" "Frecuencia")
+                                 ("Álgebra Lineal-C" 1)
+                                 ("Álgebra Lineal-CP" 1)
+                                 ("Lógica-C" 1)
+                                 ("Lógica-CP" 1)
+                                 ("Introducción a la Programación-C" 1)
+                                 ("Introducción a la Programación-CP" 1)
+                                 ("Análisis Matemático I-C" 1)
+                                 ("Análisis Matemático I-CP" 1)
+                                 ("Introducción a la Ciencia de Datos-C" 1)
+                                 ("Introducción a la Ciencia de Datos-CP" 1)
+                                 ("Filosofía-C" 1)
+                                 ("Filosofía-CP" 1)
+                                 ("Educación Física I-C" 1)
+                                 ("Educación Física I-CP" 1))))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+(DEFUN TABLA-ASIGNATURAS-M1 (GRUPO)
+  "CREA LA TABLA DE ASIGNATURAS PARA M1"
+  (TABLA :ID (CONCATENATE 'STRING "Asignaturas-" GRUPO) :CONTENIDO-DE-LA-TABLA
+         '(("Asignatura" "Frecuencia") ("Álgebra Lineal-C" 1)
+           ("Álgebra Lineal-CP" 1) ("Lógica-C" 1) ("Lógica-CP" 1)
+           ("Introducción a la Programación-C" 1)
+           ("Introducción a la Programación-CP" 1)
+           ("Análisis Matemático I-C" 1) ("Análisis Matemático I-CP" 1)
+           ("Introducción a la Ciencia de Datos-C" 1)
+           ("Introducción a la Ciencia de Datos-CP" 1) ("Filosofía-C" 1)
+           ("Filosofía-CP" 1) ("Educación Física I-C" 1)
+           ("Educación Física I-CP" 1))))
+#+end_example
+
+*** crear las asignaturas para cada año usando el macro
+#+begin_src lisp :results none :tangle codigo-tesis.lisp
+(def-tabla-de-asignaturas d1
+  (("Álgebra Lineal-C" 1)
+    ("Álgebra Lineal-CP" 1)
+    ("Lógica-C" 1)
+    ("Lógica-CP" 1)
+    ("Introducción a la Programación-C" 1)
+    ("Introducción a la Programación-CP" 1)
+    ("Análisis Matemático I-C" 1)
+    ("Análisis Matemático I-CP" 1)
+    ("Introducción a la Ciencia de Datos-C" 1)
+    ("Introducción a la Ciencia de Datos-CP" 1)
+    ("Filosofía-C" 1)
+    ("Filosofía-CP" 1)
+    ("Educación Física I-C" 1)
+    ("Educación Física I-CP" 1)))
+
+(def-tabla-de-asignaturas d2
+  (("Matemática y Aplicaciones-C" 1)
+    ("Matemática y Aplicaciones-CP" 1)
+    ("Probabilidades-C" 1)
+    ("Probabilidades-CP" 1)
+    ("Bases de Datos-C" 1)
+    ("Bases de Datos-CP" 1)
+    ("Estructura de Datos-C" 1)
+    ("Estructura de Datos-CP" 1)
+    ("Visualización de Datos-C" 1)
+    ("Visualización de Datos-CP" 1)
+    ("Economía Política-C" 1)
+    ("Economía Política-CP" 1)
+    ("Educación Física III-C" 1)
+    ("Educación Física III-CP" 1)))
+
+(def-tabla-de-asignaturas d3
+  (("Análisis Estadístico II-C" 1)
+    ("Análisis Estadístico II-CP" 1)
+    ("Muestreo y Diseño de Experimentos-C" 1)
+    ("Muestreo y Diseño de Experimentos-CP" 1)
+    ("Redes Neuronales-C" 1)
+    ("Redes Neuronales-CP" 1)
+    ("Procesamiento del Lenguaje-C" 1)
+    ("Procesamiento del Lenguaje-CP" 1)
+    ("Procesamiento de Grandes Volúmenes de Datos-C" 1)
+    ("Procesamiento de Grandes Volúmenes de Datos-CP" 1)
+    ("Teoría Política-C" 1)
+    ("Teoría Política-CP" 1)))
+
+(def-tabla-de-asignaturas d4
+  (("Inteligencia de Negocios-C" 1)
+    ("Inteligencia de Negocios-CP" 1)
+    ("Elementos de Inteligencia Artificial-C" 1)
+    ("Elementos de Inteligencia Artificial-CP" 1)
+    ("Ciberseguridad y Privacidad-C" 1)
+    ("Ciberseguridad y Privacidad-CP" 1)
+    ("Curso Optativo II-C" 1)
+    ("Curso Optativo II-CP" 1)
+    ("Estudios de Ciencia, Tecnología y Sociedad-C" 1)
+    ("Estudios de Ciencia, Tecnología y Sociedad-CP" 1)
+    ("Seguridad Nacional / Defensa Nacional-C" 1)
+    ("Seguridad Nacional / Defensa Nacional-CP" 1)))
+
+(def-tabla-de-asignaturas c1
+  (("Álgebra I-C" 1)
+    ("Álgebra I-CP" 1)
+    ("Lógica-C" 1)
+    ("Lógica-CP" 1)
+    ("Programación-C" 1)
+    ("Programación-CP" 1)
+    ("Análisis Matemático I-C" 1)
+    ("Análisis Matemático I-CP" 1)
+    ("Filosofía-C" 1)
+    ("Filosofía-CP" 1)
+    ("Educación Física I-C" 1)
+    ("Educación Física I-CP" 1)))
+
+(def-tabla-de-asignaturas c2
+  (("Estructuras de Datos y Algoritmos I-C" 1)
+    ("Estructuras de Datos y Algoritmos I-CP" 1)
+    ("Matemática Discreta I-C" 1)
+    ("Matemática Discreta I-CP" 1)
+    ("Arquitectura de Computadoras-C" 1)
+    ("Arquitectura de Computadoras-CP" 1)
+    ("Ecuaciones Diferenciales Ordinarias-C" 1)
+    ("Ecuaciones Diferenciales Ordinarias-CP" 1)
+    ("Matemática Numérica-C" 1)
+    ("Matemática Numérica-CP" 1)
+    ("Teoría Política-C" 1)
+    ("Teoría Política-CP" 1)
+    ("Educación Física III-C" 1)
+    ("Educación Física III-CP" 1)))
+
+(def-tabla-de-asignaturas c3
+  (("Redes de Computadoras-C" 1)
+    ("Redes de Computadoras-CP" 1)
+    ("Ingeniería de Software-C" 1)
+    ("Ingeniería de Software-CP" 1)
+    ("Modelos de Optimización-C" 1)
+    ("Modelos de Optimización-CP" 1)
+    ("Bases de Datos II-C" 1)
+    ("Bases de Datos II-CP" 1)
+    ("Programación Declarativa-C" 1)
+    ("Programación Declarativa-CP" 1)
+    ("Estadística-C" 1)
+    ("Estadística-CP" 1)))
+
+(def-tabla-de-asignaturas c4
+  (("Aprendizaje de Máquinas-C" 1)
+    ("Aprendizaje de Máquinas-CP" 1)
+    ("Diseño y Análisis de Algoritmos-C" 1)
+    ("Diseño y Análisis de Algoritmos-CP" 1)
+    ("Sistemas Distribuidos-C" 1)
+    ("Sistemas Distribuidos-CP" 1)
+    ("Asignatura Electiva-C" 1)
+    ("Asignatura Electiva-CP" 1)
+    ("Estudios de Ciencia, Tecnología y Sociedad-C" 1)
+    ("Estudios de Ciencia, Tecnología y Sociedad-CP" 1)
+    ("Seguridad Nacional / Defensa Nacional-C" 1)
+    ("Seguridad Nacional / Defensa Nacional-CP" 1)))
+
+;; MATEMÁTICA
+
+(def-tabla-de-asignaturas m1
+  (("Introducción al Análisis Matemático-C" 1)
+    ("Introducción al Análisis Matemático-CP" 1)
+    ("Introducción al Álgebra-C" 1)
+    ("Introducción al Álgebra-CP" 1)
+    ("Geometría Analítica-C" 1)
+    ("Geometría Analítica-CP" 1)
+    ("Programación y Algoritmos-C" 1)
+    ("Programación y Algoritmos-CP" 1)
+    ("Introducción a la Matemática-C" 1)
+    ("Introducción a la Matemática-CP" 1)
+    ("Filosofía-C" 1)
+    ("Filosofía-CP" 1)
+    ("Educación Física I-C" 1)
+    ("Educación Física I-CP" 1)))
+
+(def-tabla-de-asignaturas m2
+  (("Funciones de Varias Variables-C" 1)
+    ("Funciones de Varias Variables-CP" 1)
+    ("Complementos de Álgebra Lineal-C" 1)
+    ("Complementos de Álgebra Lineal-CP" 1)
+    ("Seminario de Problemas II-C" 1)
+    ("Seminario de Problemas II-CP" 1)
+    ("Asignatura Electiva I-C" 1)
+    ("Asignatura Electiva I-CP" 1)
+    ("Economía Política-C" 1)
+    ("Economía Política-CP" 1)
+    ("Educación Física III-C" 1)
+    ("Educación Física III-CP" 1)))
+
+(def-tabla-de-asignaturas m3
+  (("Funciones de Variable Compleja-C" 1)
+    ("Funciones de Variable Compleja-CP" 1)
+    ("Inferencia Estadística-C" 1)
+    ("Inferencia Estadística-CP" 1)
+    ("Ecuaciones Diferenciales Ordinarias-C" 1)
+    ("Ecuaciones Diferenciales Ordinarias-CP" 1)
+    ("Matemática Numérica-C" 1)
+    ("Matemática Numérica-CP" 1)
+    ("Optimización Matemática I-C" 1)
+    ("Optimización Matemática I-CP" 1)
+    ("Teoría Política-C" 1)
+    ("Teoría Política-CP" 1)))
+
+(def-tabla-de-asignaturas m4
+  (("Medida e Integración-C" 1)
+    ("Medida e Integración-CP" 1)
+    ("Geometría Diferencial-C" 1)
+    ("Geometría Diferencial-CP" 1)
+    ("Historia de la Matemática-C" 1)
+    ("Historia de la Matemática-CP" 1)
+    ("Estudios de Ciencia, Tecnología y Sociedad-C" 1)
+    ("Estudios de Ciencia, Tecnología y Sociedad-CP" 1)
+    ("Asignatura Optativa II-C" 1)
+    ("Asignatura Optativa II-CP" 1)
+    ("Asignatura Optativa III-C" 1)
+    ("Asignatura Optativa III-CP" 1)))
+#+end_src
+
+**** TODO con esto, se hacen las tablas de asignatuas para año
+
+*** macro def-hoja
+**** descripción
+ la idea es que lo que cambia de hoja-c1 a hoja-m3 es solo:
+   - lo que va detrás de  hoja en el defun,
+   - lo que va dentro de mkstr
+   - lo que va en tabla-asignaturas-XX.
+
+ Eso quiere decir que podemos tener ALGO que sea:
+
+ (make-hoja c1)
+
+ y nos devuelva
+
+ (defun hoja-c1 (grupo)
+     (let* ((nombre-del-grupo (mkstr "C1" grupo)))
+       (hoja :grupo nombre-del-grupo
+           :horario (tabla-horarios-para-todo-el-mundo nombre-del-grupo)
+	   :asignaturas (tabla-asignaturas-c1 nombre-del-grupo))))
+
+ Y que cuando digamos, 
+
+ (make-hoja d2)
+
+ nos devuelva
+
+  (defun hoja-d2 (grupo)
+     (let* ((nombre-del-grupo (mkstr "D2" grupo)))
+       (hoja :grupo nombre-del-grupo
+           :horario (tabla-horarios-para-todo-el-mundo nombre-del-grupo)
+	   :asignaturas (tabla-asignaturas-d2 nombre-del-grupo))))
+
+ Vamos a hacerlo, con un macro.
+**** codigo
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defmacro def-hoja (anno)
+   `(defun ,(symb 'hoja- anno) (grupo)
+     (let* ((nombre-del-grupo (mkstr ,(mkstr anno) grupo)))
+      (hoja :grupo nombre-del-grupo
+	  :horario (tabla-horarios-para-todo-el-mundo nombre-del-grupo)
+	  :asignaturas (,(symb 'tabla-asignaturas- anno) nombre-del-grupo)))))
+  #+end_src
+
+comprobemos la macroexpansion
+#+begin_src lisp :results output
+  (ppme '(def-hoja m1))
+#+end_src
+
+#+RESULTS:
+: (DEFUN HOJA-M1 (GRUPO)
+:   (LET* ((NOMBRE-DEL-GRUPO (MKSTR "M1" GRUPO)))
+:     (HOJA :GRUPO NOMBRE-DEL-GRUPO :HORARIO
+:           (TABLA-HORARIOS-PARA-TODO-EL-MUNDO NOMBRE-DEL-GRUPO) :ASIGNATURAS
+:           (TABLA-ASIGNATURAS-M1 NOMBRE-DEL-GRUPO))))
+
+*** generar las hojas para todos los grupos
+#+begin_src lisp :results none :tangle codigo-tesis.lisp
+(progn
+  (def-hoja c1)
+  (def-hoja c2)
+  (def-hoja c3)
+  (def-hoja c4)
+
+  (def-hoja m1)
+  (def-hoja m2)
+  (def-hoja m3)
+  (def-hoja m4)
+
+  (def-hoja d1)
+  (def-hoja d2)
+  (def-hoja d3)
+  (def-hoja d4))
+#+end_src
+
+*** generar el libro para toda la facultad
+Ahora podemos generar un libro (relativamente fácil) usando las funciones =hoja-anno=.
+
+Aquí está el ejemplo para los grupos de computación.
+
+De todas formas, esto tiene «tremenda pinta» de que se puede abstraer más todavía,
+pero por ahora, vamos a dejarlo así.
+#+begin_src lisp :results none :tangle codigo-tesis.lisp
+(defparameter libro-matcom (libro :hojas (list
+                                          ;; c1
+                                          (hoja-c1 "11")
+                                          (hoja-c1 "12")
+                                          (hoja-c1 "13")
+                                          (hoja-c1 "21")
+                                          (hoja-c1 "22")
+                                          ;; c2
+                                          (hoja-c2 "11")
+                                          (hoja-c2 "12")
+                                          (hoja-c2 "13")
+                                          ;; c3
+                                          (hoja-c3 "11")
+                                          (hoja-c3 "12")
+                                          ;; c4
+                                          (hoja-c4 "11")
+                                          (hoja-c4 "12"))))
+#+end_src
+
+** generacion de codigo (de las tablas) para org-mode
+*** lo primero es definir los lenguajes (org-mode)
+**** lenguaje org-mode
+  #+begin_src lisp :results none :tangle codigo-tesis.lisp
+  (defclass output-org-mode () ())
+  (defparameter org (make-instance 'output-org-mode))
+  #+end_src
+*** descripción
+El lenguaje org-mode nos va a permitir «representar» tablas, hojas y libros en org-mode.
+*** funciones (de common lisp) para generar código de las tablas en org-mode
+**** funcion auxiliar para escribir una fila vacía (o con contenido)
+***** descripción
+Esta función recibe un número de columnas y siempre genera «una columna más» porque supuestamente, la primera columna es para identificar la fila 😌.
+
+  También recibe un parámetro con nombre que es el contenido de la filas, porque te pueden pasar una lista que tenga el contenido de la tabla
+***** código
+  #+begin_src lisp :results none :tangle codigo-tesis.lisp
+   (defun write-org-table-row (&key cols row-contents stream)
+       "Writes an empty row with the given number of cols,
+  or if row-contents is a list writes a row with those elements.
+  There is not error check, so make sure that the length of the list matches the desired number of columns.
+
+  If row-contents is non-nil, then the value of cols is ignored."
+     (if row-contents ;; let's add those contents
+         (progn
+           ;; first, the initial |
+           (format stream "| ")
+           (format stream "~{ ~a |~}"
+                   row-contents))
+         ;; else  
+         (progn
+           (loop for i from 1 to cols
+                 do (format stream "| "))
+           ;; the final |
+           (format stream "|"))))
+  #+end_src
+***** tests
+  #+begin_src lisp :results output
+ (progn
+   (write-org-table-row :cols 3 :stream t)
+   (format t "~3%")
+   (write-org-table-row :row-contents (list "Pedro" 14) :stream t)
+   (format t "~3%")
+   (write-org-table-row :row-contents (list "Pedro" 14 26 "Becado") :stream t))
+  #+end_src
+
+  #+RESULTS:
+  : | | | |
+  : 
+  : 
+  : |  Pedro | 14 |
+  : 
+  : 
+  : |  Pedro | 14 | 26 | Becado |
+**** funcion auxilar rellenar tabla vacia
+***** codigo
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defun draw-empty-table (&key rows row-names cols (cell-size 1) stream add-line-after-row)
+   "Draws an empty table with the give number of rows and cols"
+   (setf rows (if row-names (length row-names)
+                  rows))
+   (loop for i from 1 to rows
+           do ;; let's add as many rows as cell-size
+              (loop for j from 1 to cell-size
+                    doing
+                       ;; if it is the first row of the cell add the row-name
+                       ;; if exists
+                       (if (= j 1)
+                           (progn
+                             ;; the initial |
+                             (format stream "| ")
+                             (loop for k from 1 to cols
+                                   doing
+                                      (if (and (= k 1)
+                                               row-names)
+                                          (format stream "~a |" (nth (1- i) row-names))
+                                          ;; else
+                                          (format stream " | "))
+                                   finally (format stream "~%")))
+                           ;; else
+                           (progn
+                             (write-org-table-row :cols cols :stream stream)
+                             (format stream "~%"))))
+              ;; the newline after the row
+              (when add-line-after-row
+     	(format stream "|-~%"))))
+ #+end_src
+***** tests
+ #+begin_src lisp :results output
+   (draw-empty-table :cols 2 :rows 2 :stream t)
+
+  (format t "~2%")
+
+ (draw-empty-table :cols 3 :row-names '(1 2 3) :stream t)
+
+ (format t "~2%")
+
+ (draw-empty-table :cols 3 :row-names '(A B) :stream t :add-line-after-row t)
+
+ (format t "~2%")
+
+ (draw-empty-table :cols 3 :row-names '(A B) :stream t :add-line-after-row t :cell-size 2)
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ |  |  | 
+ |  |  | 
+
+
+ | 1 | |  | 
+ | 2 | |  | 
+ | 3 | |  | 
+
+
+ | A | |  | 
+ |-
+ | B | |  | 
+ |-
+
+
+ | A | |  | 
+ | | | |
+ |-
+ | B | |  | 
+ | | | |
+ |-
+ #+end_example
+
+**** funcion auxilar para rellenar tabla con contenido
+***** descripción
+ Esta función recibe una lista donde cada elemento es una lista con el contenido de una fila.
+ Ese contenido incluye el nombre de la fila.
+ La función dibuja la tabla con el contenido dado
+***** codigo
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defun draw-table-with-content (&key (cell-size 1) stream add-line-after-row row-contents)
+   "Draws a table with the given content.
+ The content includes the name of the row.
+ Where cell-size is more than one, add content in the first row of the cell."
+   ;; let's iterate over the contents
+   (loop for row in row-contents
+           do ;; let's add as many rows as cell-size
+              (loop for j from 1 to cell-size
+                    doing
+                       ;; if it is the first row of the cell add the content
+                       (if (= j 1)
+                           (format stream "| ~{~a |~} ~%"
+                                   row)
+                           ;; else
+                           ;; just draw a |
+                           (progn
+                             (format stream "|~%"))))
+              ;; the newline after the row (cell)
+              (when add-line-after-row
+		(format stream "|-~%"))))
+ #+end_src
+***** tests
+ #+begin_src lisp :results output
+ (progn
+   (draw-table-with-content
+                   :row-contents '(("Pedro" 15 1 22)
+                                   ("Ernesto" 12 3 14)
+                                   ("Silvia" 10 1 28))
+                   :cell-size 1
+                   :stream t
+                   :add-line-after-row nil)
+   (format t "~2%")
+   (draw-table-with-content
+                   :row-contents '(("Pedro" 15 1 22)
+                                   ("Ernesto" 12 3 14)
+                                   ("Silvia" 10 1 28))
+                   :cell-size 1
+                   :stream t
+                   :add-line-after-row t))
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ | Pedro |15 |1 |22 | 
+ | Ernesto |12 |3 |14 | 
+ | Silvia |10 |1 |28 | 
+
+
+ | Pedro |15 |1 |22 | 
+ |-
+ | Ernesto |12 |3 |14 | 
+ |-
+ | Silvia |10 |1 |28 | 
+ |-
+ #+end_example
+
+**** funcion principal
+***** code
+  #+begin_src lisp :results none :tangle codigo-tesis.lisp
+  (defun make-org-table (&key
+                           cols
+                           col-names
+                           (cell-size 1)
+                           (rows 3)
+                           row-names
+                           row-contents 
+                           stream
+                           add-line-after-row
+                           add-initial-line
+                           )
+    "Writes the given table in org-mode.
+  If table-contents is non nil, it should be a list of lists, where each sublist represents a row.
+  The elements of table-contents should not include the columns-name row.
+  There is not error-checking, so make sure all the elements in the list have the same length."
+    (let* ((actual-column-names (if row-contents (first row-contents)
+                                    ;; else
+                                    (if col-names
+                                        (progn
+                                          (setf cols (length col-names))
+                                          col-names)
+                                        ;; else
+                                           (if cols
+                                               (make-list cols :initial-element " ")
+                                               (error "In make-org-table either cols or col-names is required")))))
+           (cols (or cols
+                     (length col-names)))
+           (row-names (if row-names
+                          (progn
+                            (setf rows (length row-names))
+                            row-names)
+                          ;; else
+                          (if rows
+                              (make-list rows :initial-element " ")
+                              (error "In make-org-table either rows or row-names is required"))))
+           (rows (or rows
+                     (length row-names))))
+      ;; let's add a header line
+      (if add-initial-line
+          (format stream "|-~%"))
+      ;; the following code writes the heading row
+      ;; if there are col-names AND there are not row-contents
+      (if (and
+           col-names
+           (not row-contents))
+          (progn
+            (loop for col-name in actual-column-names
+                  doing (format stream "| ~a " col-name))
+            ;; now the final |
+            (format stream "|~%")
+            ;; let's add a header separator
+            (format stream "|-~%")))
+
+      ;; now, let's choose acoording to table-contents
+      (if row-contents
+          (draw-table-with-content :cell-size cell-size
+                                   :stream stream
+                                   :add-line-after-row add-line-after-row
+                                   :row-contents row-contents)
+          ;; else
+          (draw-empty-table :rows rows
+                            :row-names row-names
+                            :cols cols
+                            :cell-size cell-size
+                            :stream stream
+                            :add-line-after-row add-line-after-row))))
+  #+end_src
+
+  Vamos a probarlo
+***** tests
+****** test0
+  #+begin_src lisp :results output
+  (make-org-table :cols 3 :rows 3 :stream t)
+  #+END_SRC
+
+  #+RESULTS:
+   |   |   |   |
+   |   |   |   |
+   |   |   |   |
+
+****** test1 (final-line)
+  #+begin_src lisp :results output
+  (make-org-table :cols 3 :rows 2 :stream t :add-line-after-row t)
+  #+END_SRC
+
+  #+RESULTS:
+   |   |   |   |
+   |---+---+---|
+   |   |   |   |
+   |---+---+---|
+
+****** test2 (with initial-line)
+  #+begin_src lisp :results output
+        (make-org-table :cols 3
+                        :rows 2
+                        :stream t
+                        :add-line-after-row t
+                        :add-initial-line t)
+  #+END_SRC
+
+  #+RESULTS:
+   |---+---+---|
+   |   |   |   |
+   |---+---+---|
+   |   |   |   |
+   |---+---+---|
+
+****** test3 (testing col-names)
+  #+begin_src lisp :results output
+    (make-org-table :col-names '("Lunes" "Martes" "Miércoles" "Jueves" "Viernes")
+                    :stream t
+                    :rows 2
+                    :add-line-after-row t
+                    :add-initial-line t)
+  #+END_SRC
+
+  #+RESULTS:
+   |-------+--------+-----------+--------+---------|
+   | Lunes | Martes | Miércoles | Jueves | Viernes |
+   |-------+--------+-----------+--------+---------|
+   |       |        |           |        |         |
+   |-------+--------+-----------+--------+---------|
+   |       |        |           |        |         |
+   |-------+--------+-----------+--------+---------|
+
+****** test4 (testing cell-size)
+  #+begin_src lisp :results output
+    (make-org-table :col-names '("Lunes" "Miércoles" "Viernes")
+                    :stream t
+                    :rows 3
+                    :cell-size 2
+                    :add-line-after-row t
+                    :add-initial-line t)
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  |-------+-----------+---------|
+  | Lunes | Miércoles | Viernes |
+  |-------+-----------+---------|
+  |       |           |         |
+  |       |           |         |
+  |-------+-----------+---------|
+  |       |           |         |
+  |       |           |         |
+  |-------+-----------+---------|
+  |       |           |         |
+  |       |           |         |
+  |-------+-----------+---------|
+  #+end_example
+
+****** test5 (testing row-names)
+  #+begin_src lisp :results output
+    (make-org-table :col-names '("Turno" "Lunes" "Miércoles" "Viernes")
+                    :stream t
+                    :row-names (list 1 2 3 "Break" 4 5 6)
+                    :cell-size 2
+                    :add-line-after-row t
+                    :add-initial-line t)
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  |-------+-------+-----------+---------|
+  | Turno | Lunes | Miércoles | Viernes |
+  |-------+-------+-----------+---------|
+  |     1 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     2 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     3 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  | Break |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     4 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     5 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     6 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  #+end_example
+
+****** test6 (testing row-names and cell-size)
+  #+begin_src lisp :results output
+    (make-org-table :col-names '("Turno" "Lunes" "Miércoles" "Viernes")
+                    :stream t
+                    :row-names (list 1 2 3 "Break" 4 5 6)
+                    :cell-size 2
+                    :add-line-after-row t
+                    :add-initial-line t)
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  |-------+-------+-----------+---------|
+  | Turno | Lunes | Miércoles | Viernes |
+  |-------+-------+-----------+---------|
+  |     1 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     2 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     3 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  | Break |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     4 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     5 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  |     6 |       |           |         |
+  |       |       |           |         |
+  |-------+-------+-----------+---------|
+  #+end_example
+
+****** test7 (testing row contents)
+  #+begin_src lisp :results output
+        (make-org-table :stream t
+                        :row-contents '(("Turno ""Lunes" "Miércoles" "Viernes")
+                                        ("1" "TV" "Radio" 15)
+                                        ("2" "Radio" 15 -2)
+                                        ("3" 15 "Radio" "TV"))
+                        :cell-size 1
+                        :add-line-after-row t
+                        :add-initial-line t)
+  #+END_SRC
+
+  #+RESULTS:
+  |-------+-------+-----------+---------|
+  | Turno | Lunes | Miércoles | Viernes |
+  |-------+-------+-----------+---------|
+  |     1 | TV    | Radio     |      15 |
+  |-------+-------+-----------+---------|
+  |     2 | Radio | 15        |      -2 |
+  |-------+-------+-----------+---------|
+  |     3 | 15    | Radio     |      TV |
+  |-------+-------+-----------+---------|
+
+*** generación de código
+**** generate-code para tabla
+ #+begin_src lisp :results none :tangle codigo-tesis.lisp
+ (defmethod generate-code ((node clase-tabla)
+        		   (lang output-org-mode)
+        		   (stream t))
+   (make-org-table :stream stream
+        	   :cols (columnas node)
+        	   :rows (filas node)
+        	   :add-line-after-row t
+                   :add-initial-line t
+                   :row-contents (contenido-de-la-tabla node)
+        	   :row-names (nombres-filas node)
+        	   :col-names (nombres-columnas node)))
+ #+end_src   
+
+***** test
+****** a la salida estándar
+   #+begin_src lisp :results output
+   (let* ((t1 (tabla :filas 3
+        	     :columnas 3)))
+     (generate-code t1 org t))
+   #+end_src
+
+   #+RESULTS:
+   |---+---+---|
+   |   |   |   |
+   |---+---+---|
+   |   |   |   |
+   |---+---+---|
+   |   |   |   |
+   |---+---+---|
+
+****** a un fichero :-o
+  #+begin_src lisp :results output
+  (let* ((t1 (tabla :filas 3
+		    :columnas 3
+		    :nombres-filas (list "1" "2" "Receso" "3")
+		    :nombres-columnas (list "Turno" "Lunes" "Martes"))))
+    (with-open-file (f "tablita1.org"
+		       :direction :output
+		       :if-exists :supersede)
+      (generate-code t1 org f)))
+  #+end_src
+
+   #+RESULTS:
+
+**** generate-code para hoja
+ En este formato de salida, una hoja será un «heading» en org-mode.
+ Un «heading» es lo que empieza con asteriscos
+
+***** codigo
+  #+begin_src lisp :results none :tangle codigo-tesis.lisp
+  (defmethod generate-code ((node clase-hoja)
+			    (lang output-org-mode)
+			    (stream t))
+    (format stream "* ~a~2%" (grupo node))
+
+    (format stream "Horario: ~%")
+
+    (generate-code (horario node) lang stream)
+
+    (format stream "~2%")
+
+    (format stream "Asignaturas: ~%")
+
+    (generate-code (asignaturas node) lang stream))
+
+  #+end_src
+
+***** test
+****** bobo a salida estándar
+      #+begin_src lisp :results output
+ (let* ((h1 (hoja :grupo "C111" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7))))
+   (generate-code h1 org t))
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+,* C111
+
+Horario: 
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+ |   |   |   |   |   |
+ |---+---+---+---+---|
+
+
+ Asignaturas: 
+ |---+---|
+ |   |   |
+ |---+---|
+ |   |   |
+ |---+---|
+ |   |   |
+ |---+---|
+ |   |   |
+ |---+---|
+ |   |   |
+ |---+---|
+ |   |   |
+ |---+---|
+ |   |   |
+ |---+---|
+ #+end_example
+
+****** bobo a fichero
+      #+begin_src lisp :results output
+ (let* ((h1 (hoja :grupo "C111" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7))))
+   (with-open-file (f "tablita1.org"
+		       :direction :output
+		       :if-exists :supersede)
+      (generate-code h1 org f)))
+ #+end_src
+
+ #+RESULTS:
+
+**** generate-code para libro
+ En este formato de salida, un libro será una concantenación de «headings» en org-mode.
+ Un «heading» es lo que empieza con asteriscos
+***** codigo
+  #+begin_src lisp :results none :tangle codigo-tesis.lisp
+  (defmethod generate-code ((node clase-libro)
+			    (lang output-org-mode)
+			    (stream t))
+    (loop for h in (hojas node)
+	  doing 
+	     (generate-code h lang stream)
+	     (format stream "~2%")))
+
+  #+end_src
+
+***** test
+****** bobo a fichero
+      #+begin_src lisp :results none
+ (let* ((h1 (hoja :grupo "C111" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7)))
+	(h2 (hoja :grupo "C112" 
+                  :horario (tabla :columnas 5
+                                  :filas 7)
+                  :asignaturas (tabla :columnas 2
+                                      :filas 7)))
+	(l1 (libro :hojas (list h1 h2))))
+   (with-open-file (f "tablita1.org"
+		       :direction :output
+		       :if-exists :supersede)
+      (generate-code l1 org f)))
+ #+end_src
+
+** lenguaje para definir restricciones
+*** descripción
+En esta sección vamos a crear las entidades necesarias para definir restricciones.
+Estas restricciones son las que Salma va a usar para definir su función objetivo.  El objetivo sería minimizar el número de estas restricciones que se incumplen.
+
+Primero vamos a escribir algunas de esas restricciones en lenguaje natural
+***** restricciones en lenguaje natural
+ - un profesor no puede tener dos asignaturas distintas en el mismo turno
+
+ - dos grupos distintos no pueden tener la misma aula
+
+ - una asignatura en un turno, tiene que tener asignada un aula
+
+ - un profesor no puede tener más de N asignaturas
+
+***** a partir de los ejemplos vamos a reescribirlos «en abstracto»
+En MAYÚSCULAS aparece lo que estamos tratando de identificar.
+
+número ENTIDAD NO-PUEDE-TENER número ENTIDAD DISTINTAS EN-EL-MISMO ENTIDAD
+
+número ENTIDAD DISTINTOS NO-PUEDEN-TENER LA-MISMA ENTIDAD
+
+número ENTIDAD EN-UNA ENTIDAD TIENE-QUE-TENER-ASIGNADA número ENTIDAD
+
+número ENTIDAD NO-PUEDEN-TENER MÁS-DE número ENTIDAD
+
+***** primer intento de jerarquía
+   - ENTIDADES
+     - profesor
+     - asignatura
+     - turno
+     - grupo
+     - aula
+   - MODIFICADORES
+     - mismo
+     - distinta
+     - en el mismo
+   - RESTRICCIONES
+     - más-de
+     - no-mas-de
+     - menos-de
+     - no-menos-de
+     - exactamente
+   - CAÑONEO
+     - no puede tener (+ número)
+     - tiene-que-tener-asignada (+ número)
+   - COSA-EN-SI (lo que estamos buscando)
+
+***** primera aproximación a la cosa en sí
+«la cosa en si» es lo que estamos buscando, y hasta ahora parece que tiene los siguientes elementos:
+
+  - número-opcional
+  - entidad
+  - modificador-opcional
+  - cañoneo
+  - restricción
+  - número (opcional para la restricción)
+  - entidad
+***** ejemplos concreto de la cosa en sí:
+****** ejemplo 1
+     (cosa-en-si 1 profesor no-puede-tener (mas-de 5) asignaturas)
+
+     Esto debería devolver una instancia de cosa-en-si que tenga:
+      - numero-opcional 1
+      - entidad: profesor
+      - modificador: nil
+      - cañoneo: no-puede-tener
+      - restriccion: más-de 5
+      - entidad: asignatura
+
+***** lo que tenemos hasta ahora
+existen ENTIDADES, MODIFICADORES Y CAÑONEOS (que no tienen parámetros), y también existe
+ (profesor, grupo, aula, etc)
+
+
+RESTRICCION, que puede tener parámetros opcionales
+ (no-más-de 5) (al-menos 3)
+
+ En este caso los parámetros serían 5 y 3.
+
+*** codigo para las entidades y restricciones
+**** entidades
+En esta sección vamos a definir las clases para las entidades.
+
+Todas heredarán de una clase base entidad, que no tiene slots.
+
+Además, para cada una de esas entidades se define un parámetro que sea una instancia de esa clase.
+***** clase entidad (es la clase base)
+   #+begin_src lisp :results none
+   (defclass* entidad () 
+     ())
+   #+end_src
+
+***** clase profesor
+Profesor es una entidad que hereda de la clase base =clase-entidad=.
+También creamos el parámetro.
+   #+begin_src lisp :results none
+   (defclass* profesor (clase-entidad) 
+     ())
+   (defparameter profesor (profesor))
+   #+end_src
+***** reflexión sobre la entidad profesor
+Evidentemente, para todas las entidades vamos a tener que hacer lo mismo:
+ - que herede de =clase-entidad=,
+ - crear un parámetro que sea una instancia de de esa clase.
+
+Ese macro es fácilmente automatizable.
+***** macro def-entidad
+   #+begin_src lisp :results none
+   (defmacro def-entidad (nombre)
+     `(progn
+	(defclass* ,nombre (clase-entidad) ())
+	(defparameter ,nombre (,nombre))))
+
+   #+end_src
+***** miren qué descaro ahora :-)
+Y con ese macro es muy fácil crear nuevas entidades.
+   #+begin_src lisp :results none
+   (progn
+     (def-entidad profesor)
+     (def-entidad asignatura)
+     (def-entidad clase))
+   #+end_src
+Sin embargo, para crear todas las entidades, hay que copiar y pegar =(def-entidad )=.
+
+La idea es que eso también se puede automatizar, con un macro que solo reciba los nombres de las entidades que se desean crear y que devuelva algo como el código anterior.
+
+***** macro def-todas-las-entidades
+****** descripción
+  la idea sería poder decir:
+
+  (def-todas-las-entidades profesor aula grupo asignatura)
+
+  y eso se expande a:
+    (progn
+      (def-entidad profesor)
+      (def-entidad aula)
+      (def-entidad grupo)
+       (def-entidad asignatura))
+****** código
+ #+begin_src lisp
+ (defmacro def-todas-las-entidades (&rest entidades)
+   `(progn
+      ,@(loop for e in entidades
+	     collecting `(def-entidad ,e))))
+ #+end_src      
+
+ #+RESULTS:
+ : DEF-TODAS-LAS-ENTIDADES
+****** test (macroexpansion)
+#+begin_src lisp :results output
+(ppme '(def-todas-las-entidades profesor aula grupo asignatura))
+#+end_src
+
+#+RESULTS:
+: (PROGN
+:  (DEF-ENTIDAD PROFESOR)
+:  (DEF-ENTIDAD AULA)
+:  (DEF-ENTIDAD GRUPO)
+:  (DEF-ENTIDAD ASIGNATURA))
+****** conclusiones
+Ahora solo quedaría hacer lo mismo con las restricciones:
+ 1. crear la clase base restriccion
+ 2. crear el  macro def-restriccion
+ 3. crear el macro todas-las-restricciones
+
+Vamos a hacerlo.
+**** restricciones
+***** clase restriccion (es la clase base)
+   #+begin_src lisp :results none
+   (defclass* restriccion () 
+     (argumento))
+   #+end_src
+***** macro def-restriccion
+   #+begin_src lisp :results none
+   (defmacro def-restriccion (nombre)
+     `(progn
+	(defclass* ,nombre (clase-restriccion) ())
+	(defun ,nombre (arg)
+           (make-instance ',(symb 'clase- nombre)
+                        :argumento arg))))
+   #+end_src
+***** macro def-todas-las-restricciones :-o
+****** descripción
+  la idea sería poder decir:
+
+  (def-todas-las-restricciones no-mas-de no-menos-de)
+
+  y eso se expande a:
+    (progn
+      (def-restriccion no-mas-de)
+      (def-restriccion no-menos-de))
+****** código
+ #+begin_src lisp :results none
+ (defmacro def-todas-las-restricciones (&rest restricciones)
+   `(progn
+      ,@(loop for e in restricciones
+	     collecting `(def-restriccion ,e))))
+ #+end_src      
+
+ #+RESULTS:
+****** test (macroexpansion)
+#+begin_src lisp :results output
+(ppme '(def-todas-las-restricciones no-mas-de no-menos-de))
+#+end_src
+
+#+RESULTS:
+: (PROGN (DEF-RESTRICCION NO-MAS-DE) (DEF-RESTRICCION NO-MENOS-DE))
+**** reflexion sobre las entidades y las restricciones
+Al final, el código para generar las restricciones y el código para generar las entidades se parece mucho 😱, de hecho, la forma de hacer el segundo fue copiar y pegar del primero y hacer una sustitución de palabras 😱.  Casi siempre que eso pasa es un indicador de que se puede hacer un macro...
+
+Así que el próximo paso en esta aventura es hacer un macro que nos genere los macros para generar entidades y restriciones 😌.
+** macro def-parametro-de-horario
+La idea de este macro es generar la definición de la clase, el parámetro y el macro def-todas-las-COSAS.
+
+No debería ser demasiado difícil, si vamos probando poquito a poquito y haciéndolo incremental.
+*** ejemplo que nos interesa reproducir
+ (def-parametro-de-horario entidad ())
+
+ debería expandirse a.
+
+ (defclass* entidad () 
+      ())
+ (defmacro def-entidad (nombre)
+      `(progn
+	 (defclass* ,nombre (clase-entidad) ())
+	 (defparameter ,nombre (,nombre))))
+
+  (defmacro def-todas-las-entidades (&rest entidades)
+    `(progn
+       ,@(loop for e in entidades
+	      collecting `(def-entidad ,e))))
+
+A estos primeros elementos a los que se hará referencia mediante un parámetro le vamos a llamar «parametro-de-horario».
+*** codigo (entre todos)
+primera opción, vamos a hacerlo como si no hubiera problemas.
+**** codigo
+ #+begin_src lisp :results none
+   (defmacro def-parametro-de-horario (nombre plural)
+    `(progn
+       (defclass* ,nombre () ())
+
+       (defmacro ,(symb 'def- nombre) (id)
+	 `(progn
+	    (defclass* ,id (,(symb 'clase- ',nombre)) ())
+	    (defparameter ,id (,id))))
+
+       (defmacro ,(symb 'def- plural) (&rest cosas)
+	 `(progn 
+	    ,@(loop for x in cosas
+		    collecting `(,',(symb 'def- nombre) ,x))))))
+ #+end_src
+**** tests 
+***** macroexpansion
+ #+begin_src lisp :results output
+ (ppme '(def-parametro-de-horario entidad todas-las-entidades))
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ (PROGN
+  (DEFCLASS* ENTIDAD NIL NIL)
+  (DEFMACRO DEF-ENTIDAD (ID)
+    `(PROGN
+      (DEFCLASS* ,ID (,(SYMB 'CLASE- 'ENTIDAD)) NIL)
+      (DEFPARAMETER ,ID (,ID))))
+  (DEFMACRO DEF-TODAS-LAS-ENTIDADES (&REST COSAS)
+    `(PROGN
+      ,@(LOOP FOR X IN COSAS
+	      COLLECTING `(,'DEF-ENTIDAD ,X)))))
+ #+end_example
+
+***** evaluacion
+ #+begin_src lisp :results output
+ (progn
+   (def-parametro-de-horario gato todos-los-gatos)
+   (ppme '(def-todos-los-gatos profesor aula)))
+ #+end_src
+
+ #+RESULTS:
+ : (PROGN (DEF-GATO PROFESOR) (DEF-GATO AULA))
+
+***** lo de verdad
+#+begin_src lisp :results none
+(progn
+  (def-parametro-de-horario entidad todas-las-entidades)
+  (def-todas-las-entidades profesor aula grupo asignatura))
+#+end_src
+
+*** definir ahora todas las entidades del problema
+    al menos las que sean con parámetros
+
+**** primero entidades
+
+***** la definición
+  #+begin_src lisp :results none
+  (def-parametro-de-horario entidad todas-las-entidades)
+  #+end_src
+
+***** las entidades en sí
+#+begin_src lisp :results none
+(def-todas-las-entidades profesor aula grupo asignatura turno)
+#+end_src      
+
+**** ahora modificadores 
+
+***** la definición
+  #+begin_src lisp :results none
+  (def-parametro-de-horario modificador todos-los-modificadores)
+  #+end_src
+
+***** las entidades en sí
+#+begin_src lisp :results none
+(def-todos-los-modificadores
+  mismo
+  el-mismo
+  la-misma
+  en-el-mismo
+  en-la-misma
+  distinta)
+#+end_src      
+
+**** ahora cañoneos 
+
+***** la definición
+  #+begin_src lisp :results none
+  (def-parametro-de-horario cannoneo todos-los-cannoneos)
+  #+end_src
+
+***** los cañoneos en sí
+#+begin_src lisp :results none
+(def-todos-los-cannoneos
+    no-puede-tener
+  tiene-que-tener)
+#+end_src      
+
+* macros definir hojas y definir libro ¡funciona! :-o
+** definir hoja
+*** codigo
+  #+begin_src lisp :results none
+  (defmacro definir-hoja (id)
+    (let* ((id-str (string-downcase (string id)))          ; "c122"
+           (var-name (intern (format nil "HOJA-~A" (string-upcase id-str)))) ; HOJA-C122
+           (grupo-up (string-upcase id-str))              ; "C122"
+           ;; La letra (c) y el primer número (1)
+           (letra (char id-str 0))
+           (num-1 (char id-str 1))
+           ;; Los dos últimos dígitos (22)
+           (sufijo (subseq grupo-up 2))
+           ;; Construye: TABLA-ASIGNATURAS-C1
+           (func-name (intern (string-upcase 
+                               (format nil "tabla-asignaturas-~A~A" letra num-1)))))
+      `(defparameter ,var-name
+	 (hoja :grupo ,grupo-up
+               :horario (tabla-horarios-para-todo-el-mundo ,grupo-up)
+               :asignaturas (,func-name ,sufijo)))))
+  #+end_src
+*** test (macroexpansion)
+#+begin_src lisp :results output
+(ppme '(definir-hoja "c111"))
+#+end_src
+
+#+RESULTS:
+: (DEFPARAMETER HOJA-C111
+:   (HOJA :GRUPO "C111" :HORARIO (TABLA-HORARIOS-PARA-TODO-EL-MUNDO "C111")
+:         :ASIGNATURAS (TABLA-ASIGNATURAS-C1 "11")))
+
+** def-libro-completo
+*** codigo
+  #+begin_src lisp :results none
+  (defmacro def-libro-completo (&rest datos)   
+      ;; REESCRITURA DEL PROCESAMIENTO PARA CLARIDAD:
+      (let ((instrucciones '())
+            (letra "")
+            (nivel 0))
+	(dolist (item datos)
+          (cond 
+            ((symbolp item) 
+             (setf letra (string-upcase (string item)))
+             (setf nivel 1))
+            ((listp item)
+             (dolist (num item)
+	       (let* ((num-str (format nil "~A" num))
+                      ;; Construimos el ID: letra + nivel + num-str
+                      ;; Ejemplo: "c" + "1" + "11" -> c111
+                      (id-completo (intern (format nil "~A~A~A" letra nivel num-str))))
+		 (push `(definir-hoja ,id-completo) instrucciones)))
+             (incf nivel))))
+      
+	`(progn ,@(reverse instrucciones))))
+  #+end_src
+*** test
+#+begin_src lisp :results output
+(ppme  '(def-libro-completo c (11 12 13 21 22)
+				(11 12 13)
+				(11 12)
+				(11 12)
+			      d (11) (11) (11) (11)
+			      m (11) (11) (11) (11)
+			      f (11 12) (11) (11) (11)))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+(PROGN
+ (DEFINIR-HOJA C111)
+ (DEFINIR-HOJA C112)
+ (DEFINIR-HOJA C113)
+ (DEFINIR-HOJA C121)
+ (DEFINIR-HOJA C122)
+ (DEFINIR-HOJA C211)
+ (DEFINIR-HOJA C212)
+ (DEFINIR-HOJA C213)
+ (DEFINIR-HOJA C311)
+ (DEFINIR-HOJA C312)
+ (DEFINIR-HOJA C411)
+ (DEFINIR-HOJA C412)
+ (DEFINIR-HOJA D111)
+ (DEFINIR-HOJA D211)
+ (DEFINIR-HOJA D311)
+ (DEFINIR-HOJA D411)
+ (DEFINIR-HOJA M111)
+ (DEFINIR-HOJA M211)
+ (DEFINIR-HOJA M311)
+ (DEFINIR-HOJA M411)
+ (DEFINIR-HOJA F111)
+ (DEFINIR-HOJA F112)
+ (DEFINIR-HOJA F211)
+ (DEFINIR-HOJA F311)
+ (DEFINIR-HOJA F411))
+#+end_example
+
+** correrlo :-o
+*** codigo
+  #+begin_src lisp :results none
+  (def-libro-completo c (11 12 13 21 22)
+				 (11 12 13)
+				 (11 12)
+				 (11 12)
+			       d (11) (11) (11) (11)
+			       m (11) (11) (11) (11)
+			       )
+  #+end_src
+
+*** test
+#+begin_src lisp :results none
+(with-open-file (f "ejemplito-bobo.org"
+		   :direction :output
+		   :if-exists :supersede)
+  (generate-code hoja-c111 org f))
+#+end_src
+
+* to be continued
+La proxima tarea es hacer un macro para generar las restricciones.  la única diferencia con el anterior es que en vez de definir un parámetro, se define una función 😌.
+
+
+no se pierda en el proximo episodio...
+
+  (def-funcion-de-horario restriccion restricciones todas-las-restricciones (cantidad))
+
+ debería expandirse a.
+
+ (defclass* restriccion () 
+      (cantidad))
+      
+ (defmacro def-restriccion (nombre)
+      `(progn
+	 (defclass* ,nombre (clase-restriccion) ())
+	 (defun ,nombre (cantidad)
+            (make-instance ,(symb 'clase- nombre) :cantidad cantidad))))
+
+  (defmacro def-todas-las-restricciones (&rest restricciones)
+    `(progn
+       ,@(loop for x in restricciones
+	      collecting `(def-restriccion ,x))))
+              
+Y después de eso se debería poder hacer:
+              
+(def-todas-las-restricciones mas-de- no-mas-de menos-de- no-menos-de exactamente)
+
+
+* descartes                                                  :noexport:
+*** código (que ya funciona, pero no vamos a ver)
+#+begin_src lisp :results none
+(defmacro def-parametro-de-horario (param-name plural todXs-lXs-nombre slots)
+  (declare (ignorable slots))
+  (let* ((base-class-name (symb 'clase- param-name))
+         (parameter-defining-macro-name (symb 'def- param-name))
+         )
+    `(progn
+       ;; define the base class
+       (defclass* ,param-name () ,slots)
+       ;; define the def-parameter macro
+       (defmacro ,parameter-defining-macro-name (nombre)
+         `(progn
+            (defclass* ,nombre (,',base-class-name)
+              ;; slots
+              ())
+            ;; define the parameter
+            (defparameter ,nombre (,nombre))))
+       ;; define the macro def-all-the-parameters
+       (defmacro ,(symb 'def- todXs-lXs-nombre) (&rest ,plural)
+         `(progn
+            ,@(loop for x in ,plural
+                    collecting `(,',parameter-defining-macro-name ,x)))))))
+#+end_src
+
+**** tests
+***** (macroexpansion)
+ #+begin_src lisp :results output
+ (ppme '(def-parametro-de-horario entidad entidades todas-las-entidades()))
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ (PROGN
+  (DEFCLASS* ENTIDAD NIL NIL)
+  (DEFMACRO DEF- (NOMBRE)
+    `(PROGN
+      (DEFCLASS* ,NOMBRE (,'CLASE-ENTIDAD) NIL)
+      (DEFPARAMETER ,NOMBRE (,NOMBRE))))
+  (DEFMACRO DEF-TODAS-LAS-ENTIDADES (&REST ENTIDADES)
+    `(PROGN
+      ,@(LOOP FOR X IN ENTIDADES
+              COLLECTING `(,'DEF-ENTIDAD ,X)))))
+ #+end_example
+
+***** evaluacion
+ Solo comprobar que no de errores.
+ #+begin_src lisp :results none
+ (def-parametro-de-horario entidad entidades todas-las-entidades ())
+ #+end_src
+***** codigo para agregar algunas entidades y comprobar que funciona
+ #+begin_src lisp :results output
+ (progn
+   (def-todas-las-entidades perro gato)
+   (format t "~a~%~a~%" perro (gato)))
+ #+end_src
+
+ #+RESULTS:
+ : #<CLASE-PERRO {1006C2E9B3}>
+ : #<CLASE-GATO {1006C70453}>
+
+**** creación de las entidades del horario (va a ser un descaro 😌)
+***** codigo
+ #+begin_src lisp :results 
+ (def-parametro-de-horario entidad entidades todas-las-entidades ())
+ (def-todas-las-entidades
+   profesor
+   grupo
+   aula
+   turno
+   asignatura)
+ #+end_src
+***** tests
+ #+begin_src lisp :results output
+ (progn
+   (loop for e in (list profesor grupo aula turno asignatura)
+         doing (format t "~a~%" e)))
+ #+end_src
+
+ #+RESULTS:
+ : #<CLASE-PROFESOR {10077E22C3}>
+ : #<CLASE-GRUPO {100781B0C3}>
+ : #<CLASE-AULA {100785BFB3}>
+ : #<CLASE-TURNO {10078A18D3}>
+ : #<CLASE-ASIGNATURA {10078DA6C3}>
+
+**** creación de los modificadores (va a ser otro descaro 😌)
+***** código
+ #+begin_src lisp :results none
+ (def-parametro-de-horario modificador modificadores todos-los-modificadores ())
+ (def-todos-los-modificadores
+   mismo el-mismo la-misma en-el-mismo en-la-misma
+   distinta)
+ #+end_src
+***** tests
+ #+begin_src lisp :results output
+ (progn
+   (loop for r in (list   mismo el-mismo la-misma en-el-mismo en-la-misma distinta)
+         doing (format t "~a~%" r)))
+ #+end_src
+
+ #+RESULTS:
+ : #<CLASE-MISMO {1008ACA6C3}>
+ : #<CLASE-EL-MISMO {1008B3A673}>
+ : #<CLASE-LA-MISMA {1008BAA703}>
+ : #<CLASE-EN-EL-MISMO {1008C22673}>
+ : #<CLASE-EN-LA-MISMA {1008C926C3}>
+ : #<CLASE-DISTINTA {1008D02673}>
+
+
+
+ 
