@@ -171,6 +171,25 @@
 (defun make-blank-row (size)
   (make-list size :initial-element ""))
 
+(defun insert-at-index (items index new-item)
+  "Inserta NEW-ITEM en ITEMS antes de INDEX."
+  (let ((safe-index (max 0 (min index (length items)))))
+    (append (subseq items 0 safe-index)
+            (list new-item)
+            (subseq items safe-index))))
+
+(defun move-last-item-to-index (items index)
+  "Mueve el último elemento de ITEMS antes de INDEX."
+  (let* ((len (length items))
+         (safe-index (max 0 (min index (max 0 (1- len))))))
+    (if (<= len 1)
+        items
+        (let ((last-item (nth (1- len) items))
+              (head (subseq items 0 (1- len))))
+          (append (subseq head 0 safe-index)
+                  (list last-item)
+                  (subseq head safe-index))))))
+
 (defparameter *headers-horario* '("Lunes" "Martes" "Miércoles" "Jueves " "Viernes"))
 (defparameter *rows-horario*
   '("Turno 1" ""
@@ -659,8 +678,13 @@
     (asig-rows (if asig-tabla (contenido-de-la-tabla asig-tabla) '()))
     (aulas-unicas (extraer-aulas-unicas horario-rows))
     ;; Calcular filas finales dinámicamente
-    (cantidad-turnos (max 1 (floor (length (nombres-filas horario-tabla)) horario-row-step)))
-    (horario-end-row (+ 3 (* cantidad-turnos horario-row-step)))
+    (total-horario-rows (length (nombres-filas horario-tabla)))
+    (cantidad-turnos (max 1 (floor total-horario-rows horario-row-step)))
+    (expected-turno4-index (* 3 horario-row-step))
+    (actual-turno4-index (or (position "Turno 4" (nombres-filas horario-tabla) :test #'string=)
+                             expected-turno4-index))
+    (post-third-offset (max 0 (- actual-turno4-index expected-turno4-index)))
+    (horario-end-row (+ 3 total-horario-rows))
     (asig-height (max 1 (length asig-rows)))
     (aulas-height (max 1 (length aulas-unicas)))
     (asig-end-row (+ 3 asig-height))
@@ -679,7 +703,8 @@
      (all-range-styles extra-range-styles)
      (dynamic-merge-ranges
         (loop for turno from 1 to cantidad-turnos
-              for start-row = (+ 4 (* (1- turno) horario-row-step))
+              for offset = (if (>= turno 4) post-third-offset 0)
+              for start-row = (+ 4 (* (1- turno) horario-row-step) offset)
               for end-row = (+ start-row (1- horario-row-step))
               collect (format nil "B~a:B~a" start-row end-row)))
     (data (construir-filas-hoja-grupo node lang))
@@ -770,7 +795,8 @@
                  (header-ref (format nil "~a$~a" aulas-col-letter header-row)))
             (loop for aulas-row from row-start to row-end do
               (let* ((turno-index (- aulas-row row-start))
-                     (group-row (+ 4 aula-offset (* turno-index horario-row-step)))
+                     (turno-offset (if (>= turno-index 3) 1 0))
+                     (group-row (+ 4 aula-offset (* turno-index horario-row-step) turno-offset))
                      (group-cell-ref (format nil "$~a$~a" group-col group-row))
                      (celda (format nil "~a~a" aulas-col-letter aulas-row))
                      (formula (generar-formula-aulas-dinamica grupos group-cell-ref header-ref)))
@@ -995,28 +1021,52 @@
          (cantidad-turnos (max 1 (or (horario-cantidad-turnos config)
                                      (contar-turnos-desde-datos horario-data horario-row-step))))
          (horario-data-normalizado (normalizar-horario-data horario-data cantidad-turnos horario-row-step))
+         ;; Buscar la posicion de Turno 4 en los datos originales (antes de normalizar)
+         ;; Esto nos da la posicion real donde empiezan los datos de Turno 4
+         (turno4-start-row (loop for i from 0 below (length horario-data)
+                                when (some (lambda (s) (and s (not (string= s "")))) (nth i horario-data))
+                                return i))
+         ;; El separador debe ir DESPUES de las filas de Turno 3
+         ;; Turno 3 ocupa las filas 3*horario-row-step-1 en datos normalizados
+         (separador-index (* 3 horario-row-step))
+         (base-row-names (nombres-filas-por-turnos cantidad-turnos horario-row-step))
+         (blank-horario-row (fila-vacia-como (and horario-data-normalizado (first horario-data-normalizado))))
+         (horario-row-names
+           (if (and (>= cantidad-turnos 4)
+                    (<= separador-index (length base-row-names)))
+               (insert-at-index base-row-names separador-index "")
+               base-row-names))
+         (horario-data-con-separador
+           (if (and (>= cantidad-turnos 4)
+                    (<= separador-index (length horario-data-normalizado)))
+               (insert-at-index horario-data-normalizado separador-index blank-horario-row)
+               horario-data-normalizado))
          (aulas-unicas (extraer-aulas-unicas horario-data-normalizado horario-row-step))
-         ;; Crear lista de aulas lateral basada en las aulas reales del horario
-         (aulas-lateral-dinamica 
-            (if aulas-unicas
-                (append aulas-unicas (make-list (max 0 (- cantidad-turnos (length aulas-unicas))) :initial-element ""))
-                *aulas-lateral*)))
-    (hoja :grupo grupo
-      :horario (tabla-horario-aula
-         :id (concatenate 'string (horario-id-prefix config) grupo)
-                    :cantidad-turnos cantidad-turnos
-                    :alto-celda (horario-alto-celda config)
-                    :ancho-celda (horario-ancho-celda config)
-                    :contenido-de-la-tabla horario-data-normalizado
-                    :border-color (horario-border-color config)
-                    :border-style (horario-border-style config)
-                    :range-styles (horario-range-styles config))
-       :asignaturas (tabla :id (concatenate 'string (asignaturas-id-prefix config) grupo)
-                             :alto-celda 1
-                             :ancho-celda (asignaturas-ancho-celda config)
-                             :nombres-columnas (asignaturas-headers config)
-                             :filas (max 1 (length asignaturas-data))
-                            :contenido-de-la-tabla (if asignaturas-data asignaturas-data '())))))
+          ;; Crear lista de aulas lateral basada en las aulas reales del horario
+          (aulas-lateral-dinamica 
+             (if aulas-unicas
+                 (append aulas-unicas (make-list (max 0 (- cantidad-turnos (length aulas-unicas))) :initial-element ""))
+                 *aulas-lateral*)))
+    (let ((horario-tabla
+            (tabla-horario-aula
+              :id (concatenate 'string (horario-id-prefix config) grupo)
+              :cantidad-turnos cantidad-turnos
+              :alto-celda (horario-alto-celda config)
+              :ancho-celda (horario-ancho-celda config)
+              :contenido-de-la-tabla horario-data-con-separador
+              :border-color (horario-border-color config)
+              :border-style (horario-border-style config)
+              :range-styles (horario-range-styles config))))
+      (setf (nombres-filas horario-tabla) horario-row-names)
+      (setf (filas horario-tabla) (length horario-row-names))
+      (hoja :grupo grupo
+            :horario horario-tabla
+            :asignaturas (tabla :id (concatenate 'string (asignaturas-id-prefix config) grupo)
+                                :alto-celda 1
+                                :ancho-celda (asignaturas-ancho-celda config)
+                                :nombres-columnas (asignaturas-headers config)
+                                :filas (max 1 (length asignaturas-data))
+                                :contenido-de-la-tabla (if asignaturas-data asignaturas-data '()))))))
 
 ;; Los horarios ahora se cargan desde variables_horario.lisp
 ;; Las variables *horario-d111*, *horario-c111*, etc. están definidas allí

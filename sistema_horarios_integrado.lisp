@@ -140,6 +140,8 @@
     (format s "    for turno in turnos:~%")
     (format s "        ws_aulas.append([turno])  # Separador~%")
     (format s "        for i in range(1, 7):  # 6 franjas horarias~%")
+    (format s "            if i == 4:~%")
+    (format s "                ws_aulas.append([''])  # Fila vacia entre turno 3 y 4~%")
     (format s "            ws_aulas.append([f'{i}ro' if i == 1 else f'{i}do' if i == 2 else f'{i}ro' if i == 3 else f'{i}to' if i == 4 else f'{i}to' if i == 5 else f'{i}to'])~%~%")
     
     ;; Crear hojas para cada grupo

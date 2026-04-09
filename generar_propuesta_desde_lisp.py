@@ -4,30 +4,30 @@ sheets_cfg = []
 
 sheets_cfg.append({
     'title': "D111",
-    'data': [["Grupo ", "D111", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "F", "ICD", "AL", "AM I", "AL", "", "AL", "Álgebra Lineal", 3, 0, 3, "", "Aula 6*"], ["", "", "Aula 8", "Aula 7", "Aula 7*", "Aula 7*", "Aula 7*", "", "L", "Lógica", 2, 0, 2, "", "Aula 7"], ["", "", "", "", "", "", "", "", "IP", "Introducción a la Programación", 2, 0, 2, "", "Aula 7*"], ["", "Turno 2", "L", "AL", "EF", "L", "", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", "Aula 8"], ["", "", "Aula 6*", "Aula 6*", "SEDER", "Aula 7", "", "", "ICD", "Introducción a la Ciencia de Datos", 2, 0, 2, "", "Lab"], ["", "", "", "", "", "", "", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "Turno 3", "IP", "AM I", "AM I", "IP", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "", "Aula 7", "Aula 6*", "Aula 7*", "Lab", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "D111", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "F", "ICD", "AL", "AM I", "AL", "", "AL", "Álgebra Lineal", 3, 0, 3, "", "Aula 6*"], ["", "", "Aula 8", "Aula 7", "Aula 7*", "Aula 7*", "Aula 7*", "", "L", "Lógica", 2, 0, 2, "", "Aula 7"], ["", "", "", "", "", "", "", "", "IP", "Introducción a la Programación", 2, 0, 2, "", "Aula 7*"], ["", "Turno 2", "L", "AL", "EF", "L", "", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", "Aula 8"], ["", "", "Aula 6*", "Aula 6*", "SEDER", "Aula 7", "", "", "ICD", "Introducción a la Ciencia de Datos", 2, 0, 2, "", "Lab"], ["", "", "", "", "", "", "", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "Turno 3", "IP", "AM I", "AM I", "IP", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "", "Aula 7", "Aula 6*", "Aula 7*", "Lab", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I10', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M10',
         'O4:O8'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M10', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O8', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -38,13 +38,13 @@ sheets_cfg.append({
         {'row': 12, 'col': 13, 'value': "=SUM(K4:K10)"},
         {'row': 9, 'col': 14, 'value': "Total:"},
         {'row': 9, 'col': 15, 'value': "=COUNTA(O4:O8)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I10,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -52,7 +52,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O8,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -60,7 +60,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -90,30 +90,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "D211",
-    'data': [["Grupo ", "D211", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "MA", "Matemática y Aplicaciones", 2, 0, 2, "", "c 7"], ["", "", "", "", "", "", "", "", "Prb", "Probabilidades", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "BD", "Bases de Datos", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "ED", "Estructura de Datos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "VD", "Visualización de Datos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EP", "Economía Política", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "EF", "Educación Física III", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "ED", "BD", "MA (EDO) cp 6 (con", "BD", "", "", "", "", "", "", "", "", ""], ["", "", "c 7", "c 7", "C211", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "VD", "EP", "EP", "Prb", "", "", "", "", "", "", "", "", ""], ["", "", "c 7", "c 7", "c 7", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "MA", "Prb", "EF 4:45pm a 5:35pm", "ED", "", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 7", "", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "D211", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "MA", "Matemática y Aplicaciones", 2, 0, 2, "", "c 6"], ["", "", "", "", "", "", "", "", "Prb", "Probabilidades", 2, 0, 2, "", "c 7"], ["", "", "", "", "", "", "", "", "BD", "Bases de Datos", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "ED", "Estructura de Datos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "VD", "Visualización de Datos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EP", "Economía Política", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "EF", "Educación Física III", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "ED", "BD", "MA (EDO) cp 6 (con", "BD", "", "", "", "", "", "", "", "", ""], ["", "", "c 7", "c 7", "C211", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "VD", "EP", "EP", "Prb", "", "", "", "", "", "", "", "", ""], ["", "", "c 7", "c 7", "c 7", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "MA", "Prb", "EF 4:45pm a 5:35pm", "ED", "", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 7", "", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I10', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M10',
-        'O4:O4'
+        'O4:O5'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M10', 'row_step': 1, 'col_step': 1},
-        {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
+        {'range': 'O4:O5', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -122,15 +122,15 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=COUNTA(I4:I10)"},
         {'row': 12, 'col': 12, 'value': "Σ Frec:"},
         {'row': 12, 'col': 13, 'value': "=SUM(K4:K10)"},
-        {'row': 5, 'col': 14, 'value': "Total:"},
-        {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 6, 'col': 14, 'value': "Total:"},
+        {'row': 6, 'col': 15, 'value': "=COUNTA(O4:O5)"},
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I10,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -138,15 +138,15 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
-            'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
+            'rango': 'C4:G22',
+            'formula': 'AND({celda}<>"", COUNTIF($O4:O5,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
             'row_start_offset': 1
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -176,30 +176,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "D311",
-    'data': [["Grupo ", "D311", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "AE2", "RN", "TP 4", "", "", "", "AE2", "Análisis Estadístico II", 2, 0, 2, "", "c 2"], ["", "", "c 2", "c 2", "", "", "", "", "MDE", "Muestreo y Diseño de Experimentos", 2, 0, 2, "", "c 4"], ["", "", "", "", "", "", "", "", "RN", "Redes Neuronales", 2, 0, 2, "", "cp Lab2"], ["", "Turno 2", "MDE", "PL", "MDE", "RN", "", "", "PL", "Procesamiento del Lenguaje", 2, 0, 2, "", ""], ["", "", "c 2", "c 2", "cp 2", "cp Lab2", "", "", "PGVD", "Procesamiento de Grandes Volúmenes de Datos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "PGVD", "TP", "AE2", "PGVD", "", "", "", "", "", "", "", "", ""], ["", "", "c 2", "c 4", "cp Lab2", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "D311", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "AE2", "RN", "TP 4", "", "", "", "AE2", "Análisis Estadístico II", 2, 0, 2, "", "c 2"], ["", "", "c 2", "c 2", "", "", "", "", "MDE", "Muestreo y Diseño de Experimentos", 2, 0, 2, "", "c 4"], ["", "", "", "", "", "", "", "", "RN", "Redes Neuronales", 2, 0, 2, "", "cp Lab2"], ["", "Turno 2", "MDE", "PL", "MDE", "RN", "", "", "PL", "Procesamiento del Lenguaje", 2, 0, 2, "", ""], ["", "", "c 2", "c 2", "cp 2", "cp Lab2", "", "", "PGVD", "Procesamiento de Grandes Volúmenes de Datos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "PGVD", "TP", "AE2", "PGVD", "", "", "", "", "", "", "", "", ""], ["", "", "c 2", "c 4", "cp Lab2", "cp 7", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O6'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O6', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -210,13 +210,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 7, 'col': 14, 'value': "Total:"},
         {'row': 7, 'col': 15, 'value': "=COUNTA(O4:O6)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -224,7 +224,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O6,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -232,7 +232,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -262,30 +262,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "D411",
-    'data': [["Grupo ", "D411", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "EIA", "", "SN", "", "", "IN", "Inteligencia de Negocios", 2, 0, 2, "", ""], ["", "", "CP 2", "2", "CP 2", "C4", "", "", "EIA", "Elementos de Inteligencia Artificial", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "CP", "Ciberseguridad y Privacidad", 2, 0, 2, "", ""], ["", "Turno 2", "IN", "SN", "IN", "SN", "", "", "CO2", "Curso Optativo II", 2, 0, 2, "", ""], ["", "", "2", "C4", "2", "C4", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SN/DN", "Seguridad Nacional / Defensa Nacional", 2, 0, 2, "", ""], ["", "Turno 3", "ECTS 9 (con", "CO", "EIA 2", "", "", "", "", "", "", "", "", "", ""], ["", "", "C4", "2", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "D411", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "EIA", "", "SN", "", "", "IN", "Inteligencia de Negocios", 2, 0, 2, "", ""], ["", "", "CP 2", "2", "CP 2", "C4", "", "", "EIA", "Elementos de Inteligencia Artificial", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "CP", "Ciberseguridad y Privacidad", 2, 0, 2, "", ""], ["", "Turno 2", "IN", "SN", "IN", "SN", "", "", "CO2", "Curso Optativo II", 2, 0, 2, "", ""], ["", "", "2", "C4", "2", "C4", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SN/DN", "Seguridad Nacional / Defensa Nacional", 2, 0, 2, "", ""], ["", "Turno 3", "ECTS 9 (con", "CO", "EIA 2", "", "", "", "", "", "", "", "", "", ""], ["", "", "C4", "2", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -296,13 +296,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -310,7 +310,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -318,7 +318,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -348,30 +348,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C111",
-    'data': [["Grupo ", "C111", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "F", "A I", "AM I", "F", "", "", "A I", "Álgebra I", 3, 0, 3, "", "Aula 6"], ["", "", "Aula 6", "Aula 6*", "Aula 6*", "Aula 6", "", "", "L", "Lógica", 2, 0, 2, "", "Aula 6*"], ["", "", "", "", "", "", "", "", "P", "Programación", 3, 0, 3, "", "Lab"], ["", "Turno 2", "L", "A I", "EF", "L", "A I", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", ""], ["", "", "Aula 6*", "Aula 6*", "SEDER", "Aula 6*", "Aula 6*", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "Turno 3", "P", "AM I", "AM I", "P", "P", "", "", "", "", "", "", "", ""], ["", "", "Aula 6", "Aula 6*", "Aula 6*", "Aula 6", "Lab", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C111", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "F", "A I", "AM I", "F", "", "", "A I", "Álgebra I", 3, 0, 3, "", "Aula 6"], ["", "", "Aula 6", "Aula 6*", "Aula 6*", "Aula 6", "", "", "L", "Lógica", 2, 0, 2, "", "Aula 6*"], ["", "", "", "", "", "", "", "", "P", "Programación", 3, 0, 3, "", "Lab"], ["", "Turno 2", "L", "A I", "EF", "L", "A I", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", ""], ["", "", "Aula 6*", "Aula 6*", "SEDER", "Aula 6*", "Aula 6*", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "Turno 3", "P", "AM I", "AM I", "P", "P", "", "", "", "", "", "", "", ""], ["", "", "Aula 6", "Aula 6*", "Aula 6*", "Aula 6", "Lab", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O6'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O6', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -382,13 +382,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 7, 'col': 14, 'value': "Total:"},
         {'row': 7, 'col': 15, 'value': "=COUNTA(O4:O6)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -396,7 +396,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O6,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -404,7 +404,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -434,30 +434,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C121",
-    'data': [["Grupo ", "C121", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "P", "A I", "AM I", "P", "A I", "", "A I", "Álgebra I", 3, 0, 3, "", "Aula 5"], ["", "", "Aula 5", "Aula 5", "Aula 5", "Aula 5", "Aula 5", "", "L", "Lógica", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "P", "Programación", 3, 0, 3, "", ""], ["", "Turno 2", "F", "AM I", "EF", "L", "P", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", ""], ["", "", "Aula 5", "Aula 5", "SEDER", "Aula 5", "Lab", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "Turno 3", "L", "A I", "AM I", "F", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 5", "Aula 5", "Aula 5", "Aula 5", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C121", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "P", "A I", "AM I", "P", "A I", "", "A I", "Álgebra I", 3, 0, 3, "", "Aula 5"], ["", "", "Aula 5", "Aula 5", "Aula 5", "Aula 5", "Aula 5", "", "L", "Lógica", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "P", "Programación", 3, 0, 3, "", ""], ["", "Turno 2", "F", "AM I", "EF", "L", "P", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", ""], ["", "", "Aula 5", "Aula 5", "SEDER", "Aula 5", "Lab", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "Turno 3", "L", "A I", "AM I", "F", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 5", "Aula 5", "Aula 5", "Aula 5", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -468,13 +468,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -482,7 +482,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -490,7 +490,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -520,30 +520,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C122",
-    'data': [["Grupo ", "C122", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "P", "A I", "AM I", "L", "P", "", "A I", "Álgebra I", 3, 0, 3, "", "Aula 1"], ["", "", "Aula 5", "Aula 5", "Aula 1", "Aula 1", "Lab", "", "L", "Lógica", 2, 0, 2, "", "Aula 5"], ["", "", "", "", "", "", "", "", "P", "Programación", 3, 0, 3, "", "Lab"], ["", "Turno 2", "F", "AM I", "EF", "AM I", "A I", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", ""], ["", "", "Aula 5", "Aula 5", "SEDER", "Aula 1", "Aula 1", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "Turno 3", "L", "A I", "P", "F", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 5", "Aula 1", "Aula 1", "Aula 5", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C122", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "P", "A I", "AM I", "L", "P", "", "A I", "Álgebra I", 3, 0, 3, "", "Aula 1"], ["", "", "Aula 5", "Aula 5", "Aula 1", "Aula 1", "Lab", "", "L", "Lógica", 2, 0, 2, "", "Aula 5"], ["", "", "", "", "", "", "", "", "P", "Programación", 3, 0, 3, "", "Lab"], ["", "Turno 2", "F", "AM I", "EF", "AM I", "A I", "", "AM I", "Análisis Matemático I", 2, 0, 2, "", ""], ["", "", "Aula 5", "Aula 5", "SEDER", "Aula 1", "Aula 1", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "Turno 3", "L", "A I", "P", "F", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 5", "Aula 1", "Aula 1", "Aula 5", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O6'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O6', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -554,13 +554,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 7, 'col': 14, 'value': "Total:"},
         {'row': 7, 'col': 15, 'value': "=COUNTA(O4:O6)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -568,7 +568,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O6,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -576,7 +576,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -606,30 +606,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C211",
-    'data': [["Grupo ", "C211", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "EDA", "Estructuras de Datos y Algoritmos I", 2, 0, 2, "", "c 6"], ["", "", "", "", "", "", "", "", "MD", "Matemática Discreta I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AC", "Arquitectura de computadoras", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "EDO", "Ecuaciones Diferenciales Ordinarias", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "MN", "Matemática Numérica", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "EF3", "Educación Física III", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "EDA I", "MD", "EDO", "MN", "AC", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c6", "cp 6", "cp 6", "lab", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "TP", "MN", "EDA I", "TP", "MD", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "cp 6", "c 6", "cp 6", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "EDO", "AC", "EF 4:45pm a 5:35pm", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C211", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "EDA", "Estructuras de Datos y Algoritmos I", 2, 0, 2, "", "c 6"], ["", "", "", "", "", "", "", "", "MD", "Matemática Discreta I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AC", "Arquitectura de computadoras", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "EDO", "Ecuaciones Diferenciales Ordinarias", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "MN", "Matemática Numérica", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "EF3", "Educación Física III", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "EDA I", "MD", "EDO", "MN", "AC", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c6", "cp 6", "cp 6", "lab", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "TP", "MN", "EDA I", "TP", "MD", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "cp 6", "c 6", "cp 6", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "EDO", "AC", "EF 4:45pm a 5:35pm", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I10', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M10',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M10', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -640,13 +640,13 @@ sheets_cfg.append({
         {'row': 12, 'col': 13, 'value': "=SUM(K4:K10)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I10,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -654,7 +654,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -662,7 +662,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -692,30 +692,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C212",
-    'data': [["Grupo ", "C212", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "EDA", "Estructuras de Datos y Algoritmos I", 2, 0, 2, "", "c 6"], ["", "", "", "", "", "", "", "", "MD", "Matemática Discreta I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AC", "Arquitectura de computadoras", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "EDO", "Ecuaciones Diferenciales Ordinarias", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "MN", "Matemática Numérica", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "EF3", "Educación Física III", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "EDA I", "MD", "EDO I", "MN", "AC", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c6", "cp 5", "cp 5", "lab", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "TP", "MN", "EDA I", "TP", "MD", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "cp 5", "c 6", "cp 5", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "EDO", "AC", "EF 4:45pm a 5:35pm", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C212", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "EDA", "Estructuras de Datos y Algoritmos I", 2, 0, 2, "", "c 6"], ["", "", "", "", "", "", "", "", "MD", "Matemática Discreta I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AC", "Arquitectura de computadoras", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "EDO", "Ecuaciones Diferenciales Ordinarias", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "MN", "Matemática Numérica", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "EF3", "Educación Física III", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "EDA I", "MD", "EDO I", "MN", "AC", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c6", "cp 5", "cp 5", "lab", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "TP", "MN", "EDA I", "TP", "MD", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "cp 5", "c 6", "cp 5", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "EDO", "AC", "EF 4:45pm a 5:35pm", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 6", "c 6", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I10', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M10',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M10', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -726,13 +726,13 @@ sheets_cfg.append({
         {'row': 12, 'col': 13, 'value': "=SUM(K4:K10)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I10,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -740,7 +740,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -748,7 +748,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -778,30 +778,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C311",
-    'data': [["Grupo ", "C311", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "BD2", "Est", "BD2 cp", "MO", "", "", "RC", "Redes de Computadoras", 2, 0, 2, "", "Aula 9"], ["", "", "Aula 9", "Aula 9", "Aula 9", "Aula 9", "", "", "IS", "Ingeniería de Software", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "MO", "Modelos de Optimización", 2, 0, 2, "", ""], ["", "Turno 2", "IS c", "PD c", "IS c", "PD cp", "", "", "BD2", "Bases de Datos II", 2, 0, 2, "", ""], ["", "", "Aula 9", "Aula 9", "Aula 9", "Aula 9", "", "", "PD", "Programación Declarativa", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "Est", "Estadística", 2, 0, 2, "", ""], ["", "Turno 3", "RC", "MO", "RC cp", "Est cp", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 9", "Aula 9", "Aula 9", "Aula 9", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C311", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "BD2", "Est", "BD2 cp", "MO", "", "", "RC", "Redes de Computadoras", 2, 0, 2, "", "Aula 9"], ["", "", "Aula 9", "Aula 9", "Aula 9", "Aula 9", "", "", "IS", "Ingeniería de Software", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "MO", "Modelos de Optimización", 2, 0, 2, "", ""], ["", "Turno 2", "IS c", "PD c", "IS c", "PD cp", "", "", "BD2", "Bases de Datos II", 2, 0, 2, "", ""], ["", "", "Aula 9", "Aula 9", "Aula 9", "Aula 9", "", "", "PD", "Programación Declarativa", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "Est", "Estadística", 2, 0, 2, "", ""], ["", "Turno 3", "RC", "MO", "RC cp", "Est cp", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 9", "Aula 9", "Aula 9", "Aula 9", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -812,13 +812,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -826,7 +826,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -834,7 +834,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -864,30 +864,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C312",
-    'data': [["Grupo ", "C312", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "BD2", "Est", "BD2 cp", "PD cp", "", "", "RC", "Redes de Computadoras", 2, 0, 2, "", "Aula 3"], ["", "", "Aula 9", "Aula 9", "Aula 3", "Aula 3", "", "", "IS", "Ingeniería de Software", 2, 0, 2, "", "Aula 9"], ["", "", "", "", "", "", "", "", "MO", "Modelos de Optimización", 2, 0, 2, "", ""], ["", "Turno 2", "IS c", "PD c", "IS c", "MO", "", "", "BD2", "Bases de Datos II", 2, 0, 2, "", ""], ["", "", "Aula 9", "Aula 9", "Aula 3", "Aula 3", "", "", "PD", "Programación Declarativa", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "Est", "Estadística", 2, 0, 2, "", ""], ["", "Turno 3", "RC", "MO", "RC cp", "Est cp", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 9", "Aula 9", "Aula 3", "Aula 3", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C312", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "BD2", "Est", "BD2 cp", "PD cp", "", "", "RC", "Redes de Computadoras", 2, 0, 2, "", "Aula 3"], ["", "", "Aula 9", "Aula 9", "Aula 3", "Aula 3", "", "", "IS", "Ingeniería de Software", 2, 0, 2, "", "Aula 9"], ["", "", "", "", "", "", "", "", "MO", "Modelos de Optimización", 2, 0, 2, "", ""], ["", "Turno 2", "IS c", "PD c", "IS c", "MO", "", "", "BD2", "Bases de Datos II", 2, 0, 2, "", ""], ["", "", "Aula 9", "Aula 9", "Aula 3", "Aula 3", "", "", "PD", "Programación Declarativa", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "Est", "Estadística", 2, 0, 2, "", ""], ["", "Turno 3", "RC", "MO", "RC cp", "Est cp", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 9", "Aula 9", "Aula 3", "Aula 3", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O5'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O5', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -898,13 +898,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 6, 'col': 14, 'value': "Total:"},
         {'row': 6, 'col': 15, 'value': "=COUNTA(O4:O5)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -912,7 +912,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O5,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -920,7 +920,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -950,30 +950,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C411",
-    'data': [["Grupo ", "C411", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "AM", "Aprendizaje de Máquinas", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "DAA", "Diseño y Análisis de Algoritmos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SD", "Sistemas Distribuidos", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "AE", "Asignatura Electiva", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SN/DN", "Seguridad Nacional / Defensa Nacionaol", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "AM", "DAA", "DAA", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "9", "9", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "SD 9", "SN", "AM", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "ECTS 9", "AE", "SD", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "9", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C411", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "AM", "Aprendizaje de Máquinas", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "DAA", "Diseño y Análisis de Algoritmos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SD", "Sistemas Distribuidos", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "AE", "Asignatura Electiva", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SN/DN", "Seguridad Nacional / Defensa Nacionaol", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "AM", "DAA", "DAA", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "9", "9", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "SD 9", "SN", "AM", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "ECTS 9", "AE", "SD", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "9", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -984,13 +984,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -998,7 +998,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -1006,7 +1006,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -1036,30 +1036,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "C412",
-    'data': [["Grupo ", "C412", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "AM", "Aprendizaje de Máquinas", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "DAA", "Diseño y Análisis de Algoritmos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SD", "Sistemas Distribuidos", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "AE", "Asignatura Electiva", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SN/DN", "Seguridad Nacional / Defensa Nacionaol", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "AM", "DAA", "DAA", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "9", "9", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "SD 9", "SN", "AM", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "1", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "ECTS 9", "AE", "SD", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "C412", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "AM", "Aprendizaje de Máquinas", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "DAA", "Diseño y Análisis de Algoritmos", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SD", "Sistemas Distribuidos", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "AE", "Asignatura Electiva", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "SN/DN", "Seguridad Nacional / Defensa Nacionaol", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "AM", "DAA", "DAA", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "9", "9", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "SD 9", "SN", "AM", "SN", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "1", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "ECTS 9", "AE", "SD", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "9", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -1070,13 +1070,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -1084,7 +1084,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -1092,7 +1092,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -1122,30 +1122,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "M111",
-    'data': [["Grupo ", "M111", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "F", "IM", "IAM", "IA", "IA", "", "IAM", "Introducción al Análisis Matemático", 3, 0, 3, "", "Aula 8"], ["", "", "Aula 8", "Aula 8", "Aula 8", "Aula 8", "Aula 8", "", "IA", "Introducción al Álgebra", 3, 0, 3, "", "PA Aula"], ["", "", "", "", "", "", "", "", "GA", "Geometría Analítica", 2, 0, 2, "", ""], ["", "Turno 2", "PA", "IAM", "EF", "PA Aula", "IAM", "", "PA", "Programación y Algoritmos", 2, 0, 2, "", ""], ["", "", "Aula 8", "Aula 8", "SEDER", "Lab", "Aula 8", "", "IM", "Introducción a la Matemática", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "Turno 3", "GA", "GA", "IA", "GA 8", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "", "Aula 8", "Aula 8", "Aula 8", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "M111", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "F", "IM", "IAM", "IA", "IA", "", "IAM", "Introducción al Análisis Matemático", 3, 0, 3, "", "Aula 8"], ["", "", "Aula 8", "Aula 8", "Aula 8", "Aula 8", "Aula 8", "", "IA", "Introducción al Álgebra", 3, 0, 3, "", "PA Aula"], ["", "", "", "", "", "", "", "", "GA", "Geometría Analítica", 2, 0, 2, "", ""], ["", "Turno 2", "PA", "IAM", "EF", "PA Aula", "IAM", "", "PA", "Programación y Algoritmos", 2, 0, 2, "", ""], ["", "", "Aula 8", "Aula 8", "SEDER", "Lab", "Aula 8", "", "IM", "Introducción a la Matemática", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "F", "Filosofía", 2, 0, 2, "", ""], ["", "Turno 3", "GA", "GA", "IA", "GA 8", "", "", "EF", "Educación Física I", 2, 0, 2, "", ""], ["", "", "Aula 8", "Aula 8", "Aula 8", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I10', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M10',
         'O4:O5'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M10', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O5', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -1156,13 +1156,13 @@ sheets_cfg.append({
         {'row': 12, 'col': 13, 'value': "=SUM(K4:K10)"},
         {'row': 6, 'col': 14, 'value': "Total:"},
         {'row': 6, 'col': 15, 'value': "=COUNTA(O4:O5)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I10,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -1170,7 +1170,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O5,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -1178,7 +1178,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -1208,30 +1208,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "M211",
-    'data': [["Grupo ", "M211", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "FVV", "Funciones de Varias Variables", 4, 0, 4, "", "c 3"], ["", "", "", "", "", "", "", "", "CAL", "Complementos de Álgebra Lineal", 3, 0, 3, "", "c 7"], ["", "", "", "", "", "", "", "", "SP2", "Seminario de Problemas II", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "AE", "Asignatura Electiva I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EP", "Economía Política", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física III", 2, 0, 2, "", ""], ["", "Turno 3", "CAL", "CAL", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 3", "c 3", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "FVV", "FVV", "FVV", "CAL", "", "", "", "", "", "", "", "", ""], ["", "", "c 3", "c 3", "cp 3", "cp 3", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "EP", "EP", "FVV", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 7", "c 7", "cp 3", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "EF 4:45pm a 5:35pm", "SP", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "2", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "M211", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "FVV", "Funciones de Varias Variables", 4, 0, 4, "", "c 3"], ["", "", "", "", "", "", "", "", "CAL", "Complementos de Álgebra Lineal", 3, 0, 3, "", ""], ["", "", "", "", "", "", "", "", "SP2", "Seminario de Problemas II", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "AE", "Asignatura Electiva I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EP", "Economía Política", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "EF", "Educación Física III", 2, 0, 2, "", ""], ["", "Turno 3", "CAL", "CAL", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 3", "c 3", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "FVV", "FVV", "FVV", "CAL", "", "", "", "", "", "", "", "", ""], ["", "", "c 3", "c 3", "cp 3", "cp 3", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "EP", "EP", "FVV", "", "", "", "", "", "", "", "", "", ""], ["", "", "c 7", "c 7", "cp 3", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "EF 4:45pm a 5:35pm", "SP", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "2", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
-        'O4:O5'
+        'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
-        {'range': 'O4:O5', 'row_step': 1, 'col_step': 1}
+        {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -1240,15 +1240,15 @@ sheets_cfg.append({
         {'row': 10, 'col': 13, 'value': "=COUNTA(I4:I9)"},
         {'row': 11, 'col': 12, 'value': "Σ Frec:"},
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
-        {'row': 6, 'col': 14, 'value': "Total:"},
-        {'row': 6, 'col': 15, 'value': "=COUNTA(O4:O5)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 5, 'col': 14, 'value': "Total:"},
+        {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -1256,15 +1256,15 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
-            'formula': 'AND({celda}<>"", COUNTIF($O4:O5,{celda})=0)',
+            'rango': 'C4:G22',
+            'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
             'row_start_offset': 1
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -1294,30 +1294,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "M311",
-    'data': [["Grupo ", "M311", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "MN", "EDO", "MN", "FV", "FVC", "", "FVC", "Funciones de variable Compleja", 2, 0, 2, "", "Aula 4"], ["", "", "Aula 4", "Aula 4", "4", "C 4", "Aula 4", "", "IE", "Inferencia Estadística", 3, 0, 3, "", ""], ["", "", "", "", "", "", "", "", "EDO", "Ecuaciones Diferenciales Ordinarias", 3, 0, 3, "", ""], ["", "Turno 2", "FVC", "OM", "EDO", "IE", "EDO", "", "MN", "Matemática Numérica", 2, 0, 2, "", ""], ["", "", "Aula 4", "Aula 4", "Aula 4", "Aula 4", "Aula 4", "", "OM", "Optimización Matemática I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "IE", "TP", "IE", "OM", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 4", "Aula 4", "Aula 4", "Aula 4", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "M311", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "MN", "EDO", "MN", "FV", "FVC", "", "FVC", "Funciones de variable Compleja", 2, 0, 2, "", "Aula 4"], ["", "", "Aula 4", "Aula 4", "4", "C 4", "Aula 4", "", "IE", "Inferencia Estadística", 3, 0, 3, "", ""], ["", "", "", "", "", "", "", "", "EDO", "Ecuaciones Diferenciales Ordinarias", 3, 0, 3, "", ""], ["", "Turno 2", "FVC", "OM", "EDO", "IE", "EDO", "", "MN", "Matemática Numérica", 2, 0, 2, "", ""], ["", "", "Aula 4", "Aula 4", "Aula 4", "Aula 4", "Aula 4", "", "OM", "Optimización Matemática I", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "TP", "Teoría Política", 2, 0, 2, "", ""], ["", "Turno 3", "IE", "TP", "IE", "OM", "", "", "", "", "", "", "", "", ""], ["", "", "Aula 4", "Aula 4", "Aula 4", "Aula 4", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -1328,13 +1328,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -1342,7 +1342,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -1350,7 +1350,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
@@ -1380,30 +1380,30 @@ sheets_cfg.append({
 
 sheets_cfg.append({
     'title': "M411",
-    'data': [["Grupo ", "M411", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "MI", "Medida e Integración", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "GD", "Geometría Diferencial", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "HM", "Historia de la Matemática", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AO2", "Asignatura Optativa II", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AO3", "Asignatura Optativa III", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "GD", "HM", "MI", "AO", "", "", "", "", "", "", "", "", ""], ["", "", "4", "4", "4", "2", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "MI", "HM", "GD", "AO", "", "", "", "", "", "", "", "", ""], ["", "", "4", "4", "4", "3", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "ECTS 9 (Con", "GD", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "C4", "4", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
+    'data': [["Grupo ", "M411", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"], ["", "Turno 1", "", "", "", "", "", "", "MI", "Medida e Integración", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "GD", "Geometría Diferencial", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "HM", "Historia de la Matemática", 2, 0, 2, "", ""], ["", "Turno 2", "", "", "", "", "", "", "ECTS", "Estudios de Ciencia, Tecnología y Sociedad", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AO2", "Asignatura Optativa II", 2, 0, 2, "", ""], ["", "", "", "", "", "", "", "", "AO3", "Asignatura Optativa III", 2, 0, 2, "", ""], ["", "Turno 3", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 4", "GD", "HM", "MI", "AO", "", "", "", "", "", "", "", "", ""], ["", "", "4", "4", "4", "2", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 5", "MI", "HM", "GD", "AO", "", "", "", "", "", "", "", "", ""], ["", "", "4", "4", "4", "3", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "Turno 6", "ECTS 9 (Con", "GD", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "C4", "4", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]],
     'column_widths': {i: 14 for i in range(1, 16)},
     'range_styles': [
         {'range': 'I3:I9', 'style': {'bg_color': 'A9D18E'}},
-        {'range': 'B4:B21', 'style': {'bg_color': 'F4CCCC'}}
+        {'range': 'B4:B22', 'style': {'bg_color': 'F4CCCC'}}
     ],
     'table_ranges': [
         'B3:G3',
-        'B4:B21',
-        'C4:G21',
+        'B4:B22',
+        'C4:G22',
         'I3:M3',
         'I4:M9',
         'O4:O4'
     ],
-    'horario_data_range': 'C4:G21',
+    'horario_data_range': 'C4:G22',
     'table_block_sizes': [
         {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},
-        {'range': 'B4:B21', 'row_step': 3, 'col_step': 1},
-        {'range': 'C4:G21', 'row_step': 3, 'col_step': 1},
+        {'range': 'B4:B22', 'row_step': 3, 'col_step': 1},
+        {'range': 'C4:G22', 'row_step': 3, 'col_step': 1},
         {'range': 'I3:M3', 'row_step': 1, 'col_step': 1},
         {'range': 'I4:M9', 'row_step': 1, 'col_step': 1},
         {'range': 'O4:O4', 'row_step': 1, 'col_step': 1}
     ],
-    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B13:B15", "B16:B18", "B19:B21"],
+    'merge_ranges': ["B4:B6", "B7:B9", "B10:B12", "B14:B16", "B17:B19", "B20:B22"],
     'table_borders': True,
     'border_color': '4F81BD',
     'border_style': 'medium',
@@ -1414,13 +1414,13 @@ sheets_cfg.append({
         {'row': 11, 'col': 13, 'value': "=SUM(K4:K9)"},
         {'row': 5, 'col': 14, 'value': "Total:"},
         {'row': 5, 'col': 15, 'value': "=COUNTA(O4:O4)"},
-        {'row': 22, 'col': 6, 'value': "Ocupados:"},
-        {'row': 22, 'col': 7, 'value': "=COUNTA(C4:G21)/3"}
+        {'row': 23, 'col': 6, 'value': "Ocupados:"},
+        {'row': 23, 'col': 7, 'value': "=COUNTA(C4:G22)/3"}
     ],
     'conditional_format_rules': [
         {
             'tipo': 'filas_pares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($I4:I9,{celda})=0)',
             'color': 'F4A460',
             'row_step': 3,
@@ -1428,7 +1428,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'filas_impares',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", COUNTIF($O4:O4,{celda})=0)',
             'color': 'FFD700',
             'row_step': 3,
@@ -1436,7 +1436,7 @@ sheets_cfg.append({
         },
         {
             'tipo': 'pares_con_siguiente',
-            'rango': 'C4:G21',
+            'rango': 'C4:G22',
             'formula': 'AND({celda}<>"", {celda_siguiente}="")',
             'color': 'FF0000',
             'row_step': 3,
