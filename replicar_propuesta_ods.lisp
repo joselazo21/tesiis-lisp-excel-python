@@ -663,108 +663,22 @@
 (defmethod generate-code ((node clase-hoja)
   (lang clase-output-python-config)
   (stream t))
-  (let* ((horario-tabla (horario node))
-    (asig-tabla (asignaturas node))
-    (asig-row-step (or (and asig-tabla (alto-celda asig-tabla)) 1))
-    (asig-col-step (or (and asig-tabla (ancho-celda asig-tabla)) 1))
-    (horario-row-step (or (alto-celda horario-tabla) 1))
-    (horario-col-step (or (ancho-celda horario-tabla) 1))
-    (sheet-border-color (or (border-color horario-tabla)
-          (group-default-border-color lang)))
-    (sheet-border-style (or (border-style horario-tabla)
-          (group-default-border-style lang)))
-    ;; Calcular rangos y datos dinámicos primero
-    (horario-rows (contenido-de-la-tabla horario-tabla))
-    (asig-rows (if asig-tabla (contenido-de-la-tabla asig-tabla) '()))
-    (aulas-unicas (extraer-aulas-unicas horario-rows))
-    ;; Calcular filas finales dinámicamente
-    (total-horario-rows (length (nombres-filas horario-tabla)))
-    (cantidad-turnos (max 1 (floor total-horario-rows horario-row-step)))
-    (expected-turno4-index (* 3 horario-row-step))
-    (actual-turno4-index (or (position "Turno 4" (nombres-filas horario-tabla) :test #'string=)
-                             expected-turno4-index))
-    (post-third-offset (max 0 (- actual-turno4-index expected-turno4-index)))
-    (horario-end-row (+ 3 total-horario-rows))
-    (asig-height (max 1 (length asig-rows)))
-    (aulas-height (max 1 (length aulas-unicas)))
-    (asig-end-row (+ 3 asig-height))
-    (aulas-end-row (+ 3 aulas-height))
-    (dynamic-asig-range (format nil "I4:M~a" asig-end-row))
-    (dynamic-aulas-range (format nil "O4:O~a" aulas-end-row))
-    (dynamic-asig-header (format nil "I3:M~a" (if (> asig-height 0) 3 3)))
-    (dynamic-turnos-range (format nil "B4:B~a" horario-end-row))
-    (dynamic-horario-range (format nil "C4:G~a" horario-end-row))
-     (block-ranges (group-table-block-ranges lang))
-     (horario-range-styles (or (range-styles horario-tabla) '()))
-     (dynamic-asig-abrev-style-range (format nil "I3:I~a" asig-end-row))
-     (dynamic-turnos-style-range (format nil "B4:B~a" horario-end-row))
-     (extra-range-styles (list (list dynamic-asig-abrev-style-range *color-verde-asignaturas*)
-                               (list dynamic-turnos-style-range *color-rojo-turnos*)))
-     (all-range-styles extra-range-styles)
-     (dynamic-merge-ranges
-        (loop for turno from 1 to cantidad-turnos
-              for offset = (if (>= turno 4) post-third-offset 0)
-              for start-row = (+ 4 (* (1- turno) horario-row-step) offset)
-              for end-row = (+ start-row (1- horario-row-step))
-              collect (format nil "B~a:B~a" start-row end-row)))
-    (data (construir-filas-hoja-grupo node lang))
-    (column-count (length (first data))))
-     (format stream "sheets_cfg.append({~%")
-     (format stream "    'title': ~s,~%" (grupo node))
-     (format stream "    'data': ")
-     (write-python-value data stream)
-     (format stream ",~%")
-     (format stream "    'column_widths': {i: ~a for i in range(1, ~a)},~%"
-       (group-column-width lang)
-       (1+ column-count))
-     (write-python-range-styles all-range-styles stream)
-     (format stream "    'table_ranges': [~%")
-     (format stream "        'B3:G3',~%")
-     (format stream "        '~a',~%" dynamic-turnos-range)
-     (format stream "        '~a',~%" dynamic-horario-range)
-    (format stream "        '~a',~%" dynamic-asig-header)
-    (format stream "        '~a',~%" dynamic-asig-range)
-    (format stream "        '~a'~%" dynamic-aulas-range)
-     (format stream "    ],~%")
-     (format stream "    'horario_data_range': '~a',~%" dynamic-horario-range)
-     (format stream "    'table_block_sizes': [~%")
-    (format stream "        {'range': 'B3:G3', 'row_step': 1, 'col_step': 1},~%")
-    (format stream "        {'range': '~a', 'row_step': ~a, 'col_step': 1},~%" dynamic-turnos-range horario-row-step)
-    (format stream "        {'range': '~a', 'row_step': ~a, 'col_step': ~a},~%" dynamic-horario-range horario-row-step horario-col-step)
-    (format stream "        {'range': '~a', 'row_step': 1, 'col_step': 1},~%" dynamic-asig-header)
-    (format stream "        {'range': '~a', 'row_step': ~a, 'col_step': ~a},~%" dynamic-asig-range asig-row-step asig-col-step)
-    (format stream "        {'range': '~a', 'row_step': 1, 'col_step': 1}~%" dynamic-aulas-range)
-    (format stream "    ],~%")
-    (format stream "    'merge_ranges': ")
-    (write-python-value dynamic-merge-ranges stream)
-    (format stream ",~%")
-    (format stream "    'table_borders': ~a,~%"
-      (python-bool (group-table-borders lang)))
-    (format stream "    'border_color': '~a',~%" sheet-border-color)
-    (format stream "    'border_style': '~a',~%" sheet-border-style)
-     ;; Generar fórmulas de celdas configurables desde Lisp
-      (generar-formulas-hoja stream
-                             4              ; asig-start
-                             asig-end-row   ; asig-end
-                             4              ; aulas-start
-                             aulas-end-row  ; aulas-end
-                             4              ; horario-start
-                             horario-end-row ; horario-end
-                             horario-row-step)
-    ;; Generar reglas de formato condicional configurables desde Lisp
-    (let ((asig-abrev-range (format nil "I4:I~a" asig-end-row)))
-      (generar-reglas-formato-condicional stream
-                                          dynamic-horario-range  ; rango del horario
-                                          asig-abrev-range       ; rango abreviaturas
-                                          dynamic-aulas-range    ; rango aulas
-                                          "J"                    ; columna asignaturas
-                                          4                      ; fila inicio asignaturas
-                                          asig-end-row           ; fila fin asignaturas
-                                          "L"                    ; columna Faltan
-                                          "K"                    ; columna Frec
-                                          "M"                    ; columna Asignadas
-                                          horario-row-step))
-     (format stream "~%})~2%")))
+  (let* ((group (grupo node))
+         (horario-tabla (horario node))
+         (asig-tabla (asignaturas node))
+         (horario-data (if horario-tabla
+                           (contenido-de-la-tabla horario-tabla)
+                           '()))
+         (asig-data (if asig-tabla
+                        (contenido-de-la-tabla asig-tabla)
+                        '())))
+    (format stream "grupos.append(~s)~%" group)
+    (format stream "horarios_por_grupo[~s] = " group)
+    (write-python-value horario-data stream)
+    (format stream "~%")
+    (format stream "asignaturas_por_grupo[~s] = " group)
+    (write-python-value asig-data stream)
+    (format stream "~2%")))
 
 (defun construir-bloques-aulas (cantidad-turnos)
   "Construye bloques dinámicos de Aulas: (nombre fila-inicio fila-fin col-grupo fila-header)."
@@ -858,95 +772,48 @@
 (defmethod generate-code ((node clase-hoja-aulas)
                           (lang clase-output-python-config)
                           (stream t))
-  (let* ((data (construir-filas-aulas node lang))
-         (column-count (length (first data)))
-         (dias (list (lunes node)
-                     (martes node)
-                     (miercoles node)
-                     (jueves node)
-                     (viernes node)))
-         (filas-por-dia (length (nombres-filas (first dias))))
-         (dynamic-table-ranges '())
-         (dynamic-range-styles '())
-         (row-offset 3))
-    ;; Calcular rangos dinámicos para cada día
-    (loop for dia in dias
-          for dia-idx from 0
-          do
-             (let* ((dia-start-row row-offset)
-                    (dia-end-row (+ row-offset filas-por-dia))
-                    (dia-table-range (format nil "B~a:L~a" dia-start-row dia-end-row)))
-               (push dia-table-range dynamic-table-ranges)
-               (push (list (format nil "B~a:L~a" dia-start-row dia-start-row) *color-rojo-aulas*) dynamic-range-styles)
-               ;; Avanzar: header + filas de datos + fila separadora + header del siguiente día
-               (setf row-offset (+ dia-end-row (if (< dia-idx 4) 2 0)))))
-     ;; Generar fórmulas dinámicas para celdas C4:L17
-      (let* ((grupos (grupos node))
-             (horario-row-step (max 1 (or (horario-alto-celda lang) 1)))
-             (cantidad-turnos (max 1 (or (horario-cantidad-turnos lang)
-                                         (length (aulas-row-names lang)))))
-             (fernando-formulas (when grupos
-                                 (generar-formulas-aulas grupos
-                                                         :horario-row-step horario-row-step
-                                                         :cantidad-turnos cantidad-turnos))))
-      (format stream "sheets_cfg.append({~%")
-      (format stream "    'title': ~s,~%" (aulas-title lang))
-      (format stream "    'data': ")
-      (write-python-value data stream)
-      (format stream ",~%")
-      (format stream "    'column_widths': {i: ~a for i in range(1, ~a)},~%"
-              (aulas-column-width lang)
-              (1+ column-count))
-      ;; Estilos de rango dinámicos
-      (let* ((reversed-styles (reverse dynamic-range-styles))
-             (num-styles (length reversed-styles)))
-        (format stream "    'range_styles': [~%")
-        (loop for cfg in reversed-styles
-              for idx from 0
-              do
-                (destructuring-bind (rango color) cfg
-                  (format stream "        {'range': '~a', 'style': {'bg_color': '~a'}}~a~%"
-                          rango
-                          color
-                          (if (< idx (1- num-styles)) "," ""))))
-        (format stream "    ],~%"))
-      (format stream "    'header_style': ")
-      (write-python-style (aulas-header-style lang) stream)
-      (format stream ",~%")
-      (format stream "    'table_ranges': ")
-      (write-python-value (reverse dynamic-table-ranges) stream)
-      (format stream ",~%")
-      (format stream "    'table_borders': ~a,~%"
-              (python-bool (aulas-table-borders lang)))
-      (format stream "    'border_color': '~a',~%" (aulas-border-color lang))
-      (format stream "    'border_style': '~a'~%" (aulas-border-style lang))
-      ;; Inyectar fórmulas si hay grupos
-      (when fernando-formulas
-        (format stream ",~%")
-        (write-python-fernando-formulas fernando-formulas stream))
-      (format stream "})~2%"))))
+  (let* ((day-map (list
+                    (list "Lunes" (lunes node))
+                    (list "Martes" (martes node))
+                    (list "Miércoles" (miercoles node))
+                    (list "Jueves" (jueves node))
+                    (list "Viernes" (viernes node))))
+         (grupos-aulas (mapcar #'string (grupos node))))
+    (dolist (entry day-map)
+      (let* ((day-name (first entry))
+             (tabla-dia (second entry))
+             (contenido (if tabla-dia
+                            (contenido-de-la-tabla tabla-dia)
+                            '())))
+        (format stream "aulas_por_dia[~s] = " day-name)
+        (write-python-value contenido stream)
+        (format stream "~%")))
+    (when grupos-aulas
+      (format stream "if not grupos: grupos = ")
+      (write-python-value grupos-aulas stream)
+      (format stream "~%"))
+    (format stream "~%")))
 
 (defmethod generate-code ((node clase-libro)
           (lang clase-output-python-config)
           (stream t))
-  (format stream "from ~a import ~a~2%"
-      (python-module lang)
-      (python-function lang))
-  (format stream "sheets_cfg = []~2%")
+  (format stream "from ~a import generar_excel_desde_parametros~2%"
+      (python-module lang))
+  (format stream "grupos = []~%")
+  (format stream "horarios_por_grupo = {}~%")
+  (format stream "asignaturas_por_grupo = {}~%")
+  (format stream "aulas_por_dia = {}~2%")
   (loop for h in (hojas node)
     do (generate-code h lang stream))
-  ;; Generar fórmulas dinámicas de Faltan y Asignadas por fila para cada hoja de grupo
-  (generar-formulas-dinamicas-hoja stream
-                                    4              ; asig-start
-                                    9              ; asig-end (4 + 6 filas de asignaturas - 1)
-                                    "K"            ; columna Frec
-                                    "L"            ; columna Faltan
-                                    "M"            ; columna Asignadas
-                                    "I")           ; columna Abrev
-  (format stream "config_excel = {'sheets': sheets_cfg}~2%")
-  (format stream "~a(config_excel, '~a')~%"
-      (python-function lang)
-      (output-excel-file lang)))
+  (format stream "generar_excel_desde_parametros(~%")
+  (format stream "    filename=~s,~%" (output-excel-file lang))
+  (format stream "    grupos=grupos,~%")
+  (format stream "    horarios_por_grupo=horarios_por_grupo,~%")
+  (format stream "    asignaturas_por_grupo=asignaturas_por_grupo,~%")
+  (format stream "    aulas_por_dia=aulas_por_dia,~%")
+  (format stream "    turnos=~a,~%" (or (horario-cantidad-turnos lang) 6))
+  (format stream "    horario_row_step=~a~%" (max 1 (or (horario-alto-celda lang) 1)))
+  (format stream ")~%"))
 
 (defun extraer-aulas-unicas (horario-data &optional (row-step 2))
   "Extrae las aulas únicas del horario (filas pares son asignaturas, impares son aulas).

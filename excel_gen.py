@@ -113,11 +113,12 @@ formulas : list[dict]  (opcional)
 FÓRMULAS COMPLEJAS (Cross-Sheet)
 ───────────────────────────────────────────────────────────────────────
 
-fernando_formulas : list[dict]  (opcional)
-    Fórmulas complejas referenciadas por notación Excel (A1, C4, etc.).
-    Diseñado para fórmulas que cruzan múltiples hojas.
+formulas_generator : generator  (opcional)
+    Generador que yield dict con fórmulas complejas referenciadas por
+    notación Excel (A1, C4, etc.). Diseñado para fórmulas que cruzan
+    múltiples hojas.
 
-    Cada dict tiene:
+    Cada dict yield debe tener:
         cell    : str — referencia Excel ("C4")
         formula : str — la fórmula (puede estar en español o inglés)
         # o alternativamente:
@@ -133,15 +134,13 @@ fernando_formulas : list[dict]  (opcional)
         • Separadores ; → ,
 
     Ejemplo:
-        "fernando_formulas": [
-            {
+        def mi_generador():
+            yield {
                 "cell": "C4",
-                "formula": "=SUBSTITUTE(TRIM(CONCAT("
-                    "IF(C111!$C$5=C$3,C111!$B$1 & \" \", \"\"),"
-                    "IF(C121!$C$5=C$3,C121!$B$1 & \" \", \"\"))), "
-                    "\" \", \",\")"
+                "formula": "=SUBSTITUTE(TRIM(CONCAT(...)))"
             }
-        ]
+
+        "formulas_generator": mi_generador()
 
 ───────────────────────────────────────────────────────────────────────
 COLUMNAS
@@ -379,6 +378,9 @@ from openpyxl.utils import get_column_letter
 from openpyxl.utils.cell import range_boundaries
 from openpyxl.formatting.rule import FormulaRule
 import re
+import os
+import argparse
+from generador_formulas import build_aulas_fernando_formulas
 
 
 # =============================================================================
@@ -809,7 +811,12 @@ def _inject_fernando_formulas(ws, sheet_cfg: dict) -> None:
     """
     Etapa 4: Inyecta fórmulas complejas con normalización automática.
 
-    Lee sheet_cfg['fernando_formulas'].
+    Args:
+        ws: Worksheet de openpyxl
+        sheet_cfg: Configuración de la hoja (debe tener 'formulas_generator')
+
+    Usa sheet_cfg['formulas_generator'] para obtener las fórmulas.
+    Esto permite que cada hoja tenga su propio generador de fórmulas externo.
 
     Normalizaciones aplicadas:
         1. [$C111.$C$9]     → C111!$C$9   (referencias ODS)
@@ -933,9 +940,13 @@ def _inject_fernando_formulas(ws, sheet_cfg: dict) -> None:
 
         return f
 
-    formulas = sheet_cfg.get('fernando_formulas', [])
+    # Obtener fórmulas del generador de la hoja
+    formulas_iter = sheet_cfg.get('formulas_generator')
+    if formulas_iter is None:
+        return  # No hay generador, no hacer nada
+
     count = 0
-    for formula_def in formulas:
+    for formula_def in formulas_iter:
         cell_ref = formula_def.get('cell')
         formula = formula_def.get('formula') or formula_def.get('excel')
 
@@ -972,8 +983,16 @@ def generate_excel(config: dict, filename: str) -> None:
         config: Diccionario con clave "sheets" (lista de configuraciones).
         filename: Ruta del archivo de salida.
 
+    Cada sheet_cfg puede tener su propio 'formulas_generator' opcional.
+    Si sheet_cfg tiene 'formulas_generator', se usa en lugar de 'fernando_formulas'.
+
     Ver docstring del módulo para referencia completa de configuración.
     """
+    # Crear directorio si no existe
+    directory = os.path.dirname(filename)
+    if directory and not os.path.exists(directory):
+        os.makedirs(directory)
+
     wb = Workbook()
     wb.remove(wb.active)
 
@@ -1002,747 +1021,246 @@ generar_excel_personalizado = generate_excel
 
 
 # =============================================================================
-# API PARAMETRICA (SIN JSON MANUAL DESDE LISP)
-# =============================================================================
-
-DEFAULT_DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
-DEFAULT_AULAS_CATALOGO = [f"Aula {i}" for i in range(1, 10)] + ["Lab"]
-
-
-def _safe_text(value) -> str:
-    if value is None:
-        return ""
-    return str(value)
-
-
-def _build_row_names(turnos: int, row_step: int) -> list:
-    row_names = []
-    for turno in range(1, max(1, turnos) + 1):
-        row_names.append(f"Turno {turno}")
-        row_names.extend([""] * max(0, row_step - 1))
-        if turno == 3 and turno < turnos:
-            row_names.append("")
-    return row_names
-
-
-def _build_dynamic_merge_ranges(turnos: int, row_step: int) -> list:
-    ranges = []
-    for turno in range(1, max(1, turnos) + 1):
-        offset = 1 if (turno >= 4 and turnos >= 4) else 0
-        start_row = 4 + ((turno - 1) * row_step) + offset
-        end_row = start_row + max(0, row_step - 1)
-        ranges.append(f"B{start_row}:B{end_row}")
-    return ranges
-
-
-def _normalize_subject_row(item) -> list:
-    if isinstance(item, dict):
-        abrev = item.get("abrev", item.get("abreviatura", ""))
-        nombre = item.get("asignatura", item.get("nombre", ""))
-        frec = item.get("frec", item.get("frecuencia", ""))
-        faltan = item.get("faltan", "")
-        asignadas = item.get("asignadas", "")
-        return [abrev, nombre, frec, faltan, asignadas]
-
-    if isinstance(item, (list, tuple)):
-        values = list(item[:5])
-        while len(values) < 5:
-            values.append("")
-        return values
-
-    raise ValueError(
-        "Formato de asignatura invalido. Usa dict o tuple/list con al menos (abrev, nombre, frec)."
-    )
-
-
-def _normalize_horario_rows(horario_data, expected_rows: int, day_count: int) -> list:
-    source = list(horario_data or [])
-    normalized = []
-
-    for i in range(expected_rows):
-        row = source[i] if i < len(source) else []
-        row_values = list(row) if isinstance(row, (list, tuple)) else []
-        row_values = row_values[:day_count] + [""] * max(0, day_count - len(row_values))
-        normalized.append([_safe_text(v) for v in row_values])
-
-    return normalized
-
-
-def _extract_unique_aulas(horario_rows: list, row_step: int) -> list:
-    seen = set()
-    aulas = []
-    offset = 1 if row_step > 1 else 0
-
-    for row_idx in range(offset, len(horario_rows), max(1, row_step)):
-        row = horario_rows[row_idx]
-        for raw_value in row:
-            value = _safe_text(raw_value).strip()
-            if value and value not in seen:
-                seen.add(value)
-                aulas.append(value)
-
-    return aulas
-
-
-def construir_hoja_grupo_desde_parametros(
-    grupo: str,
-    horario_data,
-    asignaturas_data=None,
-    turnos: int = 6,
-    row_step: int = 3,
-    days=None,
-    aulas_catalogo=None,
-    column_width: float = 14,
-    border_color: str = "4F81BD",
-    border_style: str = "medium",
-) -> dict:
-    days = list(days or DEFAULT_DAYS)
-    aulas_catalogo = list(aulas_catalogo or DEFAULT_AULAS_CATALOGO)
-
-    day_start_col = 3
-    day_end_col = day_start_col + len(days) - 1
-    day_end_col_letter = get_column_letter(day_end_col)
-
-    row_names = _build_row_names(turnos, row_step)
-    total_horario_rows = len(row_names)
-    horario_end_row = 3 + total_horario_rows
-
-    horario_rows = _normalize_horario_rows(horario_data, total_horario_rows, len(days))
-    normalized_subjects = [_normalize_subject_row(s) for s in (asignaturas_data or [])]
-
-    asig_height = max(1, len(normalized_subjects))
-    asig_end_row = 3 + asig_height
-    dynamic_asig_range = f"I4:M{asig_end_row}"
-    asig_abrev_range = f"$I4:I{asig_end_row}"
-
-    aulas_detectadas = _extract_unique_aulas(horario_rows, row_step)
-    if not aulas_detectadas:
-        aulas_detectadas = aulas_catalogo
-    aulas_lateral = aulas_detectadas + [""] * max(0, total_horario_rows - len(aulas_detectadas))
-    aulas_lateral = aulas_lateral[:total_horario_rows]
-
-    aulas_end_row = 3 + max(1, len([a for a in aulas_lateral if _safe_text(a).strip()]))
-    dynamic_aulas_range = f"O4:O{aulas_end_row}"
-    aulas_range_cf = f"$O4:O{aulas_end_row}"
-
-    has_separator = "Turno 4" in row_names
-    horario_ranges = []
-    turnos_ranges = []
-    separator_range = None
-
-    if has_separator:
-        expected_turno4_index = 3 * row_step
-        actual_turno4_index = row_names.index("Turno 4")
-        pre_end_row = 3 + expected_turno4_index
-        post_start_row = 4 + actual_turno4_index
-        separator_row = 4 + expected_turno4_index
-
-        turnos_ranges = [f"B4:B{pre_end_row}", f"B{post_start_row}:B{horario_end_row}"]
-        horario_ranges = [
-            f"C4:{day_end_col_letter}{pre_end_row}",
-            f"C{post_start_row}:{day_end_col_letter}{horario_end_row}",
-        ]
-        separator_range = f"B{separator_row}:{day_end_col_letter}{separator_row}"
-    else:
-        turnos_ranges = [f"B4:B{horario_end_row}"]
-        horario_ranges = [f"C4:{day_end_col_letter}{horario_end_row}"]
-
-    data = [
-        ["Grupo ", grupo] + [""] * 13,
-        [""] * 15,
-        ["", "", *days, "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"],
-    ]
-
-    for idx in range(total_horario_rows):
-        asig_row = normalized_subjects[idx] if idx < len(normalized_subjects) else ["", "", "", "", ""]
-        data.append([
-            "",
-            row_names[idx],
-            *horario_rows[idx],
-            "",
-            *asig_row,
-            "",
-            _safe_text(aulas_lateral[idx]),
-        ])
-
-    formulas = [
-        {"row": asig_end_row + 1, "col": 12, "value": "Total:"},
-        {"row": asig_end_row + 1, "col": 13, "value": f"=COUNTA(I4:I{asig_end_row})"},
-        {"row": asig_end_row + 2, "col": 12, "value": "Σ Frec:"},
-        {"row": asig_end_row + 2, "col": 13, "value": f"=SUM(K4:K{asig_end_row})"},
-        {"row": aulas_end_row + 1, "col": 14, "value": "Total:"},
-        {"row": aulas_end_row + 1, "col": 15, "value": f"=COUNTA(O4:O{aulas_end_row})"},
-        {"row": horario_end_row + 1, "col": 6, "value": "Ocupados:"},
-        {
-            "row": horario_end_row + 1,
-            "col": 7,
-            "value": f"=COUNTA(C4:{day_end_col_letter}{horario_end_row})/{max(1, row_step)}",
-        },
-    ]
-
-    for idx, asig in enumerate(normalized_subjects, start=4):
-        abrev = _safe_text(asig[0]).strip()
-        if not abrev:
-            continue
-        formulas.append({
-            "row": idx,
-            "col": 13,
-            "value": f"=COUNTIF(C4:{day_end_col_letter}{horario_end_row},I{idx})",
-        })
-        formulas.append({"row": idx, "col": 12, "value": f"=K{idx}-M{idx}"})
-
-    conditional_format_rules = []
-    for horario_range in horario_ranges:
-        conditional_format_rules.extend([
-            {
-                "tipo": "filas_pares",
-                "rango": horario_range,
-                "formula": f'AND({{celda}}<>"", COUNTIF({asig_abrev_range},{{celda}})=0)',
-                "color": "F4A460",
-                "row_step": row_step,
-                "row_start_offset": 0,
-            },
-            {
-                "tipo": "filas_impares",
-                "rango": horario_range,
-                "formula": f'AND({{celda}}<>"", COUNTIF({aulas_range_cf},{{celda}})=0)',
-                "color": "FFD700",
-                "row_step": row_step,
-                "row_start_offset": 1,
-            },
-            {
-                "tipo": "pares_con_siguiente",
-                "rango": horario_range,
-                "formula": 'AND({celda}<>"", {celda_siguiente}="")',
-                "color": "FF0000",
-                "row_step": row_step,
-                "next_offset": 1 if row_step > 1 else 0,
-                "aplicar_a": "siguiente",
-            },
-        ])
-
-    conditional_format_rules.extend([
-        {
-            "tipo": "rango",
-            "rango": f"J4:J{asig_end_row}",
-            "formula": 'AND({celda}<>"", M{fila}>0, L{fila}=0)',
-            "color": "00FF00",
-        },
-        {
-            "tipo": "rango",
-            "rango": f"J4:J{asig_end_row}",
-            "formula": 'AND({celda}<>"", M{fila}>0, L{fila}<0)',
-            "color": "FF6B6B",
-        },
-        {
-            "tipo": "rango",
-            "rango": f"J4:J{asig_end_row}",
-            "formula": 'AND({celda}<>"", M{fila}>0, L{fila}>0, L{fila}<K{fila})',
-            "color": "FFA500",
-        },
-    ])
-
-    table_ranges = ["B3:" + day_end_col_letter + "3", *turnos_ranges]
-    if separator_range:
-        table_ranges.append(separator_range)
-    table_ranges.extend([*horario_ranges, "I3:M3", dynamic_asig_range, dynamic_aulas_range])
-
-    table_block_sizes = [
-        {"range": f"B3:{day_end_col_letter}3", "row_step": 1, "col_step": 1},
-        *[{"range": r, "row_step": row_step, "col_step": 1} for r in turnos_ranges],
-        *[{"range": r, "row_step": row_step, "col_step": 1} for r in horario_ranges],
-        {"range": "I3:M3", "row_step": 1, "col_step": 1},
-        {"range": dynamic_asig_range, "row_step": 1, "col_step": 1},
-        {"range": dynamic_aulas_range, "row_step": 1, "col_step": 1},
-    ]
-    if separator_range:
-        table_block_sizes.insert(1 + len(turnos_ranges), {"range": separator_range, "row_step": 1, "col_step": 1})
-
-    range_styles = [
-        {"range": f"I3:I{asig_end_row}", "style": {"bg_color": "A9D18E"}},
-        *[{"range": r, "style": {"bg_color": "F4CCCC"}} for r in turnos_ranges],
-    ]
-
-    return {
-        "title": grupo,
-        "data": data,
-        "column_widths": {i: column_width for i in range(1, 16)},
-        "range_styles": range_styles,
-        "table_ranges": table_ranges,
-        "horario_data_range": f"C4:{day_end_col_letter}{horario_end_row}",
-        "table_block_sizes": table_block_sizes,
-        "merge_ranges": _build_dynamic_merge_ranges(turnos, row_step),
-        "table_borders": True,
-        "border_color": border_color,
-        "border_style": border_style,
-        "formulas": formulas,
-        "conditional_format_rules": conditional_format_rules,
-    }
-
-
-def _build_turno_labels(turnos: int) -> list:
-    base = ["1ro", "2do", "3ro", "4to", "5to", "6to"]
-    if turnos <= len(base):
-        return base[:turnos]
-    return base + [f"Turno {i}" for i in range(7, turnos + 1)]
-
-
-def _build_day_blocks(turnos: int, day_count: int) -> list:
-    blocks = []
-    row_offset = 3
-    for day_idx in range(day_count):
-        header_row = row_offset
-        row_start = header_row + 1
-        row_end = row_start + turnos - 1
-        group_col_letter = get_column_letter(3 + day_idx)
-        blocks.append((header_row, row_start, row_end, group_col_letter))
-        row_offset = row_end + (2 if day_idx < day_count - 1 else 0)
-    return blocks
-
-
-def _build_aulas_formula(groups: list, group_cell_ref: str, header_ref: str) -> str:
-    parts = [
-        f'IF({group}!{group_cell_ref}={header_ref},{group}!$B$1 & " ","")'
-        for group in groups
-    ]
-    return f'=SUBSTITUTE(TRIM(CONCAT({",".join(parts)}))," ",",")'
-
-
-def _build_aulas_fernando_formulas(
-    groups: list,
-    turnos: int,
-    row_step: int,
-    day_count: int,
-    aulas_count: int,
-) -> list:
-    if not groups:
-        return []
-
-    formulas = []
-    aula_offset = 1 if row_step > 1 else 0
-
-    for header_row, row_start, row_end, group_col in _build_day_blocks(turnos, day_count):
-        for aulas_col in range(3, 3 + aulas_count):
-            aulas_col_letter = get_column_letter(aulas_col)
-            header_ref = f"{aulas_col_letter}${header_row}"
-
-            for aulas_row in range(row_start, row_end + 1):
-                turno_index = aulas_row - row_start
-                turno_offset = 1 if turno_index >= 3 and turnos >= 4 else 0
-                group_row = 4 + aula_offset + (turno_index * row_step) + turno_offset
-                group_cell_ref = f"${group_col}${group_row}"
-                cell_ref = f"{aulas_col_letter}{aulas_row}"
-
-                formulas.append({
-                    "cell": cell_ref,
-                    "formula": _build_aulas_formula(groups, group_cell_ref, header_ref),
-                })
-
-    return formulas
-
-
-def construir_hoja_aulas_desde_parametros(
-    grupos: list,
-    aulas_por_dia=None,
-    turnos: int = 6,
-    row_step: int = 3,
-    days=None,
-    aulas_catalogo=None,
-    column_width: float = 12,
-    border_color: str = "B3B3B3",
-    border_style: str = "thick",
-) -> dict:
-    days = list(days or DEFAULT_DAYS)
-    aulas_catalogo = list(aulas_catalogo or DEFAULT_AULAS_CATALOGO)
-    aulas_por_dia = aulas_por_dia or {}
-
-    aulas_header_labels = []
-    for idx, aula_name in enumerate(aulas_catalogo, start=1):
-        name = _safe_text(aula_name)
-        if name.lower().startswith("aula "):
-            aulas_header_labels.append(name.split(" ", 1)[1])
-        elif name.lower() == "laboratorio":
-            aulas_header_labels.append("Lab")
-        else:
-            aulas_header_labels.append(name if name else str(idx))
-
-    turno_labels = _build_turno_labels(turnos)
-    data = [[""] * (2 + len(aulas_catalogo)), ["", "", *aulas_header_labels]]
-
-    for idx, day in enumerate(days):
-        day_rows = list(aulas_por_dia.get(day, []))
-        data.append(["", day, *aulas_catalogo])
-
-        for turno_idx in range(turnos):
-            row = day_rows[turno_idx] if turno_idx < len(day_rows) else []
-            row_values = list(row) if isinstance(row, (list, tuple)) else []
-            row_values = row_values[:len(aulas_catalogo)] + [""] * max(0, len(aulas_catalogo) - len(row_values))
-            data.append(["", turno_labels[turno_idx], *[_safe_text(v) for v in row_values]])
-
-        if idx < len(days) - 1:
-            data.append([""] * (2 + len(aulas_catalogo)))
-
-    end_col_letter = get_column_letter(2 + len(aulas_catalogo))
-    table_ranges = [
-        f"B{header_row}:{end_col_letter}{row_end}"
-        for header_row, _row_start, row_end, _group_col in _build_day_blocks(turnos, len(days))
-    ]
-    range_styles = [
-        {"range": f"B{header_row}:{end_col_letter}{header_row}", "style": {"bg_color": "E6B8AF"}}
-        for header_row, _row_start, _row_end, _group_col in _build_day_blocks(turnos, len(days))
-    ]
-
-    return {
-        "title": "Aulas",
-        "data": data,
-        "column_widths": {i: column_width for i in range(1, 3 + len(aulas_catalogo))},
-        "range_styles": range_styles,
-        "table_ranges": table_ranges,
-        "table_borders": True,
-        "border_color": border_color,
-        "border_style": border_style,
-        "fernando_formulas": _build_aulas_fernando_formulas(
-            groups=list(grupos),
-            turnos=turnos,
-            row_step=row_step,
-            day_count=len(days),
-            aulas_count=len(aulas_catalogo),
-        ),
-    }
-
-
-def construir_config_desde_parametros(
-    grupos,
-    horarios_por_grupo,
-    asignaturas_por_grupo=None,
-    aulas_por_dia=None,
-    turnos: int = 6,
-    horario_row_step: int = 3,
-    days=None,
-    aulas_catalogo=None,
-) -> dict:
-    grupos = list(grupos or [])
-    horarios_por_grupo = horarios_por_grupo or {}
-    asignaturas_por_grupo = asignaturas_por_grupo or {}
-
-    if not grupos:
-        grupos = list(horarios_por_grupo.keys())
-
-    sheets = []
-    for grupo in grupos:
-        sheets.append(construir_hoja_grupo_desde_parametros(
-            grupo=grupo,
-            horario_data=horarios_por_grupo.get(grupo, []),
-            asignaturas_data=asignaturas_por_grupo.get(grupo, []),
-            turnos=turnos,
-            row_step=horario_row_step,
-            days=days,
-            aulas_catalogo=aulas_catalogo,
-        ))
-
-    sheets.append(construir_hoja_aulas_desde_parametros(
-        grupos=grupos,
-        aulas_por_dia=aulas_por_dia,
-        turnos=turnos,
-        row_step=horario_row_step,
-        days=days,
-        aulas_catalogo=aulas_catalogo,
-    ))
-
-    return {"sheets": sheets}
-
-
-def generar_excel_desde_parametros(
-    filename: str,
-    grupos,
-    horarios_por_grupo,
-    asignaturas_por_grupo=None,
-    aulas_por_dia=None,
-    turnos: int = 6,
-    horario_row_step: int = 3,
-    days=None,
-    aulas_catalogo=None,
-) -> None:
-    config = construir_config_desde_parametros(
-        grupos=grupos,
-        horarios_por_grupo=horarios_por_grupo,
-        asignaturas_por_grupo=asignaturas_por_grupo,
-        aulas_por_dia=aulas_por_dia,
-        turnos=turnos,
-        horario_row_step=horario_row_step,
-        days=days,
-        aulas_catalogo=aulas_catalogo,
-    )
-    generate_excel(config, filename)
-
-
-generate_excel_from_parameters = generar_excel_desde_parametros
-build_config_from_parameters = construir_config_desde_parametros
-
-
-def _normalizar_dia_tv(dia: str) -> str:
-    value = _safe_text(dia).strip().lower()
-    mapping = {
-        "lunes": "Lunes",
-        "martes": "Martes",
-        "miercoles": "Miércoles",
-        "miércoles": "Miércoles",
-        "jueves": "Jueves",
-        "viernes": "Viernes",
-        "sabado": "Sábado",
-        "sábado": "Sábado",
-        "domingo": "Domingo",
-    }
-    if value in mapping:
-        return mapping[value]
-    return _safe_text(dia).strip().title() or "Dia"
-
-
-def _sheet_title_safe(title: str, fallback: str = "Hoja") -> str:
-    value = _safe_text(title).strip() or fallback
-    for ch in ('[', ']', ':', '*', '?', '/', '\\'):
-        value = value.replace(ch, "-")
-    return value[:31] or fallback
-
-
-def _extraer_programas_unicos_tv(programas: list) -> list:
-    seen = set()
-    result = []
-    for item in programas:
-        name = _safe_text(item.get("nombre", "")).strip()
-        key = name.lower()
-        if not name or key in seen:
-            continue
-        seen.add(key)
-        result.append({
-            "nombre": name,
-            "duracion": item.get("duracion", 0),
-            "tipo_programa": _safe_text(item.get("tipo_programa", "")),
-        })
-    return result
-
-
-def construir_hoja_tv_desde_parametros(
-    dia_cfg: dict,
-    index: int = 1,
-    start_time_param_cell: str = "I2",
-) -> dict:
-    dia_display = _normalizar_dia_tv(dia_cfg.get("dia", f"dia-{index}"))
-    title = _sheet_title_safe(f"{index:02d}-{dia_display}", f"Dia-{index}")
-    planificacion = list(dia_cfg.get("programas", []) or [])
-    programas = _extraer_programas_unicos_tv(planificacion)
-
-    max_rows = max(1, len(programas), len(planificacion))
-    default_start = _safe_text(planificacion[0].get("hora_inicio", "00:00")) if planificacion else "00:00"
-    prog_end_row = 3 + max(1, len(programas))
-    plan_end_row = 3 + max(1, len(planificacion))
-
-    data = []
-    data.append([f"Programacion {dia_display}", "", "", "", "", "", "", "", ""])
-    data.append(["", "", "", "", "", "", "", "Hora inicio 1ra fila", default_start])
-    data.append(["Programa", "Duracion (min)", "Tipo", "", "Hora de inicio", "Hora de terminacion", "Programa", "Tipo calc", ""])
-
-    for idx in range(max_rows):
-        prog = programas[idx] if idx < len(programas) else {}
-        plan = planificacion[idx] if idx < len(planificacion) else {}
-        data.append([
-            _safe_text(prog.get("nombre", "")),
-            prog.get("duracion", ""),
-            _safe_text(prog.get("tipo_programa", "")),
-            "",
-            "",
-            "",
-            _safe_text(plan.get("nombre", "")),
-            "",
-            "",
-        ])
-
-    formulas = []
-    for idx in range(len(planificacion)):
-        row = 4 + idx
-        if idx == 0:
-            formulas.append({
-                "row": row,
-                "col": 5,
-                "value": f'=IF(G{row}="","",${start_time_param_cell.replace("$", "")})',
-            })
-        else:
-            formulas.append({
-                "row": row,
-                "col": 5,
-                "value": f'=IF(G{row}="","",F{row - 1})',
-            })
-
-        formulas.append({
-            "row": row,
-            "col": 6,
-            "value": f'=IF(G{row}="","",TEXT(TIMEVALUE(E{row}) + IFERROR(VLOOKUP(G{row},$A$4:$C${prog_end_row},2,FALSE),0)/1440,"hh:mm"))',
-        })
-
-        formulas.append({
-            "row": row,
-            "col": 8,
-            "value": f'=IF(G{row}="","",IFERROR(VLOOKUP(G{row},$A$4:$C${prog_end_row},3,FALSE),""))',
-        })
-
-    conditional_format_rules = []
-    if len(planificacion) >= 1:
-        plan_range = f"E4:G{plan_end_row}"
-        conditional_format_rules.extend([
-            {
-                "tipo": "rango",
-                "rango": plan_range,
-                "formula": 'AND($H{fila}<>"", $H{fila}=IFERROR(INDEX($H:$H,{fila}-1),""), $H{fila}=IFERROR(INDEX($H:$H,{fila}+1),""))',
-                "color": "FF6B6B",
-            },
-            {
-                "tipo": "rango",
-                "rango": plan_range,
-                "formula": 'AND($H{fila}<>"", $H{fila}=IFERROR(INDEX($H:$H,{fila}-1),""), NOT($H{fila}=IFERROR(INDEX($H:$H,{fila}+1),"")))',
-                "color": "FFA500",
-            },
-            {
-                "tipo": "rango",
-                "rango": plan_range,
-                "formula": 'AND($H{fila}<>"", $H{fila}=IFERROR(INDEX($H:$H,{fila}+1),""), NOT($H{fila}=IFERROR(INDEX($H:$H,{fila}-1),"")))',
-                "color": "FFA500",
-            },
-        ])
-
-    return {
-        "title": title,
-        "data": data,
-        "column_widths": {1: 42, 2: 14, 3: 16, 4: 3, 5: 16, 6: 18, 7: 42, 8: 12, 9: 18},
-        "table_borders": True,
-        "border_color": "B7B7B7",
-        "border_style": "thin",
-        "table_ranges": [f"A3:C{prog_end_row}", f"E3:G{plan_end_row}", "H2:I2"],
-        "range_styles": [
-            {"range": "A3:C3", "style": {"bold": True, "align": "center", "bg_color": "D9EAD3"}},
-            {"range": "E3:G3", "style": {"bold": True, "align": "center", "bg_color": "CFE2F3"}},
-            {"range": "H2:I2", "style": {"bold": True, "align": "center", "bg_color": "FFF2CC"}},
-        ],
-        "formulas": formulas,
-        "conditional_format_rules": conditional_format_rules,
-    }
-
-
-def construir_hoja_resumen_tv(nombre_canal: str, planificacion_semanal: list) -> dict:
-    data = []
-    total_programas = 0
-    total_minutos = 0
-
-    for dia_cfg in planificacion_semanal:
-        programas = dia_cfg.get("programas", []) or []
-        dia_display = _normalizar_dia_tv(dia_cfg.get("dia", ""))
-        cantidad = len(programas)
-        total_programas += cantidad
-
-        minutos = 0
-        tipos = set()
-        publicos = set()
-        for p in programas:
-            try:
-                minutos += int(p.get("duracion", 0) or 0)
-            except (TypeError, ValueError):
-                pass
-            tipo = _safe_text(p.get("tipo_programa", "")).strip()
-            publico = _safe_text(p.get("tipo_publico", "")).strip()
-            if tipo:
-                tipos.add(tipo)
-            if publico:
-                publicos.add(publico)
-
-        total_minutos += minutos
-        inicio = _safe_text(programas[0].get("hora_inicio", "")) if programas else ""
-        fin = _safe_text(programas[-1].get("hora_final", "")) if programas else ""
-
-        data.append([
-            dia_display,
-            cantidad,
-            minutos,
-            inicio,
-            fin,
-            ", ".join(sorted(tipos)),
-            ", ".join(sorted(publicos)),
-        ])
-
-    data.append(["TOTAL", total_programas, total_minutos, "", "", "", _safe_text(nombre_canal)])
-
-    max_row = max(1, len(data) + 1)
-    return {
-        "title": _sheet_title_safe("Resumen TV", "Resumen"),
-        "headers": ["Día", "Programas", "Minutos", "Inicio", "Fin", "Tipos", "Públicos"],
-        "data": data,
-        "column_widths": {1: 14, 2: 12, 3: 12, 4: 10, 5: 10, 6: 36, 7: 28},
-        "header_style": {"bold": True, "align": "center", "bg_color": "F4CCCC"},
-        "table_borders": True,
-        "border_color": "B7B7B7",
-        "border_style": "thin",
-        "table_ranges": [f"A1:G{max_row}"],
-        "range_styles": [{"range": f"A{max_row}:G{max_row}", "style": {"bold": True, "bg_color": "FFF2CC"}}],
-    }
-
-
-def construir_config_horario_tv_desde_parametros(
-    nombre_canal: str,
-    planificacion_semanal,
-    incluir_resumen: bool = True,
-) -> dict:
-    plan = list(planificacion_semanal or [])
-    sheets = [
-        construir_hoja_tv_desde_parametros(day_cfg, index=idx)
-        for idx, day_cfg in enumerate(plan, start=1)
-    ]
-
-    if incluir_resumen:
-        sheets.append(construir_hoja_resumen_tv(nombre_canal, plan))
-
-    return {"sheets": sheets}
-
-
-def generar_excel_horario_tv_desde_parametros(
-    filename: str,
-    nombre_canal: str,
-    planificacion_semanal,
-    incluir_resumen: bool = True,
-) -> None:
-    config = construir_config_horario_tv_desde_parametros(
-        nombre_canal=nombre_canal,
-        planificacion_semanal=planificacion_semanal,
-        incluir_resumen=incluir_resumen,
-    )
-    generate_excel(config, filename)
-
-
-build_tv_schedule_config_from_parameters = construir_config_horario_tv_desde_parametros
-generate_tv_schedule_excel_from_parameters = generar_excel_horario_tv_desde_parametros
-
-
-# =============================================================================
 # EJEMPLOS DE USO
 # =============================================================================
 
 if __name__ == "__main__":
 
-    # ── Ejemplo 1: Tabla simple ──────────────────────────────────────
-    example_config = {
-        "sheets": [
-            {
-                "title": "Ejemplo",
-                "headers": ["ID", "Nombre", "Valor"],
-                "data": [
-                    [1, "Item A", 100],
-                    [2, "Item B", 200],
-                    [3, "Item C", 300],
-                ],
-                "column_widths": {1: 10, 2: 20, 3: 15},
-                "header_style": {"bold": True, "align": "center"},
-                "table_borders": True,
-                "border_color": "000000",
-                "border_style": "thin",
-            }
+    # ═══════════════════════════════════════════════════════════════════════════
+    # TUTORIAL: Generar estructura vacía para horarios de grupos
+    # ═══════════════════════════════════════════════════════════════════════════
+    #
+    # Este ejemplo muestra cómo generar un Excel con:
+    #   - Hojas para cada grupo (horario + tabla de asignaturas vacía)
+    #   - Hoja "Aulas" con fórmulas cruzadas
+    #   - Fórmulas y formato condicional configurados
+    #
+    # Solo necesitas configurar los nombres de los grupos.
+
+    # ── Configuración ─────────────────────────────────────────────────
+    GRUPOS = ["D111", "D211", "C111"]  # ← Solo cambia esto
+    DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]
+    AULAS = [f"Aula {i}" for i in range(1, 10)] + ["Lab"]
+    TURNOS = 6
+    ROW_STEP = 3  # filas por turno (nombre turno + aula + separador)
+
+    def crear_hoja_grupo_vacia(nombre_grupo: str) -> dict:
+        """Crea una hoja de grupo con tablas vacías pero con fórmulas."""
+
+        # Calcular dimensiones dinámicas
+        total_filas_horario = TURNOS * ROW_STEP + 1  # +1 por separador tras turno 3
+        fin_horario_fila = 3 + total_filas_horario   # fila donde termina horario
+
+        # Tabla de asignaturas vacía (solo headers, sin datos)
+        filas_asignaturas = 1  # mínimo 1 fila vacía
+        fin_asig_fila = 3 + filas_asignaturas
+        rango_asignaturas = f"I4:M{fin_asig_fila}"
+        rango_asig_abrev = f"$I4:I{fin_asig_fila}"
+
+        # Tabla de aulas lateral
+        filas_aulas = max(1, min(len(AULAS), total_filas_horario))
+        fin_aulas_fila = 3 + filas_aulas
+        rango_aulas = f"O4:O{fin_aulas_fila}"
+        rango_aulas_cf = f"$O4:O{fin_aulas_fila}"
+
+        # Construir datos de la hoja
+        # Fila 1: título grupo, Fila 2: vacía, Fila 3: headers
+        fila_headers = ["", "", *DIAS, "", "Abrev", "Asignaturas", "Frec", "Faltan", "Asignadas", "", "Aulas"]
+
+        # Generar filas del horario (Turno 1, Turno 2, etc. con separadores)
+        datos = [
+            ["Grupo", nombre_grupo] + [""] * 13,
+            [""] * 15,
+            fila_headers,
         ]
+
+        # Generar filas del horario con estructura: [Turno N, "", ""] x 3 veces + separador
+        filas_por_turno = [
+            [f"Turno {t}", "", ""] if s == 0 else ["", "", ""]
+            for t in range(1, TURNOS + 1)
+            for s in range(ROW_STEP)
+        ]
+        # Insertar separador después del turno 3 (fila 9, antes de Turno 4)
+        filas_por_turno.insert(9, ["", "", ""])
+
+        for i, (etiqueta, _, _) in enumerate(filas_por_turno):
+            # Fila vacía del horario + asignaturas vacía + aula
+            fila = [
+                "",           # A
+                etiqueta,     # B
+                "", "", "", "", "",  # C-G: horario vacío (5 días)
+                "",           # H
+                "", "", "", "", "",  # I-M: asignaturas vacía
+                "",           # N
+                AULAS[i] if i < len(AULAS) else "",  # O: aula
+            ]
+            datos.append(fila)
+
+        # Fórmulas
+        formulas = [
+            # Totales asignaturas
+            {"row": fin_asig_fila + 1, "col": 12, "value": "Total:"},
+            {"row": fin_asig_fila + 1, "col": 13, "value": f"=COUNTA(I4:I{fin_asig_fila})"},
+            {"row": fin_asig_fila + 2, "col": 12, "value": "Σ Frec:"},
+            {"row": fin_asig_fila + 2, "col": 13, "value": f"=SUM(K4:K{fin_asig_fila})"},
+            # Totales aulas
+            {"row": fin_aulas_fila + 1, "col": 14, "value": "Total:"},
+            {"row": fin_aulas_fila + 1, "col": 15, "value": f"=COUNTA(O4:O{fin_aulas_fila})"},
+            # Ocupados horario
+            {"row": fin_horario_fila + 1, "col": 6, "value": "Ocupados:"},
+            {"row": fin_horario_fila + 1, "col": 7, "value": f"=COUNTA(C4:G{fin_horario_fila})/{ROW_STEP}"},
+        ]
+
+        # Calcular posición exacta del separador en el Excel
+        # Turno 1: filas 4-6, Turno 2: 7-9, Turno 3: 10-12, Separador: 13, Turno 4: 14-16...
+        fila_separador = 4 + (3 * ROW_STEP)  # fila 13
+
+        # Rangos del horario divididos por el separador (para formato condicional)
+        rango_horario_pre = f"C4:G{fila_separador - 1}"   # C4:G12 (Turnos 1-3)
+        rango_horario_post = f"C{fila_separador + 1}:G{fin_horario_fila}"  # C14:G22 (Turnos 4-6)
+        rangos_horario_cf = [rango_horario_pre, rango_horario_post]
+
+        # Rangos para merges de turnos (columna B)
+        merges = []
+        fila = 4
+        for turno in range(1, TURNOS + 1):
+            inicio = fila
+            fin = fila + ROW_STEP - 1
+            merges.append(f"B{inicio}:B{fin}")
+            fila += ROW_STEP
+            if turno == 3:
+                fila += 1  # saltar fila separadora después de Turno 3
+
+        # Formato condicional - aplicar a cada rango del horario (pre y post separador)
+        reglas_cf = []
+        for rango_h in rangos_horario_cf:
+            reglas_cf.extend([
+                # Filas pares del horario: validar que abrev exista en asignaturas
+                {
+                    "tipo": "filas_pares",
+                    "rango": rango_h,
+                    "formula": f'AND({{celda}}<>"", COUNTIF({rango_asig_abrev},{{celda}})=0)',
+                    "color": "F4A460",
+                    "row_step": ROW_STEP,
+                    "row_start_offset": 0,
+                },
+                # Filas impares del horario: validar que aula exista en catálogo
+                {
+                    "tipo": "filas_impares",
+                    "rango": rango_h,
+                    "formula": f'AND({{celda}}<>"", COUNTIF({rango_aulas_cf},{{celda}})=0)',
+                    "color": "FFD700",
+                    "row_step": ROW_STEP,
+                    "row_start_offset": 1,
+                },
+                # Alerta roja si fila par tiene valor pero siguiente (impar) está vacía
+                {
+                    "tipo": "pares_con_siguiente",
+                    "rango": rango_h,
+                    "formula": 'AND({celda}<>"", {celda_siguiente}="")',
+                    "color": "FF0000",
+                    "row_step": ROW_STEP,
+                    "next_offset": 1,
+                    "aplicar_a": "siguiente",
+                },
+            ])
+
+        return {
+            "title": nombre_grupo,
+            "data": datos,
+            "column_widths": {i: 14 for i in range(1, 16)},
+            "range_styles": [
+                {"range": f"I3:I{fin_asig_fila}", "style": {"bg_color": "A9D18E"}},  # verde asignaturas
+                {"range": f"B4:B{fin_horario_fila}", "style": {"bg_color": "F4CCCC"}},  # rojo turnos
+            ],
+            "table_ranges": [
+                "B3:G3",
+                # Rangos de los turnos en columna B (las celdas fusionadas)
+                f"B4:B{fila_separador - 1}",      # B4:B12 (Turnos 1-3)
+                f"B{fila_separador + 1}:B{fin_horario_fila}",  # B14:B22 (Turnos 4-6)
+                rango_horario_pre,   # C4:G12 (Turnos 1-3)
+                rango_horario_post,  # C14:G22 (Turnos 4-6)
+                f"B{fila_separador}:G{fila_separador}",  # B13:G13 Separador
+                "I3:M3",
+                rango_asignaturas,
+                rango_aulas,
+            ],
+            "table_block_sizes": [
+                {"range": "B3:G3", "row_step": 1, "col_step": 1},
+                {"range": f"B4:B{fila_separador - 1}", "row_step": ROW_STEP, "col_step": 1},  # Turnos col B (1-3)
+                {"range": f"B{fila_separador + 1}:B{fin_horario_fila}", "row_step": ROW_STEP, "col_step": 1},  # Turnos col B (4-6)
+                {"range": rango_horario_pre, "row_step": ROW_STEP, "col_step": 1},
+                {"range": rango_horario_post, "row_step": ROW_STEP, "col_step": 1},
+                {"range": f"B{fila_separador}:G{fila_separador}", "row_step": 1, "col_step": 1},
+                {"range": "I3:M3", "row_step": 1, "col_step": 1},
+                {"range": rango_asignaturas, "row_step": 1, "col_step": 1},
+                {"range": rango_aulas, "row_step": 1, "col_step": 1},
+            ],
+            "merge_ranges": merges,
+            "table_borders": True,
+            "border_color": "4F81BD",
+            "border_style": "medium",
+            "formulas": formulas,
+            "conditional_format_rules": reglas_cf,
+        }
+
+
+def crear_hoja_aulas(grupos: list[str]) -> dict:
+    """Crea la hoja Aulas (las fórmulas se inyectan desde afuera via generador)."""
+    # Estructura: 5 bloques de días, cada uno con header + 6 turnos
+    datos = []
+    turnos_labels = ["1ro", "2do", "3ro", "4to", "5to", "6to"]
+
+    for dia_idx, dia in enumerate(DIAS):
+        # Fila vacía separadora (excepto antes del primer bloque)
+        if dia_idx > 0:
+            datos.append([""] * 12)
+        # Header del día con nombres de aulas
+        datos.append(["", dia] + AULAS)
+        # 6 filas de turnos vacías
+        for t in range(TURNOS):
+            datos.append(["", turnos_labels[t]] + [""] * 10)
+
+    return {
+        "title": "Aulas",
+        "data": datos,
+        "column_widths": {i: 12 for i in range(1, 13)},
+        "range_styles": [
+            {"range": "B1:L1", "style": {"bg_color": "E6B8AF"}},
+        ],
+        "table_borders": True,
+        "border_color": "B3B3B3",
+        "border_style": "thick",
+        # Nota: fernando_formulas se inyecta desde afuera via generador
     }
 
-    generate_excel(example_config, "ejemplo_refactorizado.xlsx")
+
+# ── Generador de fórmulas externo (puede vivir en otro módulo) ─────
+def aulas_formulas_generator(grupos: list[str]):
+    """Generador que yield fórmulas para la hoja Aulas."""
+    for formula_def in build_aulas_fernando_formulas(grupos, DIAS, ROW_STEP, TURNOS):
+        yield formula_def
+
+# ── Configurar argumentos CLI ─────────────────────────────────────────
+parser = argparse.ArgumentParser(description="Genera archivo Excel con horarios de grupos")
+parser.add_argument(
+    "-o", "--output",
+    default="./prueba/tutorial_estructura_vacia.xlsx",
+    help="Ruta del archivo de salida (default: ./prueba/tutorial_estructura_vacia.xlsx)"
+)
+args = parser.parse_args()
+
+# ── Generar configuración completa ─────────────────────────────────
+sheets = [crear_hoja_grupo_vacia(g) for g in GRUPOS]
+aulas_cfg = crear_hoja_aulas(GRUPOS)
+aulas_cfg['formulas_generator'] = aulas_formulas_generator(GRUPOS)
+sheets.append(aulas_cfg)
+
+config = {"sheets": sheets}
+
+# ── Ejecutar ───────────────────────────────────────────────────────
+generate_excel(config, args.output)
+print(f"✅ Archivo '{args.output}' generado.")
+print(f"   Grupos: {', '.join(GRUPOS)}")
+print("   Cada grupo tiene: horario vacío, tabla asignaturas vacía, lista de aulas")
+print("   Hoja 'Aulas': tabla cruzada (fórmulas inyectadas via generador en config)")
