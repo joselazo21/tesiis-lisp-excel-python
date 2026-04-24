@@ -107,7 +107,7 @@ planificacion_semanal = [
 ]
 
 generar_excel_horario_tv_desde_parametros(
-    filename="horario_tv_canal_habana.xlsx",
+    filename="horario_tv_semanal.xlsx",
     nombre_canal=nombre_canal,
     planificacion_semanal=planificacion_semanal,
     incluir_resumen=True
