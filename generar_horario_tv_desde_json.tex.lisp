@@ -7,6 +7,31 @@
 (defparameter *tv-tex-intervalo-minutos* 15)
 (defparameter *tv-tex-alto-base-ex* 2.8)
 
+;; =============================================================================
+;; COLORES PARA RECUADROS (tonos claros)
+;; =============================================================================
+
+(defparameter *tv-tipo-programa-colores*
+  '(("informativo" . "blue!20")
+    ("revista" . "red!20")
+    ("musical" . "purple!20")
+    ("infantil" . "yellow!30")
+    ("cine" . "green!20")
+    ("cultural" . "cyan!20")
+    ("entrevista" . "orange!20")
+    ("ficción" . "magenta!20")
+    ("salud" . "lime!20")
+    (t . "gray!10"))
+  "Mapeo de tipos de programa a colores LaTeX (tonos claros).")
+
+(defun tv-obtener-color-tipo (tipo)
+  "Devuelve el color LaTeX correspondiente al tipo de programa."
+  (let* ((tipo-normalizado (string-downcase (tv-safe tipo "")))
+         (par (assoc tipo-normalizado *tv-tipo-programa-colores* :test #'string=)))
+    (if par
+        (cdr par)
+        "gray!10")))
+
 (defun tv-intervalo-dia (dia-config &optional (default *tv-tex-intervalo-minutos*))
   (or (getf dia-config :intervalo-minutos) default))
 
@@ -39,6 +64,11 @@
 
 (defun tv-calcular-intervalos (duracion intervalo)
   (max 1 (ceiling duracion intervalo)))
+
+(defun tv-altura-programa-ex (duracion intervalo alto-base-ex)
+  (if (and intervalo (> intervalo 0))
+      (* alto-base-ex (/ (float (max 0 duracion)) (float intervalo)))
+      alto-base-ex))
 
 (defun tv-tex-escape (text)
   (with-output-to-string (out)
@@ -154,6 +184,29 @@
                 (format stream "\\cline{1-1}~%")
                 (format stream "\\hline~%")))))
 
+(defun tv-escribir-programa-vacio (programa stream intervalo alto-base-ex)
+  (let* ((inicio-str (tv-safe (getf programa :hora-inicio) ""))
+         (fin-str (tv-safe (getf programa :hora-final) ""))
+         (inicio-min (if (> (length inicio-str) 0)
+                         (tv-parse-hora-a-minutos inicio-str)
+                         0))
+         (fin-min (if (> (length fin-str) 0)
+                      (tv-parse-hora-a-minutos fin-str)
+                      inicio-min))
+         (duracion-explicita (getf programa :duracion))
+         (duracion (if duracion-explicita
+                       duracion-explicita
+                       (mod (- fin-min inicio-min) 1440)))
+         (altura-ex (max 0.8 (tv-altura-programa-ex duracion intervalo alto-base-ex)))
+         (tramo (if (and (> (length inicio-str) 0) (> (length fin-str) 0))
+                    (format nil "~a--~a" inicio-str fin-str)
+                    (tv-rango-intervalo inicio-min duracion))))
+    (format stream
+            "{\\centering\\rule{0pt}{~,2fex}~a} & {\\centering\\rule{0pt}{~,2fex}} \\\\~%"
+            altura-ex
+            (tv-tex-escape tramo)
+            altura-ex)))
+
 (defun tv-escribir-tabla-dia-tex (dia-config stream intervalo alto-base-ex)
   (let* ((dia (tv-dia-display (getf dia-config :dia)))
          (programas (or (getf dia-config :programas) '())))
@@ -165,7 +218,8 @@
     (format stream "\\textbf{Intervalo} & \\textbf{Programa} \\\\~%")
     (format stream "\\hline~%")
     (loop for programa in programas
-          do (tv-escribir-programa-escalado-tex programa stream intervalo alto-base-ex))
+          do (tv-escribir-programa-vacio programa stream intervalo alto-base-ex))
+    (format stream "\\hline~%")
     (format stream "\\end{tabular}~%")
     (format stream "\\end{adjustbox}~%")
     (format stream "\\end{center}~%~%")))
@@ -186,6 +240,7 @@
     (format stream "\\usepackage{adjustbox}~%")
     (format stream "\\usepackage{multirow}~%")
     (format stream "\\usepackage{array}~%")
+    (format stream "\\usepackage{xcolor}~%")
     (format stream "\\setlength{\\parindent}{0pt}~%")
     (format stream "\\renewcommand{\\arraystretch}{1.0}~%")
     (format stream "\\begin{document}~%")
@@ -204,6 +259,87 @@
   (format t "Para compilar a PDF: pdflatex ~a~%" output-tex-file)
   output-tex-file)
 
+;; =============================================================================
+;; FUNCIONES PARA RECORTABLES (tabla vacía + recuadros con color)
+;; =============================================================================
+
+(defun tv-dibujar-rectangulos (dia-config stream intervalo alto-base-ex)
+  (let* ((dia (tv-dia-display (getf dia-config :dia)))
+         (programas (or (getf dia-config :programas) '())))
+    (format stream "\\section*{~a - Recuadros (con texto y color)}~%" (tv-tex-escape dia))
+    (format stream "\\begin{center}~%")
+    (loop for programa in programas
+          do (tv-dibujar-rectangulo programa stream intervalo alto-base-ex))
+    (format stream "\\end{center}~%~%")))
+
+(defun tv-dibujar-rectangulo (programa stream intervalo alto-base-ex)
+  (let* ((nombre (tv-safe (getf programa :nombre) ""))
+         (tipo (tv-safe (getf programa :tipo-programa) ""))
+         (color (tv-obtener-color-tipo tipo))
+         (inicio-str (tv-safe (getf programa :hora-inicio) ""))
+         (fin-str (tv-safe (getf programa :hora-final) ""))
+         (inicio-min (if (> (length inicio-str) 0)
+                         (tv-parse-hora-a-minutos inicio-str)
+                         0))
+         (fin-min (if (> (length fin-str) 0)
+                      (tv-parse-hora-a-minutos fin-str)
+                      inicio-min))
+         (duracion-explicita (getf programa :duracion))
+         (duracion (if duracion-explicita
+                       duracion-explicita
+                       (mod (- fin-min inicio-min) 1440)))
+         (altura-ex (max 0.8 (tv-altura-programa-ex duracion intervalo alto-base-ex))))
+    (format stream
+            "\\colorbox{~a}{\\fbox{\\begin{minipage}[c][~,2fex]{10.6cm}\\centering\\textbf{~a}\\end{minipage}}}~%"
+            color
+            altura-ex
+            (tv-tex-escape nombre))
+    (format stream "\\vspace{0.3cm}~%")))
+
+(defun generar-horario-tv-tex-recortable (nombre-canal planificacion output-tex-file
+                                           &key
+                                           (intervalo-minutos *tv-tex-intervalo-minutos*)
+                                           (alto-base-ex *tv-tex-alto-base-ex*))
+  (with-open-file (stream output-tex-file
+                          :direction :output
+                          :if-exists :supersede)
+    (format stream "\\documentclass[11pt,a4paper]{article}~%")
+    (format stream "\\usepackage[utf8]{inputenc}~%")
+    (format stream "\\usepackage[T1]{fontenc}~%")
+    (format stream "\\usepackage[spanish]{babel}~%")
+    (format stream "\\usepackage{geometry}~%")
+    (format stream "\\geometry{left=1.8cm,right=1.8cm,top=1.8cm,bottom=1.8cm}~%")
+    (format stream "\\usepackage{adjustbox}~%")
+    (format stream "\\usepackage{multirow}~%")
+    (format stream "\\usepackage{array}~%")
+    (format stream "\\usepackage{xcolor}~%")
+    (format stream "\\setlength{\\parindent}{0pt}~%")
+    (format stream "\\renewcommand{\\arraystretch}{1.0}~%")
+    (format stream "\\begin{document}~%")
+    ;; PARTE 1: Tabla con columna Programa vacía
+    (format stream "\\section*{TABLA CON CELDAS VACÍAS}~%")
+    (loop for dia-config in planificacion
+          for idx from 0
+          for intervalo-dia = (tv-intervalo-dia dia-config intervalo-minutos)
+          do
+            (when (> idx 0)
+              (format stream "\\clearpage~%"))
+            (tv-escribir-tabla-dia-tex dia-config stream intervalo-dia alto-base-ex))
+    ;; PARTE 2: Recuadros separados con texto y color
+    (format stream "\\clearpage~%")
+    (format stream "\\section*{RECUADROS PARA CORTAR (con texto y color)}~%")
+    (loop for dia-config in planificacion
+          for idx from 0
+          for intervalo-dia = (tv-intervalo-dia dia-config intervalo-minutos)
+          do
+            (when (> idx 0)
+              (format stream "\\clearpage~%"))
+            (tv-dibujar-rectangulos dia-config stream intervalo-dia alto-base-ex))
+    (format stream "\\end{document}~%"))
+  (format t "Archivo LaTeX '~a' generado (recortable).~%" output-tex-file)
+  (format t "Para compilar a PDF: pdflatex ~a~%" output-tex-file)
+  output-tex-file)
+
 (defun generar-horario-tv-desde-json
        (&key
           (variables-file "variables_horario_tv.lisp")
@@ -212,7 +348,8 @@
           (output-tex-file nil)
           (intervalo-minutos 15)
        (intervalo-minutos-para-todos nil)
-          (alto-base-ex 2.8))
+           (alto-base-ex 2.8)
+           (generar-recortable nil))
   (load variables-file)
   (unless (boundp '*tv-planificacion-semanal*)
     (error "No se encontro *tv-planificacion-semanal* en ~a" variables-file))
@@ -238,10 +375,21 @@
                               output-excel-file)
     (format t "Archivo Python '~a' generado.~%" output-python-file)
     (format t "Para generar el Excel, ejecuta: python3 ~a~%" output-python-file)
-    (when output-tex-file
-      (generar-horario-tv-tex *tv-nombre-canal*
-                              planificacion
-                              output-tex-file
-                              :intervalo-minutos intervalo-minutos
-                              :alto-base-ex alto-base-ex))
+    (cond
+      (generar-recortable
+        (let ((output-recortable (concatenate 'string
+                            (substitute-if #\_ (complement #'alphanumericp)
+                                           (pathname-name (or output-tex-file "horario.tex")))
+                            "_recortable.tex")))
+          (generar-horario-tv-tex-recortable *tv-nombre-canal*
+                                             planificacion
+                                             output-recortable
+                                             :intervalo-minutos intervalo-minutos
+                                             :alto-base-ex alto-base-ex)))
+      (output-tex-file
+        (generar-horario-tv-tex *tv-nombre-canal*
+                                planificacion
+                                output-tex-file
+                                :intervalo-minutos intervalo-minutos
+                                :alto-base-ex alto-base-ex)))
     output-python-file))

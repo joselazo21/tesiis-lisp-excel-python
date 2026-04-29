@@ -605,6 +605,8 @@ def crear_excel_horarios():
     for turno in turnos:
         ws_aulas.append([turno])  # Separador
         for i in range(1, 7):  # 6 franjas horarias
+            if i == 4:
+                ws_aulas.append([''])  # Fila vacia entre turno 3 y 4
             ws_aulas.append([f'{i}ro' if i == 1 else f'{i}do' if i == 2 else f'{i}ro' if i == 3 else f'{i}to' if i == 4 else f'{i}to' if i == 5 else f'{i}to'])
 
     # ============ HOJAS POR GRUPO ============

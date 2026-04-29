@@ -84,7 +84,8 @@
   (grupo
    horario
   asignaturas
-  intervalo-minutos))
+  intervalo-minutos
+  hora-inicio-tabla))
 
 (defmethod print-object ((obj clase-hoja) stream)
   (format stream "[Hoja: ~a, con ~a asignaturas]"
