@@ -62,6 +62,118 @@
          (m (mod total 60)))
     (format nil "~2,'0d:~2,'0d" h m)))
 
+(defun tv-hora-a-minutos-si (hora-str)
+  (when (and hora-str (> (length hora-str) 0))
+    (tv-parse-hora-a-minutos hora-str)))
+
+(defun tv-floor-a-intervalo (minutos intervalo)
+  (* intervalo (floor minutos intervalo)))
+
+(defun tv-ceil-a-intervalo (minutos intervalo)
+  (* intervalo (ceiling minutos intervalo)))
+
+(defun tv-programa-inicio-min (programa)
+  (tv-hora-a-minutos-si (tv-safe (getf programa :hora-inicio) "")))
+
+(defun tv-programa-fin-min (programa)
+  (let* ((inicio (tv-programa-inicio-min programa))
+         (fin (tv-hora-a-minutos-si (tv-safe (getf programa :hora-final) "")))
+         (duracion (getf programa :duracion)))
+    (cond
+      (fin fin)
+      ((and inicio duracion) (+ inicio duracion))
+      (inicio inicio)
+      (t nil))))
+
+(defun tv-min-hora-programas (programas)
+  (let ((minimo nil))
+    (dolist (programa programas minimo)
+      (let ((inicio (tv-programa-inicio-min programa)))
+        (when inicio
+          (setf minimo (if minimo (min minimo inicio) inicio)))))))
+
+(defun tv-max-hora-programas (programas)
+  (let ((maximo nil))
+    (dolist (programa programas maximo)
+      (let ((fin (tv-programa-fin-min programa)))
+        (when fin
+          (setf maximo (if maximo (max maximo fin) fin)))))))
+
+(defun tv-inicio-tabla-dia (dia-config intervalo)
+  (let* ((programas (or (getf dia-config :programas) '()))
+         (hora-config (getf dia-config :hora-inicio-tabla))
+         (inicio-min (or (tv-hora-a-minutos-si hora-config)
+                         (tv-min-hora-programas programas)
+                         0)))
+    (tv-floor-a-intervalo inicio-min intervalo)))
+
+(defun tv-fin-tabla-dia (dia-config intervalo inicio-min)
+  (let* ((programas (or (getf dia-config :programas) '()))
+         (hora-config (getf dia-config :hora-final-tabla))
+         (fin-min (or (tv-hora-a-minutos-si hora-config)
+                      (tv-max-hora-programas programas)
+                      inicio-min))
+         (fin-ajustado (if (< fin-min inicio-min)
+                           (+ fin-min 1440)
+                           fin-min)))
+    (tv-ceil-a-intervalo fin-ajustado intervalo)))
+
+(defun tv-hora-a-minutos-si (hora-str)
+  (when (and hora-str (> (length hora-str) 0))
+    (tv-parse-hora-a-minutos hora-str)))
+
+(defun tv-floor-a-intervalo (minutos intervalo)
+  (* intervalo (floor minutos intervalo)))
+
+(defun tv-ceil-a-intervalo (minutos intervalo)
+  (* intervalo (ceiling minutos intervalo)))
+
+(defun tv-programa-inicio-min (programa)
+  (tv-hora-a-minutos-si (tv-safe (getf programa :hora-inicio) "")))
+
+(defun tv-programa-fin-min (programa)
+  (let* ((inicio (tv-programa-inicio-min programa))
+         (fin (tv-hora-a-minutos-si (tv-safe (getf programa :hora-final) "")))
+         (duracion (getf programa :duracion)))
+    (cond
+      (fin fin)
+      ((and inicio duracion) (+ inicio duracion))
+      (inicio inicio)
+      (t nil))))
+
+(defun tv-min-hora-programas (programas)
+  (let ((minimo nil))
+    (dolist (programa programas minimo)
+      (let ((inicio (tv-programa-inicio-min programa)))
+        (when inicio
+          (setf minimo (if minimo (min minimo inicio) inicio)))))))
+
+(defun tv-max-hora-programas (programas)
+  (let ((maximo nil))
+    (dolist (programa programas maximo)
+      (let ((fin (tv-programa-fin-min programa)))
+        (when fin
+          (setf maximo (if maximo (max maximo fin) fin)))))))
+
+(defun tv-inicio-tabla-dia (dia-config intervalo)
+  (let* ((programas (or (getf dia-config :programas) '()))
+         (hora-config (getf dia-config :hora-inicio-tabla))
+         (inicio-min (or (tv-hora-a-minutos-si hora-config)
+                         (tv-min-hora-programas programas)
+                         0)))
+    (tv-floor-a-intervalo inicio-min intervalo)))
+
+(defun tv-fin-tabla-dia (dia-config intervalo inicio-min)
+  (let* ((programas (or (getf dia-config :programas) '()))
+         (hora-config (getf dia-config :hora-final-tabla))
+         (fin-min (or (tv-hora-a-minutos-si hora-config)
+                      (tv-max-hora-programas programas)
+                      inicio-min))
+         (fin-ajustado (if (< fin-min inicio-min)
+                           (+ fin-min 1440)
+                           fin-min)))
+    (tv-ceil-a-intervalo fin-ajustado intervalo)))
+
 (defun tv-calcular-intervalos (duracion intervalo)
   (max 1 (ceiling duracion intervalo)))
 
@@ -197,15 +309,16 @@
          (duracion (if duracion-explicita
                        duracion-explicita
                        (mod (- fin-min inicio-min) 1440)))
-         (altura-ex (max 0.8 (tv-altura-programa-ex duracion intervalo alto-base-ex)))
-         (tramo (if (and (> (length inicio-str) 0) (> (length fin-str) 0))
-                    (format nil "~a--~a" inicio-str fin-str)
-                    (tv-rango-intervalo inicio-min duracion))))
-    (format stream
-            "{\\centering\\rule{0pt}{~,2fex}~a} & {\\centering\\rule{0pt}{~,2fex}} \\\\~%"
-            altura-ex
-            (tv-tex-escape tramo)
-            altura-ex)))
+         (unidades (tv-calcular-intervalos duracion intervalo)))
+    (loop for u from 0 below unidades
+          for tramo-inicio = (+ inicio-min (* u intervalo))
+          for tramo = (tv-rango-intervalo tramo-inicio intervalo)
+          do
+            (format stream
+                    "{\\centering\\rule{0pt}{~,2fex}~a} & {\\centering\\rule{0pt}{~,2fex}} \\\\~%"
+                    alto-base-ex
+                    (tv-tex-escape tramo)
+                    alto-base-ex))))
 
 (defun tv-escribir-tabla-dia-tex (dia-config stream intervalo alto-base-ex)
   (let* ((dia (tv-dia-display (getf dia-config :dia)))
@@ -216,9 +329,20 @@
     (format stream "\\begin{tabular}{|p{3.6cm}|p{11cm}|}~%")
     (format stream "\\hline~%")
     (format stream "\\textbf{Intervalo} & \\textbf{Programa} \\\\~%")
-    (format stream "\\hline~%")
-    (loop for programa in programas
-          do (tv-escribir-programa-vacio programa stream intervalo alto-base-ex))
+    (format stream "\\cline{1-1}~%")
+    (let* ((inicio-min (tv-inicio-tabla-dia dia-config intervalo))
+           (fin-min (tv-fin-tabla-dia dia-config intervalo inicio-min))
+           (cantidad (max 1 (floor (- fin-min inicio-min) intervalo))))
+      (loop for idx from 0 below cantidad
+            for tramo-inicio = (+ inicio-min (* idx intervalo))
+            for tramo = (tv-rango-intervalo tramo-inicio intervalo)
+            do
+              (format stream
+                      "{\\centering\\rule{0pt}{~,2fex}~a} & {\\centering\\rule{0pt}{~,2fex}} \\\\~%"
+                      alto-base-ex
+                      (tv-tex-escape tramo)
+                      alto-base-ex)
+              (format stream "\\cline{1-1}~%")))
     (format stream "\\hline~%")
     (format stream "\\end{tabular}~%")
     (format stream "\\end{adjustbox}~%")
