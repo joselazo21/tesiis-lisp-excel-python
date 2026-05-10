@@ -11,9 +11,11 @@
 (defclass* xl-range-style () (range style))
 (defclass* xl-header-style () (bold color bg-color align))
 (defclass* xl-formula () (row col value))
+(defclass* xl-formula-list () (items))
 (defclass* xl-fernando-formula () (cell formula))
 (defclass* xl-conditional-rule () (tipo rango formula color))
 (defclass* xl-merge-range () (range))
+(defclass* xl-column-widths () (pairs))
 
 ; Output class
 (defclass xl-out () ())
@@ -77,35 +79,93 @@
 (defmethod generate-code ((m clase-xl-merge-range) (lang xl-out) (stream t))
   (format stream "~s" (range m)))
 
-(defmethod generate-code ((tbl clase-xl-tabla) (lang xl-out) (stream t))
+(defmethod generate-code ((cw clase-xl-column-widths) (lang xl-out) (stream t))
+  (format stream "            \"column_widths\": ")
+  (xl-write-dict (pairs cw) stream)
+  (format stream ",~%"))
+
+(defmethod generate-code ((lst clase-xl-formula-list) (lang xl-out) (stream t))
+  (format stream "            \"formulas\": [")
+  (loop for i from 0 for f in (items lst) do
+       (when (> i 0) (format stream ", "))
+       (generate-code f lang stream))
+  (format stream "],~%"))
+
+(defmethod generate-code ((tbl clase-xl-table) (lang xl-out) (stream t))
   (let ((con (contenido tbl)) (hdrs (headers tbl)) (cwidths (column-widths tbl)) (frms (formulas tbl)))
     (when con (format stream "        \"data\": ") (xl-write con stream) (format stream ",~%"))
     (when hdrs (format stream "        \"headers\": ") (xl-write hdrs stream) (format stream ",~%"))
-    (when cwidths (format stream "        \"column_widths\": ") (xl-write-dict cwidths stream) (format stream ",~%"))
-    (when frms (format stream "        \"formulas\": [") (loop for i from 0 for f in frms do (when (> i 0) (format stream ", ")) (generate-code f lang stream)) (format stream "],~%"))))
+    (when cwidths
+      (if (typep cwidths 'clase-xl-column-widths)
+          (generate-code cwidths lang stream)
+          (progn
+            (format stream "        \"column_widths\": ")
+            (xl-write-dict cwidths stream)
+            (format stream ",~%"))))
+    (when frms
+      (if (typep frms 'clase-xl-formula-list)
+          (generate-code frms lang stream)
+          (progn
+            (format stream "        \"formulas\": [")
+            (loop for i from 0 for f in frms do (when (> i 0) (format stream ", ")) (generate-code f lang stream))
+            (format stream "],~%"))))))
 
-(defmethod generate-code ((sh clase-xl-hoja) (lang xl-out) (stream t))
+(defmethod generate-code ((sh clase-xl-sheet) (lang xl-out) (stream t))
   (format stream "        {~%")
   (format stream "            \"title\": ~s,~%" (name sh))
   (dolist (tbl (tables sh)) (generate-code tbl lang stream))
-  (let ((frms (formulas sh))) (when frms (format stream "            \"formulas\": [") (loop for i from 0 for f in frms do (when (> i 0) (format stream ", ")) (generate-code f lang stream)) (format stream "],~%")))
-  (let ((ffrms (fernando-formulas sh))) (when ffrms (format stream "            \"fernando_formulas\": [") (loop for i from 0 for f in ffrms do (when (> i 0) (format stream ", ")) (generate-code f lang stream)) (format stream "],~%")))
+  (let ((frms (formulas sh)))
+    (when frms
+      (if (typep frms 'clase-xl-formula-list)
+          (generate-code frms lang stream)
+          (progn
+            (format stream "            \"formulas\": [")
+            (loop for i from 0 for f in frms do
+                 (when (> i 0) (format stream ", "))
+                 (generate-code f lang stream))
+            (format stream "],~%")))))
+  (let ((ffrms (fernando-formulas sh)))
+    (when ffrms
+      (format stream "            \"fernando_formulas\": [")
+      (loop for i from 0 for f in ffrms do
+           (when (> i 0) (format stream ", "))
+           (generate-code f lang stream))
+      (format stream "],~%")))
   (when (table-borders sh) (format stream "            \"table_borders\": True,~%"))
   (let ((bc (border-color sh))) (when bc (format stream "            \"border_color\": ~s,~%" bc)))
   (let ((bs (border-style sh))) (when bs (format stream "            \"border_style\": ~s,~%" bs)))
   (let ((tr (table-ranges sh))) (when tr (format stream "            \"table_ranges\": ") (xl-write tr stream) (format stream ",~%")))
-  (let ((rs (range-styles sh))) (when rs (format stream "            \"range_styles\": [") (loop for i from 0 for r in rs do (when (> i 0) (format stream ", ")) (generate-code r lang stream)) (format stream "],~%")))
+  (let ((rs (range-styles sh)))
+    (when rs
+      (format stream "            \"range_styles\": [")
+      (loop for i from 0 for r in rs do
+           (when (> i 0) (format stream ", "))
+           (generate-code r lang stream))
+      (format stream "],~%")))
   (let ((mr (merge-ranges sh))) (when mr (format stream "            \"merge_ranges\": ") (xl-write mr stream) (format stream ",~%")))
-  (let ((cr (conditional-format-rules sh))) (when cr (format stream "            \"conditional_format_rules\": [") (loop for i from 0 for r in cr do (when (> i 0) (format stream ", ")) (generate-code r lang stream)) (format stream "],~%")))
-  (let ((cw (column-widths sh))) (when cw (format stream "            \"column_widths\": ") (xl-write-dict cw stream) (format stream ",~%")))
+  (let ((cr (conditional-format-rules sh)))
+    (when cr
+      (format stream "            \"conditional_format_rules\": [")
+      (loop for i from 0 for r in cr do
+           (when (> i 0) (format stream ", "))
+           (generate-code r lang stream))
+      (format stream "],~%")))
+  (let ((cw (column-widths sh)))
+    (when cw
+      (if (typep cw 'clase-xl-column-widths)
+          (generate-code cw lang stream)
+          (progn
+            (format stream "            \"column_widths\": ")
+            (xl-write-dict cw stream)
+            (format stream ",~%")))))
   (let ((cs (cell-size sh))) (when cs (format stream "            \"cell_size\": ~a,~%" cs)))
   (let ((hs (header-style sh))) (when hs (format stream "            \"header_style\": ") (generate-code hs lang stream) (format stream "~%")))
   (format stream "        }~%"))
 
-(defmethod generate-code ((wb clase-xl-libro) (lang xl-out) (stream t))
+(defmethod generate-code ((wb clase-xl-workbook) (lang xl-out) (stream t))
   (format stream "#!/usr/bin/env python3~%")
   (format stream "from hoja_con_formulas import generar_excel_personalizado~2%")
-  (format stream "config = {#~%")
+  (format stream "config = {~%")
   (format stream "    \"sheets\": [~%")
   (when (sheets wb) (loop for i from 0 for sh in (sheets wb) do (generate-code sh lang stream) (when (< i (1- (length (sheets wb)))) (format stream ",~%")))
   (format stream "    ]~%")
@@ -113,6 +173,7 @@
   (format stream "generar_excel_personalizado(config, ~s)~%" (name wb))
   (format stream "~%if __name__=='__main__':~%")
   (format stream "    print('OK: ~a')~%" (name wb)))
+)
 
 (defun xl-generate (wb file)
   (with-open-file (s file :direction :output :if-exists :supersede) (generate-code wb xl-py s))

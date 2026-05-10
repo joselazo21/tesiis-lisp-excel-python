@@ -1,14 +1,9 @@
 #!/bin/bash
 cd /home/jose/Proyectos/Scripting/python_excel_tesis
 echo "=== Generating TV Schedule ==="
-echo "1. Running clisp..."
+echo "1. Running clisp (AST manual)..."
 clisp -q -q <<'EOF' 2>&1 | grep -v "^$" | grep -v "^ADVERTENCIA"
-(load "codigo-tesis.lisp")
-(load "modelo-excel.lisp")
-(load "generar_tv_modelo.lisp")
-(load "variables_horario_tv.lisp")
-(generar-horario-tv :planificacion *tv-planificacion-semanal*
-                  :nombre *tv-nombre-canal*)
+(load "ast_manual.lisp")
 (quit)
 EOF
 
