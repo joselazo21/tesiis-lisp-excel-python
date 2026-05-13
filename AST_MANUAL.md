@@ -1,0 +1,61 @@
+## Árbol AST (todo como nodo)
+
+xl-workbook
+- name: "Canal Habana.xlsx"
+- sheets:
+  - xl-sheet (Lunes .. Domingo)
+    - name: "Lunes" .. "Domingo"
+    - tables:
+      - xl-table
+        - id: <dia>
+        - contenido:
+          - row1: ["Programacion <Dia>", nil, nil, nil, nil, nil, nil, nil, nil]
+          - row2: [nil, nil, nil, nil, nil, nil, nil, "Hora inicio 1ra fila", "<hora>"]
+          - row3: ["Programa", "Duracion (min)", "Tipo", nil, "Hora de inicio", "Hora de terminacion", "Programa", "Tipo calc", nil]
+          - row4..n: [<nombre>, <duracion>, <tipo>, nil, "", "", <nombre>, ""]
+    - formulas:
+      - xl-formula-list
+        - items:
+          - xl-formula (row=3, col=5, value="=IF(G3<>\"\",$I$2)")
+          - xl-formula (row=3, col=6, value="=IF(G3<>\"\",TEXT(TIMEVALUE(E3)+IFERROR(VLOOKUP(G3,$A$4:$C$19,2,FALSE),0)/1440,\"hh:mm\"))")
+          - xl-formula (row=3, col=8, value="=IF(G3<>\"\",IFERROR(VLOOKUP(G3,$A$4:$C$19,3,FALSE),\"\"))")
+          - xl-formula (row=4..n, col=5, value="=IF(G<r><>\"\",F<r-1>)")
+          - xl-formula (row=4..n, col=6, value="=IF(G<r><>\"\",TEXT(TIMEVALUE(E<r>)+IFERROR(VLOOKUP(G<r>,$A$4:$C$<n>,2,FALSE),0)/1440,\"hh:mm\"))")
+          - xl-formula (row=4..n, col=8, value="=IF(G<r><>\"\",IFERROR(VLOOKUP(G<r>,$A$4:$C$<n>,3,FALSE),\"\"))")
+    - fernando-formulas:
+      - xl-fernando-formula (cell="I2", formula="=1+1")
+    - table-borders: t
+    - border-color: "B7B7B7"
+    - border-style: "thin"
+    - table-ranges:
+      - "A3:C<nrows>"
+      - "E3:G<nrows>"
+      - "H2:I2"
+    - range-styles:
+      - xl-range-style (range="A1:I1", style=xl-style)
+      - xl-range-style (range="A3:I3", style=xl-style)
+    - merge-ranges:
+      - xl-merge-range (range="A1:I1")
+    - conditional-format-rules:
+      - xl-conditional-rule (tipo="cellIs", rango="B4:B<nrows>", formula=">60", color="FFC7CE")
+    - column-widths:
+      - xl-column-widths (pairs: 1..9)
+    - header-style:
+      - xl-header-style (bold, align=center, bg-color="D9EAD3")
+
+  - xl-sheet (Resumen TV)
+    - name: "Resumen TV"
+    - tables:
+      - xl-table
+        - id: "resumen"
+        - contenido:
+          - row1: ["Día", "Programas", "Minutos", "Inicio", "Fin", "Tipos", "Públicos"]
+          - row2..row8: [<Dia>, <programas>, <minutos>, nil, nil, nil, nil]
+          - row9: ["TOTAL", 88, 3717, nil, nil, nil, nil, "Canal Habana"]
+    - table-borders: t
+    - border-color: "B7B7B7"
+    - border-style: "thin"
+    - column-widths:
+      - xl-column-widths (pairs: 1..7)
+    - header-style:
+      - xl-header-style (bold, align=center, bg-color="F4CCCC")

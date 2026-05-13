@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AST Manual</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; margin: 24px; background: #f6f5f2; color: #1e1e1e; }
+    header { margin-bottom: 16px; }
+    h1 { font-size: 20px; margin: 0 0 6px 0; }
+    .meta { font-size: 12px; color: #5b5b5b; }
+    .card { background: #ffffff; border: 1px solid #e6e2db; border-radius: 8px; padding: 16px; }
+    .mermaid { background: #ffffff; padding: 12px; border-radius: 8px; }
+  </style>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+  </script>
+</head>
+<body>
+  <header>
+    <h1>AST Manual (grafo)</h1>
+    <div class="meta">Fuente: AST_MANUAL.md · Generado: 2026-05-12 13:58:26</div>
+  </header>
+  <div class="card">
+    <pre class="mermaid">
+graph TD
+n0["xl-workbook"]
+n1["name: &#x27;Canal Habana.xlsx&#x27;"]
+n0 --> n1
+n2["sheets:"]
+n3["xl-sheet (01-Lunes .. 07-Domingo)"]
+n2 --> n3
+n4["name: &#x27;01-Lunes&#x27; .. &#x27;07-Domingo&#x27;"]
+n3 --> n4
+n5["tables:"]
+n3 --> n5
+n6["xl-table"]
+n5 --> n6
+n7["id: &lt;dia&gt;"]
+n6 --> n7
+n8["contenido:"]
+n6 --> n8
+n9["row1: [&#x27;Programacion &lt;Dia&gt;&#x27;, nil, nil, nil, nil, nil, nil, nil, nil]"]
+n8 --> n9
+n10["row2: [nil, nil, nil, nil, nil, nil, nil, &#x27;Hora inicio 1ra fila&#x27;, &#x27;&lt;hora&gt;&#x27;]"]
+n8 --> n10
+n11["row3: [&#x27;Programa&#x27;, &#x27;Duracion (min)&#x27;, &#x27;Tipo&#x27;, nil, &#x27;Hora de inicio&#x27;, &#x27;Hora de terminacion&#x27;, &#x27;Programa&#x27;, &#x27;Tipo calc&#x27;, nil]"]
+n8 --> n11
+n12["row4..n: [&lt;nombre&gt;, &lt;duracion&gt;, &lt;tipo&gt;, nil, &#x27;&#x27;, &#x27;&#x27;, &lt;nombre&gt;, &#x27;&#x27;]"]
+n8 --> n12
+n13["formulas:"]
+n3 --> n13
+n14["xl-formula-list"]
+n13 --> n14
+n15["items:"]
+n14 --> n15
+n16["xl-formula (row=3, col=5, value=&#x27;=IF(G3&lt;&gt;\&#x27;\&#x27;,$I$2)&#x27;)"]
+n15 --> n16
+n17["xl-formula (row=3, col=6, value=&#x27;=IF(G3&lt;&gt;\&#x27;\&#x27;,TEXT(TIMEVALUE(E3)+IFERROR(VLOOKUP(G3,$A$4:$C$19,2,FALSE),0)/1440,\&#x27;hh:mm\&#x27;))&#x27;)"]
+n15 --> n17
+n18["xl-formula (row=3, col=8, value=&#x27;=IF(G3&lt;&gt;\&#x27;\&#x27;,IFERROR(VLOOKUP(G3,$A$4:$C$19,3,FALSE),\&#x27;\&#x27;))&#x27;)"]
+n15 --> n18
+n19["xl-formula (row=4..n, col=5, value=&#x27;=IF(G&lt;r&gt;&lt;&gt;\&#x27;\&#x27;,F&lt;r-1&gt;)&#x27;)"]
+n15 --> n19
+n20["xl-formula (row=4..n, col=6, value=&#x27;=IF(G&lt;r&gt;&lt;&gt;\&#x27;\&#x27;,TEXT(TIMEVALUE(E&lt;r&gt;)+IFERROR(VLOOKUP(G&lt;r&gt;,$A$4:$C$&lt;n&gt;,2,FALSE),0)/1440,\&#x27;hh:mm\&#x27;))&#x27;)"]
+n15 --> n20
+n21["xl-formula (row=4..n, col=8, value=&#x27;=IF(G&lt;r&gt;&lt;&gt;\&#x27;\&#x27;,IFERROR(VLOOKUP(G&lt;r&gt;,$A$4:$C$&lt;n&gt;,3,FALSE),\&#x27;\&#x27;))&#x27;)"]
+n15 --> n21
+n22["fernando-formulas:"]
+n3 --> n22
+n23["xl-fernando-formula (cell=&#x27;I2&#x27;, formula=&#x27;=1+1&#x27;)"]
+n22 --> n23
+n24["table-borders: t"]
+n3 --> n24
+n25["border-color: &#x27;B7B7B7&#x27;"]
+n3 --> n25
+n26["border-style: &#x27;thin&#x27;"]
+n3 --> n26
+n27["table-ranges:"]
+n3 --> n27
+n28["&#x27;A3:C&lt;nrows&gt;&#x27;"]
+n27 --> n28
+n29["&#x27;E3:G&lt;nrows&gt;&#x27;"]
+n27 --> n29
+n30["&#x27;H2:I2&#x27;"]
+n27 --> n30
+n31["range-styles:"]
+n3 --> n31
+n32["xl-range-style (range=&#x27;A1:I1&#x27;, style=xl-style)"]
+n31 --> n32
+n33["xl-range-style (range=&#x27;A3:I3&#x27;, style=xl-style)"]
+n31 --> n33
+n34["merge-ranges:"]
+n3 --> n34
+n35["xl-merge-range (range=&#x27;A1:I1&#x27;)"]
+n34 --> n35
+n36["conditional-format-rules:"]
+n3 --> n36
+n37["xl-conditional-rule (tipo=&#x27;cellIs&#x27;, rango=&#x27;B4:B&lt;nrows&gt;&#x27;, formula=&#x27;&gt;60&#x27;, color=&#x27;FFC7CE&#x27;)"]
+n36 --> n37
+n38["column-widths:"]
+n3 --> n38
+n39["xl-column-widths (pairs: 1..9)"]
+n38 --> n39
+n40["header-style:"]
+n3 --> n40
+n41["xl-header-style (bold, align=center, bg-color=&#x27;D9EAD3&#x27;)"]
+n40 --> n41
+n42["xl-sheet (Resumen TV)"]
+n2 --> n42
+n43["name: &#x27;Resumen TV&#x27;"]
+n42 --> n43
+n44["tables:"]
+n42 --> n44
+n45["xl-table"]
+n44 --> n45
+n46["id: &#x27;resumen&#x27;"]
+n45 --> n46
+n47["contenido:"]
+n45 --> n47
+n48["row1: [&#x27;Día&#x27;, &#x27;Programas&#x27;, &#x27;Minutos&#x27;, &#x27;Inicio&#x27;, &#x27;Fin&#x27;, &#x27;Tipos&#x27;, &#x27;Públicos&#x27;]"]
+n47 --> n48
+n49["row2..row8: [&lt;Dia&gt;, &lt;programas&gt;, &lt;minutos&gt;, nil, nil, nil, nil]"]
+n47 --> n49
+n50["row9: [&#x27;TOTAL&#x27;, 88, 3717, nil, nil, nil, nil, &#x27;Canal Habana&#x27;]"]
+n47 --> n50
+n51["table-borders: t"]
+n42 --> n51
+n52["border-color: &#x27;B7B7B7&#x27;"]
+n42 --> n52
+n53["border-style: &#x27;thin&#x27;"]
+n42 --> n53
+n54["column-widths:"]
+n42 --> n54
+n55["xl-column-widths (pairs: 1..7)"]
+n54 --> n55
+n56["header-style:"]
+n42 --> n56
+n57["xl-header-style (bold, align=center, bg-color=&#x27;F4CCCC&#x27;)"]
+n56 --> n57
+</pre>
+  </div>
+</body>
+</html>

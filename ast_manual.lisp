@@ -11,11 +11,15 @@
 (defun first-hour (prog-list)
   (or (getf (first prog-list) :hora-inicio) "16:00"))
 
-; Sheet name
+; Sheet name (sin ceros)
 (defun sheet-name (n)
-  (cond ((= n 1) "01-Lunes") ((= n 2) "02-Martes") ((= n 3) "03-Miércoles")
-        ((= n 4) "04-Jueves") ((= n 5) "05-Viernes") ((= n 6) "06-Sábado")
-        ((= n 7) "07-Domingo")))
+  (cond ((= n 1) "Lunes")
+        ((= n 2) "Martes")
+        ((= n 3) "Miércoles")
+        ((= n 4) "Jueves")
+        ((= n 5) "Viernes")
+        ((= n 6) "Sábado")
+        ((= n 7) "Domingo")))
 
 ; Data for one day - FIXED
 (defun make-data (prog hour dia)
@@ -27,18 +31,28 @@
       (setf d (cons (list (getf p :nombre) (getf p :duracion) (getf p :tipo-programa) nil "" "" (getf p :nombre) "") d)))
     (reverse d)))
 
-; Formulas for one day - FIX proper list building
+; Formulas for one day - English (Excel/LO)
 (defun make-formulas (last)
   (let ((f nil))
-    ; Header row 3
-    (push (make-instance 'clase-xl-formula :row 3 :col 5 :value "=IF(G3<>\"\",$I$2)") f)
-    (push (make-instance 'clase-xl-formula :row 3 :col 6 :value "=IF(G3<>\"\",TEXT(TIMEVALUE(E3)+IFERROR(VLOOKUP(G3,$A$4:$C$19,2,FALSE),0)/1440,\"hh:mm\"))") f)
-    (push (make-instance 'clase-xl-formula :row 3 :col 8 :value "=IF(G3<>\"\",IFERROR(VLOOKUP(G3,$A$4:$C$19,3,FALSE),\"\"))") f)
-    ; Data rows
+    ; Data rows (formulas start at row 4, header row 3 has titles)
     (loop for r from 4 to last do
-      (push (make-instance 'clase-xl-formula :row r :col 5 :value (concatenate 'string "=IF(G" (write-to-string r) "<>\"\",F" (write-to-string (1- r)) ")")) f)
-      (push (make-instance 'clase-xl-formula :row r :col 6 :value (concatenate 'string "=IF(G" (write-to-string r) "<>\"\",TEXT(TIMEVALUE(E" (write-to-string r) ")+IFERROR(VLOOKUP(G" (write-to-string r) ",$A$4:$C$" (write-to-string last) ",2,FALSE),0)/1440,\"hh:mm\"))")) f)
-      (push (make-instance 'clase-xl-formula :row r :col 8 :value (concatenate 'string "=IF(G" (write-to-string r) "<>\"\",IFERROR(VLOOKUP(G" (write-to-string r) ",$A$4:$C$" (write-to-string last) ",3,FALSE),\"\"))")) f))
+      (push (make-instance 'clase-xl-formula :row r :col 5
+                           :value (if (= r 4)
+                                      "=IF(G4<>\"\",TIME(HOUR($I$2),MINUTE($I$2),0),\"\")"
+                                      (concatenate 'string "=IF(G" (write-to-string r) "<>\"\",F"
+                                                  (write-to-string (1- r)) ",\"\")"))) f)
+      (push (make-instance 'clase-xl-formula :row r :col 6
+                           :value (concatenate 'string
+                                               "=IF(G" (write-to-string r) "<>\"\",TEXT(TIME(HOUR(E"
+                                               (write-to-string r) "),MINUTE(E" (write-to-string r) "),0)"
+                                               "+IFERROR(VLOOKUP(G" (write-to-string r)
+                                               ",$A$4:$C$" (write-to-string last)
+                                               ",2,FALSE),0)/1440,\"hh:mm\"),\"\")")) f)
+      (push (make-instance 'clase-xl-formula :row r :col 8
+                           :value (concatenate 'string
+                                               "=IF(G" (write-to-string r) "<>\"\",IFERROR(VLOOKUP(G"
+                                               (write-to-string r) ",$A$4:$C$" (write-to-string last)
+                                               ",3,FALSE),\"\"),\"\")")) f))
     (reverse f)))
 
 ; Make day sheet - WITH formulas list node
@@ -46,14 +60,31 @@
   (let* ((prog (get-prog dia)) (hour (first-hour prog)) (nprog (length prog))
          (data (make-data prog hour dia))
          (nrows (+ 3 nprog))
+         (end-row (max 4 nrows))
          (formulas (make-formulas nrows))
-         (formula-list (make-instance 'clase-xl-formula-list :items formulas)))
+         (formula-list (make-instance 'clase-xl-formula-list :items formulas))
+         (title-style (xl-style :bold t :bg-color "FFF2CC" :align "center"))
+         (range-styles (list
+                        (make-instance 'clase-xl-range-style :range "A1:I1" :style title-style)
+                        (make-instance 'clase-xl-range-style :range "A3:I3" :style (xl-style :bold t :bg-color "D9EAD3" :align "center"))))
+         (merge-ranges (list (make-instance 'clase-xl-merge-range :range "A1:I1")))
+         (conditional-rules (list
+                             (make-instance 'clase-xl-conditional-rule :tipo "cellIs"
+                                            :rango (concatenate 'string "B4:B" (write-to-string end-row))
+                                            :formula ">60"
+                                            :color "FFC7CE")))
+         (fernando-formulas (list
+                             (make-instance 'clase-xl-fernando-formula :cell "I2" :formula "=1+1"))))
     (format t "~a: ~a formulas=~a~%" dia nprog (length formulas))
     (xl-sheet :name (sheet-name n) :tables (list (xl-table :id dia :contenido data))
               :formulas formula-list
+              :fernando-formulas fernando-formulas
               :table-borders t :border-color "B7B7B7" :border-style "thin"
               :table-ranges (list (concatenate 'string "A3:C" (write-to-string nrows))
                                 (concatenate 'string "E3:G" (write-to-string nrows)) "H2:I2")
+              :range-styles range-styles
+              :merge-ranges merge-ranges
+              :conditional-format-rules conditional-rules
               :column-widths (xl-column-widths :pairs '(1 42 2 14 3 16 4 3 5 16 6 18 7 42 8 12 9 18))
               :header-style (xl-header-style :bold t :align "center" :bg-color "D9EAD3"))))
 

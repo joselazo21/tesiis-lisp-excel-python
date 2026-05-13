@@ -142,7 +142,13 @@
            (when (> i 0) (format stream ", "))
            (generate-code r lang stream))
       (format stream "],~%")))
-  (let ((mr (merge-ranges sh))) (when mr (format stream "            \"merge_ranges\": ") (xl-write mr stream) (format stream ",~%")))
+  (let ((mr (merge-ranges sh)))
+    (when mr
+      (format stream "            \"merge_ranges\": ")
+      (if (and (listp mr) (typep (first mr) 'clase-xl-merge-range))
+          (xl-write (mapcar #'range mr) stream)
+          (xl-write mr stream))
+      (format stream ",~%")))
   (let ((cr (conditional-format-rules sh)))
     (when cr
       (format stream "            \"conditional_format_rules\": [")
