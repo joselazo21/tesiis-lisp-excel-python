@@ -964,6 +964,47 @@ def _inject_fernando_formulas(ws, sheet_cfg: dict) -> None:
 # FUNCIÓN PRINCIPAL
 # =============================================================================
 
+def _unwrap_regions(sheet_cfg: dict) -> dict:
+    """
+    Convierte formato regions a formato plano (backward compat).
+    Las hojas generadas por el DSL Lisp vienen con 'regions';
+    las hojas escritas a mano en Python (como construir_hoja_grupo_desde_parametros)
+    vienen planas.
+    
+    Para una sola región, copia sus claves a la raíz de la hoja.
+    Para múltiples regiones, concatena datos y ajusta posiciones (TODO).
+    """
+    if "regions" not in sheet_cfg:
+        return sheet_cfg
+    regions = sheet_cfg["regions"]
+    if not regions:
+        return sheet_cfg
+    if len(regions) == 1:
+        for k, v in regions[0].items():
+            if k not in sheet_cfg:
+                sheet_cfg[k] = v
+    return sheet_cfg
+
+
+def _apply_defaults(sheet_cfg: dict) -> dict:
+    """
+    Aplica valores por defecto para estilo cuando el DSL no los proporciona.
+    El DSL ahora es puramente estructural; el estilo es responsabilidad del backend.
+    """
+    sheet_cfg.setdefault("table_borders", True)
+    sheet_cfg.setdefault("border_color", "000000")
+    sheet_cfg.setdefault("border_style", "thin")
+    sheet_cfg.setdefault("header_style", {})
+    hs = sheet_cfg["header_style"]
+    if "bold" not in hs:
+        hs["bold"] = True
+    if "align" not in hs:
+        hs["align"] = "center"
+    if "bg_color" not in hs:
+        hs["bg_color"] = "4A90E2"
+    return sheet_cfg
+
+
 def generate_excel(config: dict, filename: str) -> None:
     """
     Genera un archivo .xlsx completo desde una configuración declarativa.
@@ -978,6 +1019,8 @@ def generate_excel(config: dict, filename: str) -> None:
     wb.remove(wb.active)
 
     for sheet_cfg in config.get("sheets", []):
+        sheet_cfg = _unwrap_regions(sheet_cfg)
+        sheet_cfg = _apply_defaults(sheet_cfg)
         ws = wb.create_sheet(title=sheet_cfg["title"])
 
         # Pipeline de procesamiento (orden importante)

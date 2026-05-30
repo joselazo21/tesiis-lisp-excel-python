@@ -36,7 +36,7 @@
          (data (mapcar #'programa-tv-a-fila prog)))
     (xl-table :contenido data :headers '("Inicio" "Fin" "Duración" "Programa" "Tipo" "Público"))))
 
-; Create Sheet WITH FORMULAS
+; Create Sheet WITH FORMULAS (using region)
 (defun crear-hoja (cfg idx)
   (let* ((prog (getf cfg :programas))
          (frmls (loop for p in prog
@@ -44,17 +44,17 @@
                      for dur = (or (getf p :duracion) 0)
                      when (> dur 0)
                      collect (make-instance 'clase-xl-formula 
-                                          :row r :col 2 
-                                          :value (format nil "=TEXT(TIMEVALUE(A~a)+(C~a/1440),\"hh:mm\")" r r)))))
+                                           :row r :col 2 
+                                           :value (format nil "=TEXT(TIMEVALUE(A~a)+(C~a/1440),\"hh:mm\")" r r)))))
     (xl-sheet :name (format nil "~02d-~a" idx (tv-dia-display (getf cfg :dia)))
-      :tables (list (crear-tabla cfg))
-      :formulas frmls
-      :table-borders t :border-color "B7B7B7"
-      :column-widths (list 10 8 8 30 12 10)
-      :header-style (xl-header-style :bold t :bg-color "4A90E2" :align "center")
-      :range-styles (loop for p in prog for r from 3
-        for tipo = (tv-safe (getf p :tipo-programa) "") when (> (length tipo) 0)
-        collect (list :range (format nil "E~a:E~a" r r) :style (list :bg-color (tv-color-tipo tipo)))))))
+      :regions (list
+        (xl-region
+          :tables (list (crear-tabla cfg))
+          :formulas frmls
+          :column-widths (list 10 8 8 30 12 10)
+          :range-styles (loop for p in prog for r from 3
+            for tipo = (tv-safe (getf p :tipo-programa) "") when (> (length tipo) 0)
+            collect (list :range (format nil "E~a:E~a" r r) :style (list :bg-color (tv-color-tipo tipo)))))))))
 
 ; Totals
 (defun calcular-totales (plan)
@@ -64,15 +64,15 @@
         (incf prog) (incf min (or (getf p :duracion) 0))))
     (values prog min)))
 
-; Resumen
+; Resumen (using region)
 (defun crear-resumen (plan nombre)
   (multiple-value-bind (prog min) (calcular-totales plan)
     (let ((data (list (list "TOTAL" prog min))))
       (xl-sheet :name "Resumen"
-        :tables (list (xl-table :contenido data :headers '("" "Programas" "Minutos")))
-        :table-borders t :border-color "B7B7B7"
-        :header-style (xl-header-style :bold t :bg-color "F4CCCC")
-        :range-styles (list (list :range "A2:C2" :style (list :bold t :bg-color "FFF2CC")))))))
+        :regions (list
+          (xl-region
+            :tables (list (xl-table :contenido data :headers '("" "Programas" "Minutos")))
+            :range-styles (list (list :range "A2:C2" :style (list :bold t :bg-color "FFF2CC")))))))))
 
 ; Workbook
 (defun crear-libro (nombre plan &optional (con-resumen t))
