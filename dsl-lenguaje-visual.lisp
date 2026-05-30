@@ -1,63 +1,18 @@
 ;; dsl-lenguaje-visual.lisp
-;; Lenguaje de alto nivel para describir visualización de horarios.
-;; Macros: def-tabla, def-hoja, def-horario
+;; Lenguaje de alto nivel para describir estructuras de datos.
+;; Macros: def-expresion, def-tabla, def-hoja, def-horario
 ;;
-;; Este archivo es BACKEND-AGNOSTICO. Solo produce nodos AST (xl-*).
-;; NO contiene: column-letters, cell-refs, rangos Excel, códigos hex,
-;;            ni ninguna expresión de Excel.
-;; Todo eso se compila en los métodos generate-code de modelo-excel.lisp.
-;;
-;; El flujo:
-;;   DSL macro → produce xl-* AST con datos simbólicos
-;;   xl-generate → generate-code (en modelo-excel.lisp) → compila a Excel
+;; BACKEND-AGNOSTICO. Solo produce nodos AST (xl-*).
+;; NO contiene: Excel-ismos, ni compilación de fórmulas.
 
 (load "codigo-tesis.lisp")
-(load "modelo-excel.lisp")  ;; ← carga compilador-formulas.lisp internamente
+(load "modelo-excel.lisp")
 
 ;; =====================================================================
 ;; UTILIDADES
 ;; =====================================================================
 
-(defun collect-plist-key (plist key)
-  "Colecciona todos los valores para KEY en PLIST (soporta claves duplicadas).
-   PLIST es una lista plana (:key1 val1 :key2 val2 ...)"
-  (loop for (k v) on plist by #'cddr
-        when (eq k key)
-        collect v))
-
-(defun parse-cond-format-def (cfdef)
-  "Parsea una definición de :cond-format.
-   Retorna (values target-col row-var body apply-from).
-   Soporta:
-     (col :rule (var) _if-body)           — inline (old style)
-     (col :rule nombre-expresion)         — expresión (new style)
-   :apply-from es opcional, default 1."
-  (let* ((target-col (first cfdef))
-         (rest-spec (rest cfdef))
-         (rule-pos (position :rule rest-spec))
-         (rule-val (if rule-pos (nth (1+ rule-pos) rest-spec) nil))
-         (apply-from-pos (position :apply-from rest-spec))
-         (apply-from (if apply-from-pos
-                         (nth (1+ apply-from-pos) rest-spec)
-                         1)))
-    (if (symbolp rule-val)
-        ;; (col :rule nombre-expresion)
-        (let ((expr (gethash rule-val *expresiones*)))
-          (unless expr
-            (error "Expresión ~a no encontrada (def-expresion?)" rule-val))
-          (values target-col nil (body expr) apply-from))
-        ;; (col :rule (var) _if-body)
-        (let ((row-var (first rule-val))
-              (body (find-if (lambda (x)
-                                (and (listp x) (eq (first x) '_if)))
-                              (cddr (member :rule rest-spec)))))
-          (values target-col row-var body apply-from)))))
-
 (defun parse-hoja-body (body)
-  "Parsea el body de def-hoja.
-   Retorna (values plist table-calls)
-   plist: alist de (key . value) para pares keyword/valor
-   table-calls: lista de llamadas a tablas"
   (let ((plist '())
         (table-calls '())
         (len (length body))
@@ -77,158 +32,71 @@
     (values (nreverse plist) (nreverse table-calls))))
 
 ;; =====================================================================
-;; DEF-EXPRESION: define una expresión reutilizable
+;; EXPRESIONES: un macro por cada tipo de expresión
 ;; =====================================================================
-;;
-;; Sintaxis:
-;;   (def-expresion nombre ()
-;;     cuerpo-de-la-expresion)
-;;
-;; El cuerpo usa símbolos como llamadas a función (0 args):
-;;   (nombre-del-programa)  → columna del contexto
-;;   (hora-inicio)          → otra columna
-;;   (duracion expr)        → lookup en tabla de datos
-;;   (previous-row expr)    → evalúa expr en fila anterior
-;;
-;; generate-code produce código específico del backend:
-;;   Excel:  G4, E4, VLOOKUP(G4,...)
-;;   TS:     row.programName, row.startTime, getDuration(...)
 
-(defmacro def-expresion (name params &body body)
-  "Define una expresión pura, sin contexto de tabla.
-   name:   símbolo que nombra la expresión
-   params: lista de parámetros formales (vacía si no tiene)
-   body:   un solo S-expression (el cuerpo de la expresión)
-   La expresión se registra en *expresiones* para referencia posterior."
-  (declare (ignore params))
-  (let ((expr-body (first body)))
-    `(setf (gethash ',name *expresiones*)
-           (xl-expresion :body ',expr-body))))
+(defmacro _if (test then else)
+  `(xl-expr-if :test ,test :then ,then :else ,else))
+
+(defmacro non-empty (expr)
+  `(xl-expr-non-empty :expr ,expr))
+
+(defmacro it-is-the-first-row ()
+  `(xl-expr-first-row))
+
+(defmacro previous-row (expr)
+  `(xl-expr-previous-row :expr ,expr))
+
+(defmacro time-add (a b)
+  `(xl-expr-time-add :a ,a :b ,b))
+
+(defmacro show-nothing ()
+  `(xl-expr-show-nothing))
+
+(defmacro lookup (key-expr field)
+  `(xl-expr-lookup :value-field ',field :key-expr ,key-expr))
+
+(defmacro col (name &optional context)
+  (if context
+      `(xl-expr-column-ref :name ',name :context ,context)
+      `(xl-expr-column-ref :name ',name :context nil)))
+
+(defmacro param (name)
+  `(xl-expr-param-ref :name ',name))
 
 ;; =====================================================================
-;; DEF-TABLA: define una plantilla de tabla
+;; DEF-TABLA
 ;; =====================================================================
-;;
-;; Sintaxis:
-;;   (def-tabla nombre (param1 param2 ...)
-;;     :columns ((col-name "Display Name") ...)
-;;     [:height n]
-;;     :formula (col-target :compute (var) cuerpo)   ;; inline (old style)
-;;     :formula (col-target :compute nombre-expresion) ;; por nombre (new style)
-;;     :formula ...                                   ;; repetible
-;;     :cond-format (col-target :rule (var) cuerpo [:apply-from n])
-;;     :cond-format ...)                              ;; repetible
-;;
-;; Genera: función constructora que retorna
-;;   (values xl-table col-defs formula-defs cond-format-defs)
-;;   Todos son objetos AST agnósticos, sin Excel-ismos.
-
-(defun parse-formula-def (fdef)
-  "Parsea una definición de :formula.
-   Retorna (values target-col row-var body).
-   Si es estilo expresión: row-var es nil, body es el cuerpo de la expresión.
-   Si es estilo inline: row-var es el símbolo de fila, body es el cuerpo."
-  (let* ((target-col (first fdef))
-         (compute-part (third fdef))
-         (rest-part (cddr (member :compute fdef))))
-    (if (symbolp compute-part)
-        ;; (col :compute nombre-expresion) → lookup en *expresiones*
-        (let ((expr (gethash compute-part *expresiones*)))
-          (unless expr
-            (error "Expresión ~a no encontrada (def-expresion?)" compute-part))
-          (values target-col nil (body expr)))
-        ;; (col :compute (var) cuerpo) → inline
-        (let ((row-var (first compute-part))
-              (body (first rest-part)))
-          (values target-col row-var body)))))
 
 (defmacro def-tabla (name params &body body)
   (let* ((columns (getf body :columns))
-         (ncols (length columns))
          (column-names (mapcar #'first columns))
-         (column-display-names (mapcar #'second columns))
-         (height (or (getf body :height) 1))
-         (formula-defs (collect-plist-key body :formula))
-         (cond-format-defs (collect-plist-key body :cond-format)))
+         (column-display-names (mapcar #'second columns)))
     `(defun ,name (,@params &key (data nil))
-       "Constructor generado por def-tabla.
-        Retorna (values xl-table col-defs formula-defs cond-format-defs)
-        Todos son objetos AST agnósticos (sin Excel-ismos)."
-       (let* ((ncols ,ncols)
-              (column-names ',column-names)
-              (column-display-names ',column-display-names)
-              ;; Crear xl-col-def objects (agnósticos)
-              (col-defs
-                (loop for name in column-names
-                      for display in column-display-names
-                      collect (xl-col-def :name name :display-name display)))
-              ;; Crear xl-formula-def objects (simbólicos, sin compilar)
-              (formula-def-objs
-                (loop for fdef in ',formula-defs
-                      collect
-                      (multiple-value-bind (target-col row-var body)
-                          (parse-formula-def fdef)
-                        (xl-formula-def
-                          :target-col target-col
-                          :row-var row-var
-                          :body body))))
-              ;; Crear xl-cond-format-def objects (simbólicos)
-              (cond-format-objs
-                (loop for cfdef in ',cond-format-defs
-                      collect
-                      (multiple-value-bind (target-col row-var body apply-from)
-                          (parse-cond-format-def cfdef)
-                        (xl-cond-format-def
-                          :target-col target-col
-                          :row-var row-var
-                          :body body
-                          :apply-from apply-from)))))
-         (declare (ignore ncols column-names column-display-names))
-         ;; Construir xl-table (solo datos)
-         (let ((table (xl-table :contenido (or data '())
-                                 :headers column-display-names)))
-           (values table
-                   col-defs
-                   formula-def-objs
-                   cond-format-objs))))))
+       (let ((col-defs
+               (loop for name in ',column-names
+                     for display in ',column-display-names
+                     collect (xl-col-def :name name :display-name display)))
+             (table (xl-table :contenido (or data '())
+                              :headers ',column-display-names)))
+         (values table col-defs)))))
 
 ;; =====================================================================
-;; DEF-HOJA: define una plantilla de hoja
+;; DEF-HOJA
 ;; =====================================================================
-;;
-;; Sintaxis:
-;;   (def-hoja nombre (param1 ...)
-;;     :key value ...
-;;     (nombre-tabla arg1 arg2 ... :key value ...))
-;;
-;; La macro genera un constructor que:
-;;   1. Recibe datos abstractos
-;;   2. Construye la matriz de datos (layout) sin Excel-ismos
-;;   3. Almacena las definiciones DSL en slots dsl-* del xl-sheet
-;;   4. generate-code (en modelo-excel.lisp) compila todo a Excel
 
 (defmacro def-hoja (name params &body body)
-  "Define un constructor de hoja genérico.
+  "Define un constructor de hoja.
 
    Sintaxis:
      (def-hoja nombre (param1 param2 ...)
-       ;; REQUERIDO: una llamada a un constructor de tabla
+       ;; REQUERIDO: un constructor de tabla
        (nombre-tabla arg1 arg2 ...)
 
-       ;; Opcionales (keyword/value):
-       ;; :data       — matriz de datos completa
-       ;; :layout     — lista de elementos de layout abstracto (solo :border, :merge, :col-width)
-       ;; :params     — alist (sym . (col . row))
-       ;; :ref-table  — plist (:sc :sr :ec :er :cn)
-       ;; :table-pos  — (start-col . start-row)
-       ;; :name          — string nombre de hoja (default: (format nil \"~a\" primer-param))
-       ;; :fernando-formulas — lista
-       ;; :conditional-format-rules — lista
-       )
-
-   NOTA: La macro NO hardcodea ningún layout ni columna específica.
-   Todo lo específico del dominio debe pasarse como keyword.
-   El estilo es responsabilidad del backend — no se aceptan parámetros de estilo aquí."
+       ;; Opcionales:
+       ;; :data  — matriz de datos
+       ;; :name  — string nombre de hoja (default: nombre del primer parámetro)
+       )"
   (multiple-value-bind (plist table-calls)
       (parse-hoja-body body)
     (let* ((table-call (first table-calls))
@@ -236,33 +104,17 @@
            (table-args (rest table-call))
            (name-expr (or (cdr (assoc :name plist))
                           `(format nil "~a" ,(first params))))
-           (data-expr (cdr (assoc :data plist)))
-           (layout-expr (cdr (assoc :layout plist)))
-           (params-expr (cdr (assoc :params plist)))
-           (ref-table-expr (cdr (assoc :ref-table plist)))
-           (table-pos-expr (cdr (assoc :table-pos plist)))
-           (fernando-expr (cdr (assoc :fernando-formulas plist)))
-           (cfr-expr (cdr (assoc :conditional-format-rules plist))))
+           (data-expr (cdr (assoc :data plist))))
       `(defun ,name (,@params &key (data nil))
-         "Constructor de hoja generado por def-hoja.
-          Retorna un xl-sheet con una región DSL."
-         (multiple-value-bind (table t-col-defs t-formula-defs t-cond-format-defs)
+         (multiple-value-bind (table col-defs)
              (,table-name ,@table-args)
+           (declare (ignore col-defs))
            (let ((sheet-data (or ,data-expr data (contenido table))))
              (xl-sheet
                :name ,name-expr
                :regions (list
                  (xl-region
-                   :tables (list (xl-table :contenido sheet-data))
-                   :dsl-layout ,layout-expr
-                   :dsl-formula-defs t-formula-defs
-                   :dsl-cond-format-defs t-cond-format-defs
-                   :dsl-col-defs t-col-defs
-                   :dsl-params ,params-expr
-                   :dsl-ref-table ,ref-table-expr
-                   :dsl-table-pos ,table-pos-expr
-                   :fernando-formulas ,fernando-expr
-                   :conditional-format-rules ,cfr-expr)))))))))
+                   :tables (list (xl-table :contenido sheet-data)))))))))))
 
 ;; =====================================================================
 ;; DEF-HORARIO: define el libro completo

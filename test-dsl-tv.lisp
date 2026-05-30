@@ -131,18 +131,7 @@
       :name "Resumen TV"
       :regions (list
         (xl-region
-          :tables (list (xl-table :contenido data))
-          :dsl-layout (list
-                        (list :type :border
-                              :col-start 1 :col-end 7
-                              :row-start 1 :row-end max-row)
-                        (list :type :col-width :col 1 :width 14)
-                        (list :type :col-width :col 2 :width 12)
-                        (list :type :col-width :col 3 :width 12)
-                        (list :type :col-width :col 4 :width 10)
-                        (list :type :col-width :col 5 :width 10)
-                        (list :type :col-width :col 6 :width 36)
-                        (list :type :col-width :col 7 :width 28)))))))
+          :tables (list (xl-table :contenido data)))))))
 
 (format t "OK: constructoras de hojas definidas~%")
 

@@ -38,23 +38,10 @@
 
 ; Create Sheet WITH FORMULAS (using region)
 (defun crear-hoja (cfg idx)
-  (let* ((prog (getf cfg :programas))
-         (frmls (loop for p in prog
-                     for r from 3
-                     for dur = (or (getf p :duracion) 0)
-                     when (> dur 0)
-                     collect (make-instance 'clase-xl-formula 
-                                           :row r :col 2 
-                                           :value (format nil "=TEXT(TIMEVALUE(A~a)+(C~a/1440),\"hh:mm\")" r r)))))
-    (xl-sheet :name (format nil "~02d-~a" idx (tv-dia-display (getf cfg :dia)))
-      :regions (list
-        (xl-region
-          :tables (list (crear-tabla cfg))
-          :formulas frmls
-          :column-widths (list 10 8 8 30 12 10)
-          :range-styles (loop for p in prog for r from 3
-            for tipo = (tv-safe (getf p :tipo-programa) "") when (> (length tipo) 0)
-            collect (list :range (format nil "E~a:E~a" r r) :style (list :bg-color (tv-color-tipo tipo)))))))))
+  (xl-sheet :name (format nil "~02d-~a" idx (tv-dia-display (getf cfg :dia)))
+    :regions (list
+      (xl-region
+        :tables (list (crear-tabla cfg))))))
 
 ; Totals
 (defun calcular-totales (plan)
