@@ -39,24 +39,55 @@
   `(xl-expr-param-ref :name ',name))
 
 ;; =====================================================================
-;; TABLE: expande directamente a xl-table
+;; DEF-TABLE: macro que DEFINE una función-clase de tabla
 ;; =====================================================================
 ;;
-;; (tabla (programa "Programa") (duracion "Duración") (tipo "Tipo")
-;;   :data ((prog1 30 tipo1) (prog2 45 tipo2)))
+;; (def-table program-table
+;;   ((programa "Programa") (duracion "Duración") (tipo "Tipo"))
+;;   :computed ((hora-inicio ...) ...))
+;;
+;; Define una función que acepta :data y :params y devuelve un xl-table.
 
-(defmacro tabla (columns &body body)
-  (let* ((col-names (mapcar #'first columns))
-         (display-names (mapcar #'second columns))
-         (data (getf body :data))
-         (computed (getf body :computed))
-         (params (getf body :params)))
-    `(xl-table :contenido (or ,data '()) :headers ',display-names
-               :col-names ',col-names
-               :computed (list ,@(loop for (col expr) in computed
-                                       collect `(cons ',col ,expr)))
-               :params (list ,@(loop for (name val) in params
-                                     collect `(cons ',name ,val))))))
+(defmacro def-table (name columns &body body)
+  (let ((col-names (mapcar #'first columns))
+        (headers (mapcar #'second columns))
+        (computed (getf body :computed)))
+    `(defun ,name (&key data params)
+       (xl-table :contenido (or data '())
+                 :headers ',headers
+                 :col-names ',col-names
+                 :computed (list ,@(loop for (col expr) in computed
+                                         collect `(cons ',col ,expr)))
+                 :params params))))
+
+;; =====================================================================
+;; TABLA: macro que INSTANCIA una tabla (llama a la función definida)
+;; =====================================================================
+;;
+;; (tabla program-table
+;;   :data *lunes-progs*
+;;   :params ((hora-inicio-param *lunes-hour*)))
+
+(defmacro tabla (first &rest args)
+  (if (listp first)
+      ;; forma inline: (tabla ((col "Header") ...) :data ... :computed ... :params ...)
+      (let* ((col-names (mapcar #'first first))
+             (headers (mapcar #'second first))
+             (data (getf args :data))
+             (computed (getf args :computed))
+             (params (getf args :params)))
+        `(xl-table :contenido (or ,data '()) :headers ',headers
+                   :col-names ',col-names
+                   :computed (list ,@(loop for (col expr) in computed
+                                           collect `(cons ',col ,expr)))
+                   :params (list ,@(loop for (name val) in params
+                                         collect `(cons ',name ,val)))))
+      ;; forma instancia: (tabla program-table :data ... :params ...)
+      (let ((data-arg (getf args :data))
+            (params-arg (getf args :params)))
+        `(,first :data ,data-arg
+                 :params (list ,@(loop for (name val) in params-arg
+                                       collect `(cons ',name ,val)))))))
 
 ;; =====================================================================
 ;; HOJA: expande directamente a xl-sheet con region + tablas

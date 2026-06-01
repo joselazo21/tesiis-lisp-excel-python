@@ -1,160 +1,65 @@
 (load "dsl-directo.lisp")
 (load "variables_horario_tv.lisp")
 
-(format t "~%=== AST MANUAL DIRECTO (sin plantillas, instancias explicitas) ===~%~%")
+(format t "~%=== AST MANUAL DIRECTO ===~%~%")
+
+;; =====================================================================
+;; 1. DEFINICIÓN de la tabla de programas (una vez, reutilizable)
+;; =====================================================================
+
+(def-table program-table
+  ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
+   (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
+   (tipo-calc "Tipo Calc"))
+  :computed ((hora-inicio (_if (non-empty (col programa-calc))
+                             (_if (it-is-the-first-row)
+                               (param hora-inicio-param)
+                               (col hora-terminacion (previous-row (col hora-terminacion))))
+                             (show-nothing)))
+             (hora-terminacion (_if (non-empty (col programa-calc))
+                                  (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
+                                  (show-nothing)))
+             (tipo-calc (_if (non-empty (col programa-calc))
+                           (lookup (col programa-calc) tipo)
+                           (show-nothing)))))
+
+;; =====================================================================
+;; 2. INSTANCIACIÓN — cada día con sus datos
+;; =====================================================================
 
 (libro horario-tv-directo
   :filename "Horario_TV_Directo.xlsx"
   :hojas (list
-    ;; =================================================================
-    ;; Lunes
-    ;; =================================================================
     (hoja "Lunes"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *lunes-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *lunes-hour*))))
-
-    ;; =================================================================
-    ;; Martes
-    ;; =================================================================
     (hoja "Martes"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *martes-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *martes-hour*))))
-
-    ;; =================================================================
-    ;; Miércoles
-    ;; =================================================================
     (hoja "Miércoles"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *miercoles-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *miercoles-hour*))))
-
-    ;; =================================================================
-    ;; Jueves
-    ;; =================================================================
     (hoja "Jueves"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *jueves-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *jueves-hour*))))
-
-    ;; =================================================================
-    ;; Viernes
-    ;; =================================================================
     (hoja "Viernes"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *viernes-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *viernes-hour*))))
-
-    ;; =================================================================
-    ;; Sábado
-    ;; =================================================================
     (hoja "Sábado"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *sabado-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *sabado-hour*))))
-
-    ;; =================================================================
-    ;; Domingo
-    ;; =================================================================
     (hoja "Domingo"
-      (tabla ((programa-calc "Programa") (duracion "Duración (min)") (tipo "Tipo")
-              (hora-inicio "Hora Inicio") (hora-terminacion "Hora Terminación")
-              (tipo-calc "Tipo Calc"))
+      (tabla program-table
         :data *domingo-progs*
-        :computed ((hora-inicio (_if (non-empty (col programa-calc))
-                                   (_if (it-is-the-first-row)
-                                     (param hora-inicio-param)
-                                     (col hora-terminacion (previous-row (col hora-terminacion))))
-                                   (show-nothing)))
-                   (hora-terminacion (_if (non-empty (col programa-calc))
-                                        (time-add (col hora-inicio) (lookup (col programa-calc) duracion))
-                                        (show-nothing)))
-                   (tipo-calc (_if (non-empty (col programa-calc))
-                                 (lookup (col programa-calc) tipo)
-                                 (show-nothing))))
         :params ((hora-inicio-param *domingo-hour*))))
-
     ;; =================================================================
-    ;; Resumen
+    ;; Resumen — tabla inline (solo esta, estructura distinta)
     ;; =================================================================
     (hoja "Resumen TV"
       (tabla ((dia "Día") (programas "Programas") (minutos "Minutos")
@@ -172,8 +77,7 @@
                         collect (list name (length _progs) dur
                                       (or _hour "")
                                       ""))
-                  (list (list "TOTAL" total-prog total-min "" "")))))))
-)
+                  (list (list "TOTAL" total-prog total-min "" ""))))))))
 (xl-generate horario-tv-directo "horario-tv-directo.py")
 (xl-run-generated "horario-tv-directo.py")
 
