@@ -21,7 +21,13 @@
                                   (show-nothing)))
              (tipo-calc (_if (non-empty (col programa-calc))
                            (lookup (col programa-calc) tipo)
-                           (show-nothing)))))
+                           (show-nothing))))
+  :render (conditional-rendering
+            :condition (_or (equals (previous-of (col tipo))
+                                    (col tipo))
+                            (equals (col tipo)
+                                    (next-of (col tipo))))
+            :target-columns (hora-inicio hora-terminacion tipo-calc)))
 
 ;; =====================================================================
 ;; 2. INSTANCIACIÓN — cada día con sus datos

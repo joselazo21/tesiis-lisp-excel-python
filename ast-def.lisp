@@ -10,11 +10,35 @@
 (defclass* xl-expr-column-ref () (name context))
 (defclass* xl-expr-param-ref () (name))
 (defclass* xl-expr-previous-row () (expr))
+(defclass* xl-expr-next-row () (expr))
 (defclass* xl-expr-time-add () (a b))
 (defclass* xl-expr-show-nothing () ())
 (defclass* xl-expr-lookup () (value-field key-expr))
 
-(defclass* xl-table () (id cols rows contenido headers computed col-names params))
+(defclass* xl-expr-equals () (a b))
+(defclass* xl-expr-different () (a b))
+(defclass* xl-expr-and () (a b))
+(defclass* xl-expr-or () (a b))
+
+(defclass* xl-expr-add () (a b))
+(defclass* xl-expr-subtract () (a b))
+(defclass* xl-expr-multiply () (a b))
+(defclass* xl-expr-divide () (a b))
+
+(defclass* xl-expr-countif () (range-template criteria))
+(defclass* xl-expr-counta () (range-template))
+(defclass* xl-expr-sum () (range-template))
+
+(defclass* xl-expr-cross-sheet-ref () (sheet cell-template))
+
+(defclass* xl-expr-concat () (a b))
+(defclass* xl-expr-string () (value))
+
+(defclass* xl-fixed-formula () (row column-index expr))
+
+(defclass* xl-style-rule () (rule-condition target-columns))
+
+(defclass* xl-table () (id cols rows contenido headers computed col-names params style-rules fixed-formulas first-row))
 
 (defclass* xl-region () (tables))
 
