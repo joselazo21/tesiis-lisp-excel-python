@@ -1,6 +1,30 @@
-; generate-code-direct.lisp — Generate-code methods para el DSL directo
-; Backend Excel: serializa AST a Python (openpyxl)
-; Cargar en lugar de modelo-excel.lisp para el pipeline directo.
+;; =============================================================================
+;; generate-code-direct.lisp — Backend Excel/Python del DSL
+;;
+;; RESPONSABILIDAD: traducir nodos del AST (definidos en ast-def.lisp) a
+;; fórmulas y estructuras concretas del target (Excel/Python/openpyxl).
+;; Este archivo es el ÚNICO lugar donde pueden vivir:
+;;   - Letras de columna Excel ("B", "C", "$A$1"...)
+;;   - Nombres de funciones Excel (IF, SUBSTITUTE, TRIM, COUNTIF...)
+;;   - Estructuras JSON del protocolo hoja_con_formulas.py
+;;   - Conocimiento de la estructura interna de las tablas del workbook
+;;     (ej: turno-table tiene first-row=4, cell-height=2)
+;;
+;; PRINCIPIO CLAVE: separación de responsabilidades.
+;;   - ast-def.lisp  → QUÉ existe (clases, estructura)
+;;   - dsl-directo   → CÓMO se escribe (sintaxis, macros)
+;;   - aquí          → A QUÉ se traduce en el backend concreto
+;;
+;; El método central es compile-excel-formula, que recibe un nodo AST
+;; y devuelve un string con la fórmula Excel correspondiente.
+;;
+;; Firma: (compile-excel-formula expr col-map data-names row-num first-row last-row)
+;;   col-map    : alist (col-sym → "LetraExcel") de la región actual
+;;   data-names : lista de símbolos de columnas de la tabla actual
+;;   row-num    : fila Excel absoluta que se está compilando
+;;   first-row  : primera fila de datos de la tabla
+;;   last-row   : última fila de datos de la tabla
+;; =============================================================================
 (load "ast-def.lisp")
 
 ; =====================================================================
@@ -40,6 +64,50 @@
 (defun data-col-names (tbl)
   (let ((computed-names (mapcar #'car (computed tbl))))
     (remove-if (lambda (n) (member n computed-names)) (col-names tbl))))
+
+(defun paired-col-indexes (tbl)
+  (let ((names (paired-columns tbl)))
+    (loop for pname in names
+          for idx = (position pname (col-names tbl) :test #'string-equal)
+          when idx collect idx)))
+
+(defun paired-cell-values (value cell-height)
+  (let ((result (make-list cell-height :initial-element "")))
+    (cond
+      ((and (listp value) (> (length value) 0))
+       (setf (nth 0 result) (or (first value) ""))
+       (when (> cell-height 1)
+         (setf (nth 1 result) (or (second value) ""))))
+      (t
+       (setf (nth 0 result) value)))
+    result))
+
+(defun expand-data-row (row num-cols cell-height paired-idxs)
+  (let ((physical-rows (loop repeat cell-height collect (make-list num-cols :initial-element ""))))
+    (loop for col-idx from 0 below num-cols
+          for val = (if (< col-idx (length row)) (nth col-idx row) "")
+          do (if (member col-idx paired-idxs)
+                 (let ((pieces (paired-cell-values val cell-height)))
+                   (loop for r from 0 below cell-height
+                         do (setf (nth col-idx (nth r physical-rows)) (nth r pieces))))
+                 (setf (nth col-idx (first physical-rows)) val)))
+    physical-rows))
+
+(defun expand-table-content (tbl)
+  (let* ((con (contenido tbl))
+         (num-cols (length (col-names tbl)))
+         (cell-height (max 1 (or (cell-height tbl) 1)))
+         (paired-idxs (paired-col-indexes tbl))
+         (explicit-first (first-row tbl)))
+    (if (<= cell-height 1)
+        con
+        (let* ((prefix-count (if explicit-first (max 0 (1- explicit-first)) 0))
+               (prefix (subseq con 0 (min prefix-count (length con))))
+               (logical-data (nthcdr (min prefix-count (length con)) con))
+               (expanded-data
+                 (loop for row in logical-data
+                       append (expand-data-row row num-cols cell-height paired-idxs))))
+          (append prefix expanded-data)))))
 
 ; =====================================================================
 ; COMPILE-EXCEL-FORMULA — expresión → string de fórmula Excel
@@ -156,17 +224,28 @@
 ; =====================================================================
 
 (defmethod compile-excel-formula ((e clase-xl-expr-countif) col-map data-names row-num first-row last-row)
-  (let ((range (resolve-range-template (range-template e) first-row last-row row-num col-map))
+  (let ((range-str (compile-excel-formula (count-range e) col-map data-names row-num first-row last-row))
         (criteria (compile-excel-formula (criteria e) col-map data-names row-num first-row last-row)))
-    (format nil "COUNTIF(~a,~a)" range criteria)))
+    (format nil "COUNTIF(~a,~a)" range-str criteria)))
 
 (defmethod compile-excel-formula ((e clase-xl-expr-counta) col-map data-names row-num first-row last-row)
-  (let ((range (resolve-range-template (range-template e) first-row last-row row-num col-map)))
-    (format nil "COUNTA(~a)" range)))
+  (let ((range-str (compile-excel-formula (count-range e) col-map data-names row-num first-row last-row)))
+    (format nil "COUNTA(~a)" range-str)))
 
 (defmethod compile-excel-formula ((e clase-xl-expr-sum) col-map data-names row-num first-row last-row)
-  (let ((range (resolve-range-template (range-template e) first-row last-row row-num col-map)))
-    (format nil "SUM(~a)" range)))
+  (let ((range-str (compile-excel-formula (count-range e) col-map data-names row-num first-row last-row)))
+    (format nil "SUM(~a)" range-str)))
+
+;;; xl-range: compila un rango de columnas a string Excel "$C$4:$L$9"
+(defmethod compile-excel-formula ((e clase-xl-range) col-map data-names row-num first-row last-row)
+  (declare (ignore data-names row-num))
+  (let ((from-name (name (from-col e)))
+        (to-name (when (to-col e) (name (to-col e)))))
+    (let ((from-letter (cdr (assoc from-name col-map :test #'eq))))
+      (let ((to-letter (if to-name
+                           (cdr (assoc to-name col-map :test #'eq))
+                           from-letter)))
+        (format nil "$~a$~a:$~a$~a" from-letter first-row to-letter last-row)))))
 
 ;; =====================================================================
 ; COMPILE-EXCEL-FORMULA — CROSS-SHEET / STRING / CONCAT
@@ -184,6 +263,93 @@
   (format nil "(~a&~a)"
           (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
           (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+;; aula-lookup: genera SUBSTITUTE(TRIM(IF(G1!$COL$ROW=AULA,G1!$A$1&" ","")&...), " ", ",")
+;; El ROW en la hoja de grupo se calcula desde row-num y first-row de la tabla Aulas.
+;; Asume: grupo first-row=4, cell-height=2, aula es la 2da fila del par (offset=1).
+;; =============================================================================
+;; INFRAESTRUCTURA PARA BÚSQUEDAS CROSS-SHEET DINÁMICAS
+;;
+;; Estas tres piezas colaboran para compilar collect-over / cross-cell:
+;;
+;;  *turno-dia-col-map*  → conocimiento de la estructura de turno-table
+;;  *sheet-env*          → entorno dinámico de ligaduras de variables de hoja
+;;  resolve-cross-col    → símbolo DSL → letra Excel
+;; =============================================================================
+
+;; Posición de cada columna de turno-table dentro de la hoja de grupo.
+;; Este mapa ES conocimiento del backend: sabe que turno-table tiene
+;; ((turno "") (lun "") (mar "") (mie "") (jue "") (vie ""))
+;; y que en el Excel generado eso ocupa columnas A..F (1-indexed).
+;; Si la definición de turno-table cambiara, este mapa debe actualizarse.
+(defparameter *turno-dia-col-map*
+  '((turno . 1) (lun . 2) (mar . 3) (mie . 4) (jue . 5) (vie . 6)))
+
+;; Resuelve un símbolo de columna DSL a la letra Excel correspondiente.
+;; Primero busca en *turno-dia-col-map*; si no está, usa el nombre del símbolo.
+;; Ejemplo: LUN → "B", VIE → "F", A → "A" (fallback directo).
+(defun resolve-cross-col (col-sym)
+  (let ((pos (cdr (assoc col-sym *turno-dia-col-map* :test #'string-equal))))
+    (if pos (col->letter pos) (symbol-name col-sym))))
+
+;; Entorno dinámico de ligaduras de variables de hoja.
+;; Estructura: alist ((SYM . "NombreHoja") ...)
+;; collect-over amplía este entorno en cada iteración para que cross-cell
+;; pueda resolver a qué hoja concreta hace referencia la variable.
+;; Es nil fuera de un collect-over.
+(defparameter *sheet-env* nil)
+
+;; =============================================================================
+;; compile-excel-formula — CROSS-SHEET DINÁMICO
+;; =============================================================================
+
+;; xl-expr-turno-aula-row: calcula la fila Excel del aula dentro de la turno-table
+;; del grupo para el turno que se está compilando actualmente.
+;;
+;; La turno-table del grupo tiene: first-row=4, cell-height=2, aula = 2ª fila del par.
+;;   turno 1 → fila 4 (asig) + fila 5 (aula)  → row-aula = 5
+;;   turno 2 → fila 6 (asig) + fila 7 (aula)  → row-aula = 7
+;;   turno N → 4 + (N-1)*2 + 1                 → row-aula = 3 + N*2
+;;
+;; row-num:   fila actual en la tabla Aulas (2=turno1, 3=turno2, ..., 7=turno6)
+;; first-row: primera fila de datos de la tabla Aulas (2)
+;; turno-idx: (row-num - first-row) → índice 0-based del turno
+(defmethod compile-excel-formula ((e clase-xl-expr-turno-aula-row) col-map data-names row-num first-row last-row)
+  (declare (ignore e col-map data-names last-row))
+  (format nil "~a" (+ 4 (* (- row-num first-row) 2) 1)))
+
+;; xl-expr-cross-cell: referencia a celda en la hoja ligada a sheet en *sheet-env*.
+;; 1. Resuelve la hoja: busca (sheet e) en *sheet-env* → string "D111"
+;; 2. Resuelve la columna: resolve-cross-col sobre (xcol e)
+;; 3. Resuelve la fila: entero → directo; expresión → compila recursivamente
+;; Genera: "D111!$B$5"
+(defmethod compile-excel-formula ((e clase-xl-expr-cross-cell) col-map data-names row-num first-row last-row)
+  (let* ((sheet-sym    (sheet e))
+         (actual-sheet (cdr (assoc sheet-sym *sheet-env* :test #'string-equal)))
+         (col-letter   (resolve-cross-col (xcol e)))
+         (row-val      (let ((r (row e)))
+                         (if (integerp r)
+                             (format nil "~a" r)
+                             (compile-excel-formula r col-map data-names row-num first-row last-row)))))
+    (format nil "~a!$~a$~a" actual-sheet col-letter row-val)))
+
+;; xl-expr-collect-over: para cada hoja en groups, liga sheet-var→hoja en *sheet-env*
+;; y compila body. Los N términos se concatenan y se envuelven en:
+;;   SUBSTITUTE(TRIM(t1&t2&...&tN), " ", ",")
+;;
+;; El resultado es una fórmula Excel que devuelve los grupos que cumplen
+;; la condición del body, separados por comas. Vacío si ninguno cumple.
+(defmethod compile-excel-formula ((e clase-xl-expr-collect-over) col-map data-names row-num first-row last-row)
+  (let* ((groups  (groups e))
+         (sh-var  (sheet-var e))
+         (body    (body e))
+         (terms   (mapcar (lambda (g)
+                            ;; Liga SH-VAR → g solo durante la compilación de este término
+                            (let ((*sheet-env* (acons sh-var g *sheet-env*)))
+                              (compile-excel-formula body col-map data-names row-num first-row last-row)))
+                          groups))
+         (inner   (format nil "~{~a~^&~}" terms)))
+    (format nil "SUBSTITUTE(TRIM(~a),\" \",\",\")" inner)))
 
 (defmethod compile-excel-formula ((e clase-xl-expr-time-add) col-map data-names row-num first-row last-row)
   (let* ((a-str (compile-excel-formula (a e) col-map data-names row-num first-row last-row))
@@ -327,15 +493,27 @@
 ; =====================================================================
 
 (defmethod generate-code ((e clase-xl-expr-countif) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"countif\", \"range\": ~s, \"criteria\": " (range-template e))
+  (format stream "{\"type\": \"countif\", \"range\": ")
+  (generate-code (count-range e) lang stream)
+  (format stream ", \"criteria\": ")
   (generate-code (criteria e) lang stream)
   (format stream "}"))
 
 (defmethod generate-code ((e clase-xl-expr-counta) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"counta\", \"range\": ~s}" (range-template e)))
+  (format stream "{\"type\": \"counta\", \"range\": ")
+  (generate-code (count-range e) lang stream)
+  (format stream "}"))
 
 (defmethod generate-code ((e clase-xl-expr-sum) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"sum\", \"range\": ~s}" (range-template e)))
+  (format stream "{\"type\": \"sum\", \"range\": ")
+  (generate-code (count-range e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-range) (lang xl-out) (stream t))
+  (format stream "{\"type\": \"range\", \"from\": ~s" (name (from-col e)))
+  (when (to-col e)
+    (format stream ", \"to\": ~s" (name (to-col e))))
+  (format stream "}"))
 
 ;; =====================================================================
 ; GENERATE-CODE — CROSS-SHEET, STRING, CONCAT
@@ -519,16 +697,23 @@
 ; =====================================================================
 
 (defmethod generate-code ((tbl clase-xl-table) (lang xl-out) (stream t))
-  (let ((con (contenido tbl)) (hdrs (headers tbl)) (comp (computed tbl))
-        (col-map (build-col-map tbl)) (dnames (data-col-names tbl))
-        (prms (params tbl)) (cn (col-names tbl))
-        (ffs (fixed-formulas tbl))
-        (num-cols (length (col-names tbl)))
-        (num-params (length (params tbl)))
-        (key-count 0)
-        (explicit-first (first-row tbl)))
+  (let* ((logical-con (contenido tbl))
+         (con (expand-table-content tbl))
+         (hdrs (headers tbl))
+         (comp (computed tbl))
+         (col-map (build-col-map tbl))
+         (dnames (data-col-names tbl))
+         (prms (params tbl))
+         (cn (col-names tbl))
+         (ffs (fixed-formulas tbl))
+         (num-cols (length (col-names tbl)))
+         (num-params (length (params tbl)))
+         (cell-height (max 1 (or (cell-height tbl) 1)))
+         (cell-width (max 1 (or (cell-width tbl) 1)))
+         (key-count 0)
+         (explicit-first (first-row tbl)))
     (flet ((emit-sep ()
-             (when (> key-count 0) (format stream ",~%"))))
+              (when (> key-count 0) (format stream ",~%"))))
       ;; ── data ──
       (when con
         (emit-sep)
@@ -552,44 +737,71 @@
       ;; ── formulas ──
       (let* ((first-row (or explicit-first
                             (+ 2 (if (> num-params 0) 1 0))))
-             ;; data-rows = número de filas de datos reales (no prefix)
-             (data-rows (if explicit-first
-                            (max 0 (- (length con) (1- explicit-first)))
-                            (length con)))
-             (last-row (1- (+ first-row data-rows)))
+             (prefix-rows (if explicit-first (max 0 (1- explicit-first)) 0))
+             (logical-data-rows (if explicit-first
+                                    (max 0 (- (length logical-con) prefix-rows))
+                                    (length logical-con)))
+             (physical-data-rows (* logical-data-rows cell-height))
+             (last-row (if (> physical-data-rows 0)
+                           (1- (+ first-row physical-data-rows))
+                           (1- first-row)))
              (param-cells
-               (when prms
-                 (loop for (n . v) in prms for idx from 1
-                       for col-num = (+ num-cols idx)
-                       collect (cons n (format nil "$~a~a" (col->letter col-num) 2))))))
+                (when prms
+                  (loop for (n . v) in prms for idx from 1
+                        for col-num = (+ num-cols idx)
+                        collect (cons n (format nil "$~a~a" (col->letter col-num) 2))))))
         (when (or comp ffs)
           (emit-sep)
           (format stream "        \"formulas\": [")
           (let ((formula-count 0))
             ;; Computed formulas (per-row)
-            (loop for (col . expr) in comp
-                  for col-index = (1+ (position col cn :test #'string-equal))
-                  do
-                     (loop for i from 0 below data-rows
-                           for row = (+ first-row i)
-                            for formula = (let ((*param-cells* param-cells))
-                                            (compile-excel-formula expr col-map dnames row first-row last-row))
-                           do
+                  (loop for (col . expr) in comp
+                   for col-index = (1+ (position col cn :test #'string-equal))
+                   do
+                     (loop for i from 0 below logical-data-rows
+                           for row = (+ first-row (* i cell-height))
+                             for formula = (let ((*param-cells* param-cells))
+                                             (compile-excel-formula expr col-map dnames row first-row last-row))
+                            do
                               (when (> formula-count 0) (format stream ", "))
                               (format stream "{\"row\": ~a, \"col\": ~a, \"value\": \"=~a\"}"
                                       row col-index (escape-python-string formula))
                               (incf formula-count)))
             ;; Fixed formulas (single cells)
             (loop for ff in ffs
+                  for cr = (cell-ref ff)
                   for formula = (let ((*param-cells* param-cells))
-                                  (compile-excel-formula (expr ff) col-map dnames (row ff) first-row last-row))
+                                  (compile-excel-formula (expr ff) col-map dnames (row cr) first-row last-row))
                   do
                      (when (> formula-count 0) (format stream ", "))
-                     (format stream "{\"row\": ~a, \"col\": ~a, \"value\": \"=~a\"}"
-                             (row ff) (column-index ff) (escape-python-string formula))
-                     (incf formula-count)))
-          (format stream "]")
-          (incf key-count)))
+(format stream "{\"row\": ~a, \"col\": ~a, \"value\": \"=~a\"}"
+        (row cr) (slot-value cr 'col) (escape-python-string formula))
+                       (incf formula-count)))
+           (format stream "]")
+           (incf key-count)))
+      ;; ── table_ranges / table_block_sizes (layout por backend) ──
+      (let* ((first-row (or explicit-first
+                            (+ 2 (if (> num-params 0) 1 0))))
+             (prefix-rows (if explicit-first (max 0 (1- explicit-first)) 0))
+             (logical-data-rows (if explicit-first
+                                    (max 0 (- (length logical-con) prefix-rows))
+                                    (length logical-con)))
+             (physical-data-rows (* logical-data-rows cell-height))
+             (last-row (if (> physical-data-rows 0)
+                           (1- (+ first-row physical-data-rows))
+                           nil))
+             (last-col-letter (col->letter num-cols))
+             (table-range (when last-row
+                            (format nil "A~a:~a~a" first-row last-col-letter last-row))))
+        (when table-range
+          (emit-sep)
+          (format stream "        \"table_ranges\": [~s]" table-range)
+          (incf key-count)
+          (when (or (> cell-height 1) (> cell-width 1))
+            (emit-sep)
+            (format stream "        \"table_block_sizes\": [{\"range\": ~s, \"row_step\": ~a, \"col_step\": ~a}]"
+                    table-range cell-height cell-width)
+            (incf key-count))))
       ;; ── column_widths ──
       (progn
         (emit-sep)
@@ -612,7 +824,10 @@
       ;; ── border_color ──
       (progn
         (emit-sep)
-        (format stream "        \"border_color\": \"B7B7B7\"")
+        (format stream "        \"border_color\": \"4F81BD\"")
+        (incf key-count)
+        (emit-sep)
+        (format stream "        \"border_style\": \"thick\"")
         (incf key-count))
       ;; ── range_styles ──
       (let* ((first-row (or explicit-first
@@ -642,11 +857,142 @@
 ; =====================================================================
 
 (defmethod generate-code ((region clase-xl-region) (lang xl-out) (stream t))
-  (format stream "{")
-  (loop for tbl in (tables region) for i from 0
-        do (when (> i 0) (format stream ","))
-           (generate-code tbl lang stream))
-  (format stream "}"))
+  (let ((tables (tables region)))
+    (unless tables (return-from generate-code (format stream "{}")))
+    (labels ((col-count (tbl) (length (col-names tbl)))
+             (effective-first-row (tbl)
+               (or (first-row tbl) (+ 2 (if (params tbl) 1 0))))
+             (logical-rows (tbl)
+               (let* ((con (contenido tbl))
+                      (ef (first-row tbl))
+                      (pr (if ef (max 0 (1- ef)) 0)))
+                 (max 0 (- (length con) pr))))
+             (physical-rows (tbl)
+               (* (logical-rows tbl) (max 1 (or (cell-height tbl) 1))))
+             (build-global-col-map (tbls)
+               (let ((cur 1) (map nil))
+                 (dolist (tb tbls (nreverse map))
+                   (dolist (name (col-names tb))
+                     (push (cons name (col->letter cur)) map)
+                     (incf cur))
+                   (incf cur)))))  ;; skip gap column
+     (let* ((offsets (loop with cur = 0
+                            for tbl in tables
+                            for start = cur
+                            do (incf cur (1+ (col-count tbl)))
+                            collect start))
+             (main-tbl (first tables))
+             (ref-first-row (effective-first-row main-tbl))
+             (ref-physical-rows (physical-rows main-tbl))
+             (last-row (if (> ref-physical-rows 0)
+                           (1- (+ ref-first-row ref-physical-rows))
+                           (1- ref-first-row)))
+             (total-cols (loop for tbl in tables sum (1+ (col-count tbl))))
+             (last-col-letter (col->letter total-cols))
+             (global-col-map (build-global-col-map tables))
+             (global-dnames (loop for tbl in tables append (data-col-names tbl)))
+             (all-expanded (loop for tbl in tables collect (expand-table-content tbl)))
+             (max-rows (loop for exp in all-expanded maximize (length exp))))
+        (format stream "{~%")
+        ;; ── data ──
+        (format stream "        \"data\": ")
+        (xl-write
+          (loop for r from 0 below max-rows
+                collect (loop for tbl in tables for exp in all-expanded
+                              append (let ((row (if (< r (length exp)) (nth r exp)
+                                                     (make-list (col-count tbl) :initial-element "")))
+                                           (nc (col-count tbl)))
+                                       (subseq row 0 (min (length row) nc)))
+                              collect ""))
+          stream)
+        (format stream ",~%")
+        ;; ── headers ──
+        (format stream "        \"headers\": ")
+        (xl-write (loop for tbl in tables append (append (headers tbl) (list ""))) stream)
+        (format stream ",~%")
+        ;; ── formulas ──
+        (let ((formulas nil))
+          (loop for tbl in tables
+                for offset in offsets
+                for cell-h = (max 1 (or (cell-height tbl) 1))
+                for first-row = (effective-first-row tbl)
+                for ldr = (logical-rows tbl)
+                for prms = (params tbl)
+                for param-cells = (when prms
+                                    (loop for (n . v) in prms for idx from 1
+                                          for col-num = (+ (col-count tbl) idx)
+                                          collect (cons n (format nil "$~a~a" (col->letter (+ offset col-num)) 2))))
+                do
+                ;; computed formulas
+                (loop for (col . expr) in (computed tbl)
+                      for tbl-col-idx = (position col (col-names tbl) :test #'string-equal)
+                      for abs-col = (+ offset (or tbl-col-idx -1) 1)
+                      do
+                      (loop for i from 0 below ldr
+                            for row = (+ first-row (* i cell-h))
+                            for formula = (let ((*param-cells* param-cells))
+                                            (compile-excel-formula expr global-col-map global-dnames row first-row last-row))
+                            do (push (list row abs-col formula) formulas)))
+                ;; fixed formulas
+                (loop for ff in (fixed-formulas tbl)
+                      for cr = (cell-ref ff)
+                      for abs-col = (+ offset (slot-value cr 'col))
+                      for formula = (let ((*param-cells* param-cells))
+                                      (compile-excel-formula (expr ff) global-col-map global-dnames (row cr) first-row last-row))
+                      do (push (list (row cr) abs-col formula) formulas)))
+          (setf formulas (sort formulas (lambda (a b)
+                                          (or (< (first a) (first b))
+                                              (and (= (first a) (first b))
+                                                   (< (second a) (second b)))))))
+          (when formulas
+            (format stream "        \"formulas\": [")
+            (loop for (row col formula) in formulas for i from 0
+                  do (when (> i 0) (format stream ", "))
+                     (format stream "{\"row\": ~a, \"col\": ~a, \"value\": \"=~a\"}"
+                             row col (escape-python-string formula)))
+            (format stream "],~%")))
+        ;; ── table_ranges ──
+        (format stream "        \"table_ranges\": [~s],~%"
+                (format nil "A~a:~a~a" ref-first-row last-col-letter last-row))
+        ;; ── table_block_sizes ──
+        (format stream "        \"table_block_sizes\": [")
+        (loop for tbl in tables
+              for offset in offsets
+              for cell-h = (max 1 (or (cell-height tbl) 1))
+              for cell-w = (max 1 (or (cell-width tbl) 1))
+              for from-letter = (col->letter (1+ offset))
+              for to-letter = (col->letter (+ offset (col-count tbl)))
+              for range-str = (format nil "~a~a:~a~a" from-letter ref-first-row to-letter last-row)
+              for i from 0
+              do (when (> i 0) (format stream ", "))
+                 (format stream "{\"range\": ~s, \"row_step\": ~a, \"col_step\": ~a}"
+                         range-str cell-h cell-w))
+        (format stream "],~%")
+        ;; ── column_widths ──
+        (format stream "        \"column_widths\": {")
+        (let ((idx 1) (first t))
+          (dolist (tbl tables)
+            (dolist (name (col-names tbl))
+              (unless first (format stream ", "))
+              (setf first nil)
+              (format stream "~a: ~a" idx
+                      (case (if (symbolp name) name (intern (string-upcase name)))
+                        ((programa-calc) 30) ((duracion) 8) ((tipo) 10)
+                        ((hora-inicio) 10) ((hora-terminacion) 10) ((tipo-calc) 8)
+                        (otherwise 10)))
+              (incf idx))
+            (unless first (format stream ", "))
+            (format stream "~a: 0" idx)
+            (incf idx))
+          (loop for tbl in tables do
+            (loop for (n . v) in (params tbl) do
+                  (format stream ", ~a: 8" idx)
+                  (incf idx))))
+        (format stream "},~%")
+        ;; ── border_color ──
+        (format stream "        \"border_color\": \"4F81BD\",~%")
+        (format stream "        \"border_style\": \"thick\"~%")
+        (format stream "    }")))))
 
 ; =====================================================================
 ; GENERATE-CODE — HOJAS

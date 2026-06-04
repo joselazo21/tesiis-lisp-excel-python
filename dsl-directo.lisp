@@ -1,220 +1,361 @@
-;; dsl-directo.lisp
-;; Macros que instancian nodos AST directamente (sin generar funciones).
-;; Backend-agnóstico. Solo produce xl-* objects.
+;; =============================================================================
+;; dsl-directo.lisp — Macros del DSL de hojas de cálculo
+;;
+;; RESPONSABILIDAD: exponer una sintaxis de dominio limpia que construye
+;; nodos del AST (definidos en ast-def.lisp). Este archivo no contiene
+;; ninguna lógica de generación de código.
+;;
+;; PRINCIPIO CLAVE: los macros son azúcar sintáctico puro.
+;;   - Cada macro construye uno o más objetos xl-* del AST.
+;;   - No hay strings de Excel, no hay letras de columna, no hay fórmulas.
+;;   - Los nombres son del dominio: "dia", "lun", "turno", "grupos"...
+;;
+;; REGLA DE QUOTING EN MACROS:
+;;   - Un símbolo que es nombre fijo de columna/tabla/variable se quote: ',sym
+;;     (el caller escribe sin comilla: (col lun) → sym LUN queda en el AST)
+;;   - Un símbolo que puede ser variable en scope NO se quote: ,sym
+;;     (el caller escribe la variable o la quotea él: :col dia  o  :col 'a)
+;;
+;; Carga generate-code-direct para que los métodos compile-excel-formula
+;; estén disponibles al evaluar los ASTs generados.
+;; =============================================================================
 
 (load "codigo-tesis.lisp")
 (load "generate-code-direct.lisp")
 
-;; =====================================================================
-;; EXPRESIONES: un macro por cada tipo de expresión
-;; =====================================================================
+;; =============================================================================
+;; EXPRESIONES DE FLUJO Y COMPARACIÓN
+;; =============================================================================
 
+;; Condicional: (_if test then else)
+;; → IF(test, then, else)
 (defmacro _if (test then else)
   `(xl-expr-if :test ,test :then ,then :else ,else))
 
+;; Verdad si la expresión no es vacía
+;; (non-empty (col programa)) → programa <> ""
 (defmacro non-empty (expr)
   `(xl-expr-non-empty :expr ,expr))
 
+;; Verdad en la primera fila de datos
+;; → ROW() = first-row
 (defmacro it-is-the-first-row ()
   `(xl-expr-first-row))
 
+;; Valor de la misma columna en la fila anterior / siguiente
+;; (previous-row (col tipo)) → C3 cuando se está en C4
 (defmacro previous-row (expr)
   `(xl-expr-previous-row :expr ,expr))
 
-(defmacro time-add (a b)
-  `(xl-expr-time-add :a ,a :b ,b))
+(defmacro next-of (base)
+  `(xl-expr-next-row :expr ,base))
 
+(defmacro previous-of (base)
+  `(xl-expr-previous-row :expr ,base))
+
+;; Produce "" visualmente (celda en blanco)
 (defmacro show-nothing ()
   `(xl-expr-show-nothing))
 
-(defmacro lookup (key-expr field)
-  `(xl-expr-lookup :value-field ',field :key-expr ,key-expr))
+;; Comparaciones: (equals a b) (different a b) (_and a b) (_or a b)
+(defmacro equals (a b)    `(xl-expr-equals :a ,a :b ,b))
+(defmacro different (a b) `(xl-expr-different :a ,a :b ,b))
+(defmacro _and (a b)      `(xl-expr-and :a ,a :b ,b))
+(defmacro _or (a b)       `(xl-expr-or :a ,a :b ,b))
 
+;; =============================================================================
+;; ARITMÉTICA
+;; =============================================================================
+
+(defmacro add (a b)      `(xl-expr-add :a ,a :b ,b))
+(defmacro subtract (a b) `(xl-expr-subtract :a ,a :b ,b))
+(defmacro multiply (a b) `(xl-expr-multiply :a ,a :b ,b))
+(defmacro divide (a b)   `(xl-expr-divide :a ,a :b ,b))
+
+;; =============================================================================
+;; STRINGS
+;; =============================================================================
+
+;; Literal de texto: (str "Total") → "Total"
+(defmacro str (value)
+  `(xl-expr-string :value ,value))
+
+;; Concatenación: (concat (col nombre) (str " hs")) → (nombre & " hs")
+(defmacro concat (a b)
+  `(xl-expr-concat :a ,a :b ,b))
+
+;; Suma de tiempos: (time-add (col hora) 90) → TEXT(TIMEVALUE(hora)+90/1440,"hh:mm")
+(defmacro time-add (a b)
+  `(xl-expr-time-add :a ,a :b ,b))
+
+;; =============================================================================
+;; REFERENCIA A COLUMNAS DE LA TABLA ACTUAL
+;; =============================================================================
+
+;; (col nombre)          → columna nombre, fila actual
+;; (col nombre contexto) → columna nombre con contexto de fila (previous-row, etc.)
+;; El nombre se quotea: es un símbolo del dominio, no una variable Lisp.
 (defmacro col (name &optional context)
   (if context
       `(xl-expr-column-ref :name ',name :context ,context)
       `(xl-expr-column-ref :name ',name :context nil)))
 
+;; (param nombre) → referencia a la celda que contiene el parámetro nombre
+;; Los parámetros se pasan al instanciar la tabla: (tabla t :params ((n val)))
 (defmacro param (name)
   `(xl-expr-param-ref :name ',name))
 
-;; =====================================================================
-;; ARITMÉTICA
-;; =====================================================================
-
-(defmacro add (a b)
-  `(xl-expr-add :a ,a :b ,b))
-
-(defmacro subtract (a b)
-  `(xl-expr-subtract :a ,a :b ,b))
-
-(defmacro multiply (a b)
-  `(xl-expr-multiply :a ,a :b ,b))
-
-(defmacro divide (a b)
-  `(xl-expr-divide :a ,a :b ,b))
-
-;; =====================================================================
-;; AGREGADOS (rangos)
-;; =====================================================================
+;; =============================================================================
+;; RANGOS Y AGREGADOS (sobre columnas de la tabla actual)
+;; =============================================================================
 ;;
-;; (countif "$C${first-row}:$G${last-row}" (col abrev))
-;;   → COUNTIF($C$4:$G$15, I5)
+;; El rango abarca desde first-row hasta last-row de la tabla.
+;;   (range lun)       → columna lun, todas las filas
+;;   (range lun vie)   → desde columna lun hasta columna vie
+
+(defmacro range (from &optional to)
+  `(xl-range :from-col (xl-expr-column-ref :name ',from :context nil)
+             :to-col ,(if to
+                          `(xl-expr-column-ref :name ',to :context nil)
+                          nil)))
+
+;; (countif (range lun vie) (col abrev)) → COUNTIF($C$4:$L$9, N4)
+(defmacro countif (range-expr criteria)
+  `(xl-expr-countif :count-range ,range-expr :criteria ,criteria))
+
+;; (counta (range abrev)) → COUNTA($N$4:$N$9)
+(defmacro counta (range-expr)
+  `(xl-expr-counta :count-range ,range-expr))
+
+;; (sum-range (range frec)) → SUM($J$4:$J$9)
+(defmacro sum-range (range-expr)
+  `(xl-expr-sum :count-range ,range-expr))
+
+;; =============================================================================
+;; LOOKUPS
+;; =============================================================================
+
+;; (lookup key-expr campo) → IFERROR(VLOOKUP(key, rango, col-campo, FALSE), 0)
+;; Busca key-expr en la primera columna de la tabla y devuelve el campo.
+(defmacro lookup (key-expr field)
+  `(xl-expr-lookup :value-field ',field :key-expr ,key-expr))
+
+;; =============================================================================
+;; REFERENCIAS CROSS-SHEET SIMPLES (hoja fija)
+;; =============================================================================
 ;;
-;; (counta "I${first-row}:I${last-row}")
-;;   → COUNTA(I4:I15)
+;; Para referencias a una hoja conocida en tiempo de escritura del AST.
+;; La hoja y la celda son literales — no cambian según el contexto.
 ;;
-;; Los placeholders {first-row} {last-row} se resuelven en generate-code.
-
-(defmacro countif (range-template criteria)
-  `(xl-expr-countif :range-template ,range-template :criteria ,criteria))
-
-(defmacro counta (range-template)
-  `(xl-expr-counta :range-template ,range-template))
-
-(defmacro sum-range (range-template)
-  `(xl-expr-sum :range-template ,range-template))
-
-;; =====================================================================
-;; STRING
-;; =====================================================================
-
-(defmacro str (value)
-  `(xl-expr-string :value ,value))
-
-(defmacro concat (a b)
-  `(xl-expr-concat :a ,a :b ,b))
-
-;; =====================================================================
-;; CROSS-SHEET REF
-;; =====================================================================
-;;
-;; (sheet-ref "C111" "$C$5") → C111!$C$5
-;; (sheet-ref "C111" "$C${row-num}") → C111!$C5
+;; (sheet-ref "C111" "$C$5")        → C111!$C$5
+;; (sheet-ref "C111" "$C${row-num}") → C111!$C<row-actual>
 
 (defmacro sheet-ref (sheet cell-template)
   `(xl-expr-cross-sheet-ref :sheet ,sheet :cell-template ,cell-template))
 
-;; =====================================================================
-;; FIXED FORMULA
-;; =====================================================================
+;; =============================================================================
+;; REFERENCIAS CROSS-SHEET DINÁMICAS — para búsquedas sobre múltiples hojas
 ;;
-;; (fixed-formula 11 13 (counta "I4:I10"))
-;;   → {"row": 11, "col": 13, "value": "=COUNTA(I4:I10)"}
+;; Estas tres expresiones trabajan juntas:
+;;
+;;   (collect-over lista (var) expr)
+;;     Itera lista, liga var a cada hoja, compila expr para cada una,
+;;     y concatena los resultados: SUBSTITUTE(TRIM(t1&t2&...&tN)," ",",")
+;;
+;;   (cross-cell :sheet var :col col-sym :row row-expr)
+;;     Dentro de collect-over: referencia a la celda (col-sym, row-expr)
+;;     en la hoja actualmente ligada a var.
+;;
+;;   (turno-aula-row)
+;;     Fila del aula en la turno-table del grupo para el turno que se
+;;     está compilando. generate-code la computa desde row-num y first-row.
+;;
+;; Ejemplo de uso:
+;;   (collect-over *grupos* (g)
+;;     (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
+;;                  (str "Aula 6"))
+;;          (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+;;          (str "")))
+;;
+;; :col QUOTING:
+;;   - :col dia    → dia es una variable en scope (inst-param): se evalúa
+;;   - :col 'a     → 'a quotea el literal: resuelve al símbolo A (col A)
+;; =============================================================================
 
-(defmacro fixed-formula (row column-index expr)
-  `(xl-fixed-formula :row ,row :column-index ,column-index :expr ,expr))
+;; (cross-cell :sheet g :col col :row row)
+;; :sheet se quotea automáticamente — es el nombre de la variable de iteración.
+;; :col no se quotea — el caller decide: variable (dia) o literal ('a).
+;; :row no se quotea — entero fijo (1) o expresión ((turno-aula-row)).
+(defmacro cross-cell (&key sheet col row)
+  `(xl-expr-cross-cell :sheet ',sheet :xcol ,col :row ,row))
 
-;; =====================================================================
-;; REFERENCIAS RELATIVAS
-;; =====================================================================
+;; (turno-aula-row)
+;; Fila del aula para el turno actual en la turno-table del grupo.
+;; generate-code la calcula: grupo-first-row + (row-num - first-row) * 2 + 1
+(defmacro turno-aula-row ()
+  `(xl-expr-turno-aula-row))
 
-(defmacro previous-of (base)
-  `(xl-expr-previous-row :expr ,base))
+;; (collect-over groups (sheet-var) expr)
+;; groups    : expresión que evalúa a lista de strings (nombres de hojas)
+;; sheet-var : símbolo que nombra la variable de iteración — usar en cross-cell
+;; expr      : una única expresión AST que puede referenciar sheet-var
+(defmacro collect-over (groups (sheet-var) expr)
+  `(xl-expr-collect-over :groups ,groups
+                          :sheet-var ',sheet-var
+                          :body ,expr))
 
-(defmacro next-of (base)
-  `(xl-expr-next-row :expr ,base))
+;; =============================================================================
+;; REFERENCIAS DE CELDA ABSOLUTAS Y FÓRMULAS FIJAS
+;; =============================================================================
+;;
+;; Para colocar una fórmula en una celda específica fuera del área de datos.
+;;   (fixed-formula (cell 16 7) (sum-range (range frec)))
+;;   → {"row": 16, "col": 7, "value": "=SUM(...)"}
 
-;; =====================================================================
-;; CONDICIONES
-;; =====================================================================
+;; (cell fila columna [hoja]) → xl-cell-ref
+(defmacro cell (row column &optional sheet)
+  `(xl-cell-ref :row ,row :col ,column :sheet ,sheet))
 
-(defmacro equals (a b)
-  `(xl-expr-equals :a ,a :b ,b))
+;; (fixed-formula celda expr) → xl-fixed-formula
+(defmacro fixed-formula (cell-ref expr)
+  `(xl-fixed-formula :cell-ref ,cell-ref :expr ,expr))
 
-(defmacro different (a b)
-  `(xl-expr-different :a ,a :b ,b))
-
-(defmacro _and (a b)
-  `(xl-expr-and :a ,a :b ,b))
-
-(defmacro _or (a b)
-  `(xl-expr-or :a ,a :b ,b))
-
-;; =====================================================================
+;; =============================================================================
 ;; RENDERIZADO CONDICIONAL
-;; =====================================================================
+;; =============================================================================
+;;
+;; (conditional-rendering :condition expr :target-columns (col1 col2))
+;; Aplica estilo condicional a las columnas indicadas cuando se cumple condition.
 
 (defmacro conditional-rendering (&key condition target-columns)
   `(xl-style-rule :rule-condition ,condition
                   :target-columns ',target-columns))
 
-;; =====================================================================
-;; DEF-TABLE: macro que DEFINE una función-clase de tabla
-;; =====================================================================
+;; =============================================================================
+;; DEF-TABLE — define la plantilla de una tabla reutilizable
+;; =============================================================================
 ;;
-;; (def-table program-table
-;;   ((programa "Programa") (duracion "Duración") (tipo "Tipo"))
-;;   :computed ((hora-inicio ...) ...))
+;; (def-table nombre
+;;   ((col1 "Header1") (col2 "Header2") ...)
+;;   :first-row 4            ; fila Excel donde empieza el área de datos
+;;   :cell-height 2          ; filas por fila lógica (para celdas paired)
+;;   :cell-width  1
+;;   :paired-columns (col2)  ; columnas expandidas en pares (asig/aula)
+;;   :inst-params (param1)   ; parámetros de generación pasados al instanciar
+;;   :computed               ; fórmulas por columna
+;;     ((col1 expresion-dsl)
+;;      (col2 (collect-over ...)))
+;;   :fixed-formulas         ; fórmulas en celdas fijas
+;;     (((cell 16 7) (sum-range (range col1))))
+;;   :render                 ; regla de estilo condicional (opcional)
+;;     (conditional-rendering ...))
 ;;
-;; (def-table program-table
-;;   ...columnas...
-;;   :render (conditional-rendering
-;;             :condition (_or (equals (previous-of (col tipo))
-;;                                    (col tipo))
-;;                            (equals (col tipo)
-;;                                    (next-of (col tipo))))
-;;             :target-columns (hora-inicio hora-terminacion tipo-calc)))
+;; Genera una función: (nombre &key data params [inst-params...])
+;;   - data       : lista de filas de contenido
+;;   - params     : lista de pares (sym . valor) para celdas auxiliares
+;;   - inst-params: cada parámetro declarado en :inst-params se añade a la firma
 ;;
-;; Define una función que acepta :data y :params y devuelve un xl-table.
+;; Los :inst-params son parámetros que afectan la ESTRUCTURA de las fórmulas
+;; en tiempo de generación de código (no son datos en celdas).
+;; Ejemplo: :inst-params (dia) permite que :computed use `dia` como variable.
 
 (defmacro def-table (name columns &body body)
-  (let ((col-names (mapcar #'first columns))
-        (headers (mapcar #'second columns))
-        (computed (getf body :computed))
-        (render (getf body :render))
-        (fixed (getf body :fixed-formulas)))
-    `(defun ,name (&key data params)
+  (let ((col-names      (mapcar #'first columns))
+        (headers        (mapcar #'second columns))
+        (computed       (getf body :computed))
+        (render         (getf body :render))
+        (fixed          (getf body :fixed-formulas))
+        (first-row      (getf body :first-row))
+        (cell-height    (or (getf body :cell-height) 1))
+        (cell-width     (or (getf body :cell-width) 1))
+        (paired-columns (getf body :paired-columns))
+        (inst-params    (getf body :inst-params)))
+    `(defun ,name (&key data params ,@inst-params)
        (xl-table :contenido (or data '())
                  :headers ',headers
                  :col-names ',col-names
                  :computed (list ,@(loop for (col expr) in computed
                                          collect `(cons ',col ,expr)))
-                 :fixed-formulas (list ,@(loop for (row ci expr) in fixed
-                                                collect `(xl-fixed-formula :row ,row :column-index ,ci :expr ,expr)))
+                 :fixed-formulas (list ,@(loop for (cell-form expr-form) in fixed
+                                                collect `(xl-fixed-formula :cell-ref ,cell-form :expr ,expr-form)))
                  :style-rules (list ,@(when render (list render)))
+                 :first-row ,(or first-row nil)
+                 :cell-height ,cell-height
+                 :cell-width ,cell-width
+                 :paired-columns ',paired-columns
                  :params params))))
 
-;; =====================================================================
-;; TABLA: macro que INSTANCIA una tabla (llama a la función definida)
-;; =====================================================================
+;; =============================================================================
+;; TABLA — instancia una tabla (llama a la función definida con def-table)
+;; =============================================================================
 ;;
-;; (tabla program-table
-;;   :data *lunes-progs*
-;;   :params ((hora-inicio-param *lunes-hour*)))
+;; Forma instancia (tabla definida con def-table):
+;;   (tabla nombre-tabla
+;;     :data *mis-datos*
+;;     :params ((param-sym valor))
+;;     :inst-key val ...)         ; inst-params adicionales
+;;
+;; Los keyword args que no son :data ni :params son inst-params: se pasan
+;; quoted a la función de tabla para usarlos en generación de código.
+;; Ejemplo: (tabla aulas-dia-table :dia lun :data *DATOS-AULAS-LUNES*)
+;;          → llama a (aulas-dia-table :data ... :dia 'lun :params ...)
+;;
+;; Forma inline (tabla definida en el lugar):
+;;   (tabla ((col1 "H1") (col2 "H2"))
+;;     :data *datos*
+;;     :computed ((col1 expr))
+;;     :params ...)
 
 (defmacro tabla (first &rest args)
   (if (listp first)
-      ;; forma inline: (tabla ((col "Header") ...) :data ... :computed ... :params ...)
-      (let* ((col-names (mapcar #'first first))
-             (headers (mapcar #'second first))
-             (data (getf args :data))
-             (computed (getf args :computed))
-             (params (getf args :params))
-             (fixed (getf args :fixed-formulas)))
-    `(xl-table :contenido (or ,data '()) :headers ',headers
-               :col-names ',col-names
-               :computed (list ,@(loop for (col expr) in computed
-                                       collect `(cons ',col ,expr)))
-               :fixed-formulas (list ,@(loop for (row ci expr) in fixed
-                                             collect `(xl-fixed-formula :row ,row :column-index ,ci :expr ,expr)))
-               :style-rules (list ,@(when (getf args :render) (list (getf args :render))))
-               :params (list ,@(loop for (name val) in params
-                                     collect `(cons ',name ,val)))))
-      ;; forma instancia: (tabla program-table :data ... :params ...)
-      (let ((data-arg (getf args :data))
-            (params-arg (getf args :params)))
+      ;; ── forma inline ──────────────────────────────────────────────────────
+      (let* ((col-names      (mapcar #'first first))
+             (headers        (mapcar #'second first))
+             (data           (getf args :data))
+             (computed       (getf args :computed))
+             (params         (getf args :params))
+             (fixed          (getf args :fixed-formulas))
+             (first-row      (getf args :first-row))
+             (cell-height    (or (getf args :cell-height) 1))
+             (cell-width     (or (getf args :cell-width) 1))
+             (paired-columns (getf args :paired-columns)))
+        `(xl-table :contenido (or ,data '()) :headers ',headers
+                   :col-names ',col-names
+                   :computed (list ,@(loop for (col expr) in computed
+                                           collect `(cons ',col ,expr)))
+                   :fixed-formulas (list ,@(loop for (cell-form expr-form) in fixed
+                                                  collect `(xl-fixed-formula :cell-ref ,cell-form :expr ,expr-form)))
+                   :style-rules (list ,@(when (getf args :render) (list (getf args :render))))
+                   :first-row ,(or first-row nil)
+                   :cell-height ,cell-height
+                   :cell-width ,cell-width
+                   :paired-columns ',paired-columns
+                   :params (list ,@(loop for (name val) in params
+                                         collect `(cons ',name ,val)))))
+      ;; ── forma instancia ───────────────────────────────────────────────────
+      (let* ((data-arg    (getf args :data))
+             (params-arg  (getf args :params))
+             ;; inst-kwargs: cualquier keyword que no sea :data ni :params.
+             ;; Se pasa quoted porque son símbolos de dominio, no variables Lisp.
+             (inst-kwargs (loop for (k v) on args by #'cddr
+                                unless (member k '(:data :params))
+                                nconc `(,k ',v))))
         `(,first :data ,data-arg
+                 ,@inst-kwargs
                  :params (list ,@(loop for (name val) in params-arg
-                                       collect `(cons ',name ,val)))))))
+                                        collect `(cons ',name ,val)))))))
 
-;; =====================================================================
-;; HOJA: expande directamente a xl-sheet con region + tablas
-;; =====================================================================
+;; =============================================================================
+;; HOJA — agrupa tablas en una hoja de cálculo
+;; =============================================================================
 ;;
-;; (hoja "Lunes"
-;;   (tabla ...)
-;;   (tabla ...))
+;; (hoja "NombreHoja"
+;;   (tabla turno-table :data *datos-turno*)
+;;   (tabla stats-table :data *datos-stats*)
+;;   (tabla aulas-table :data *datos-aulas*))
+;;
+;; Todas las tablas van en una ÚNICA región (horizontales side-by-side).
+;; Para tablas apiladas verticalmente usar hoja-v.
 
 (defmacro hoja (name &body tables)
   `(xl-sheet
@@ -223,18 +364,29 @@
        (xl-region
          :tables (list ,@tables)))))
 
-;; =====================================================================
-;; LIBRO: workbook + defparameter + generar
-;; =====================================================================
+;; (hoja-v "NombreHoja" tabla1 tabla2 ...)
+;; Cada tabla va en su propia región.
+;; El backend Python (_unwrap_regions) las apila verticalmente con separación.
+(defmacro hoja-v (name &body tables)
+  `(xl-sheet
+     :name ,name
+     :regions (list
+       ,@(mapcar (lambda (tbl) `(xl-region :tables (list ,tbl))) tables))))
+
+;; =============================================================================
+;; LIBRO — construye el workbook completo
+;; =============================================================================
 ;;
-;; (libro horario-tv
-;;   :filename "Horario.xlsx"
-;;   :hojas (list (hoja ...) (hoja ...)))
+;; (libro nombre-workbook
+;;   :filename "archivo.xlsx"
+;;   :hojas (list (hoja "H1" ...) (hoja "H2" ...) ...))
+;;
+;; Define el símbolo nombre-workbook con el objeto xl-workbook generado.
 
 (defmacro libro (name &body body)
-  (let* ((filename (or (getf body :filename)
-                       (concatenate 'string (string-downcase (symbol-name name)) ".xlsx")))
-         (hojas-form (getf body :hojas)))
+  (let* ((filename    (or (getf body :filename)
+                          (concatenate 'string (string-downcase (symbol-name name)) ".xlsx")))
+         (hojas-form  (getf body :hojas)))
     `(let ((wb (xl-workbook :name ,filename :sheets ,hojas-form)))
        (defparameter ,name wb)
        (format t "Libro ~a creado con ~a hojas~%" ',name (length ,hojas-form))

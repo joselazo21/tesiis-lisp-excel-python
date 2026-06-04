@@ -692,7 +692,7 @@ def merge_cell_ranges(ws, merge_ranges: list) -> None:
 def _process_headers(ws, sheet_cfg: dict) -> None:
     """Etapa 1: Encabezados."""
     headers = sheet_cfg.get("headers", [])
-    if not headers:
+    if not headers or all(h == "" for h in headers):
         return
 
     ws.append(headers)
@@ -760,15 +760,19 @@ def _process_table_borders(ws, sheet_cfg: dict) -> None:
 
     table_ranges = sheet_cfg.get("table_ranges", [])
 
-    if table_ranges:
-        for table_range in table_ranges:
-            row_step, col_step, row_offset, col_offset = block_sizes.get(
-                table_range, (border_step, border_step, 0, 0)
-            )
+    if block_sizes:
+        for block_range, (row_step, col_step, row_offset, col_offset) in block_sizes.items():
             apply_borders_by_blocks(
-                ws, table_range,
+                ws, block_range,
                 row_step=row_step, col_step=col_step,
                 row_offset=row_offset, col_offset=col_offset,
+                color=border_color, style=border_style
+            )
+    elif table_ranges:
+        for table_range in table_ranges:
+            apply_borders_by_blocks(
+                ws, table_range,
+                row_step=border_step, col_step=border_step,
                 color=border_color, style=border_style
             )
     else:
@@ -964,15 +968,23 @@ def _inject_fernando_formulas(ws, sheet_cfg: dict) -> None:
 # FUNCIÓN PRINCIPAL
 # =============================================================================
 
+def _offset_range_rows(range_str: str, offset: int) -> str:
+    """Desplaza los números de fila en un rango tipo 'A1:K7' por offset."""
+    import re
+    def shift(cell):
+        m = re.match(r'([A-Z]+)(\d+)', cell)
+        return f"{m.group(1)}{int(m.group(2)) + offset}" if m else cell
+    return ":".join(shift(p) for p in range_str.split(":"))
+
+
 def _unwrap_regions(sheet_cfg: dict) -> dict:
     """
     Convierte formato regions a formato plano (backward compat).
     Las hojas generadas por el DSL Lisp vienen con 'regions';
-    las hojas escritas a mano en Python (como construir_hoja_grupo_desde_parametros)
-    vienen planas.
-    
-    Para una sola región, copia sus claves a la raíz de la hoja.
-    Para múltiples regiones, concatena datos y ajusta posiciones (TODO).
+    las hojas escritas a mano en Python vienen planas.
+
+    Una región: copia sus claves a la raíz.
+    Múltiples regiones: apila verticalmente con 1 fila en blanco entre ellas.
     """
     if "regions" not in sheet_cfg:
         return sheet_cfg
@@ -983,7 +995,51 @@ def _unwrap_regions(sheet_cfg: dict) -> dict:
         for k, v in regions[0].items():
             if k not in sheet_cfg:
                 sheet_cfg[k] = v
-    return sheet_cfg
+        return sheet_cfg
+
+    GAP_ROWS = 1
+    all_data = []
+    all_formulas = []
+    all_table_ranges = []
+    all_block_sizes = []
+    current_row = 1  # fila Excel 1-indexed donde empieza la región actual
+
+    for i, region in enumerate(regions):
+        if i > 0:
+            ncols = len(all_data[-1]) if all_data else 0
+            all_data.append([""] * ncols)
+            current_row += GAP_ROWS
+
+        region_data = region.get("data", [])
+        row_offset = current_row - 1
+
+        for row in region_data:
+            all_data.append(row)
+
+        for tr in region.get("table_ranges", []):
+            all_table_ranges.append(_offset_range_rows(tr, row_offset))
+
+        for bs in region.get("table_block_sizes", []):
+            adjusted = dict(bs)
+            adjusted["range"] = _offset_range_rows(bs["range"], row_offset)
+            all_block_sizes.append(adjusted)
+
+        for f in region.get("formulas", []):
+            all_formulas.append({**f, "row": f["row"] + row_offset})
+
+        current_row += len(region_data)
+
+    first = regions[0]
+    result = {k: v for k, v in sheet_cfg.items() if k != "regions"}
+    result["data"] = all_data
+    result["table_ranges"] = all_table_ranges
+    result["table_block_sizes"] = all_block_sizes
+    if all_formulas:
+        result["formulas"] = all_formulas
+    for k in ["headers", "column_widths", "border_color", "border_style"]:
+        if k in first and k not in result:
+            result[k] = first[k]
+    return result
 
 
 def _apply_defaults(sheet_cfg: dict) -> dict:
