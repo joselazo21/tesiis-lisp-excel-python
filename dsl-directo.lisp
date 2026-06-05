@@ -189,11 +189,25 @@
 (defmacro cross-cell (&key sheet col row)
   `(xl-expr-cross-cell :sheet ',sheet :xcol ,col :row ,row))
 
+;; (source-row :table TABLE :offset N)
+;; Fila de una subcelda en la tabla origen TABLE, mapeada desde la fila actual.
+;; TABLE debe estar registrada en *source-table-schemas* (generate-code-direct.lisp).
+;; :offset subcelda dentro de la fila compuesta (0=primera, 1=segunda...) — default 0.
+;; Para conceptos nombrados usa un macro explícito en este archivo (ver turno-aula-row).
+(defmacro source-row (&key table (offset 0))
+  `(xl-expr-source-row :table-id ',table :offset ,offset))
+
 ;; (turno-aula-row)
-;; Fila del aula para el turno actual en la turno-table del grupo.
-;; generate-code la calcula: grupo-first-row + (row-num - first-row) * 2 + 1
+;; Alias de (source-row :table turno-table :offset 1).
+;; No requiere clase propia — usa xl-expr-source-row directamente.
 (defmacro turno-aula-row ()
-  `(xl-expr-turno-aula-row))
+  `(source-row :table turno-table :offset 1))
+
+;; (sheet-id :sheet var)
+;; Identificador canónico de la hoja ligada a var en el collect-over actual.
+;; Excel: genera SHEET!$A$1 — celda donde cada hoja almacena su nombre de grupo.
+(defmacro sheet-id (&key sheet)
+  `(xl-expr-sheet-id :sheet ',sheet))
 
 ;; (collect-over groups (sheet-var) expr)
 ;; groups    : expresión que evalúa a lista de strings (nombres de hojas)
@@ -237,8 +251,8 @@
 ;;
 ;; (def-table nombre
 ;;   ((col1 "Header1") (col2 "Header2") ...)
-;;   :first-row 4            ; fila Excel donde empieza el área de datos
 ;;   :cell-height 2          ; filas por fila lógica (para celdas paired)
+;;   ; :first-row ya no va aquí — es responsabilidad de *table-first-rows* en generate-code
 ;;   :cell-width  1
 ;;   :paired-columns (col2)  ; columnas expandidas en pares (asig/aula)
 ;;   :inst-params (param1)   ; parámetros de generación pasados al instanciar
@@ -260,18 +274,17 @@
 ;; Ejemplo: :inst-params (dia) permite que :computed use `dia` como variable.
 
 (defmacro def-table (name columns &body body)
-  (let ((col-names      (mapcar #'first columns))
-        (headers        (mapcar #'second columns))
-        (computed       (getf body :computed))
-        (render         (getf body :render))
-        (fixed          (getf body :fixed-formulas))
-        (first-row      (getf body :first-row))
-        (cell-height    (or (getf body :cell-height) 1))
-        (cell-width     (or (getf body :cell-width) 1))
-        (paired-columns (getf body :paired-columns))
-        (inst-params    (getf body :inst-params)))
+  (let ((col-names   (mapcar #'first columns))
+        (headers     (mapcar #'second columns))
+        (computed    (getf body :computed))
+        (render      (getf body :render))
+        (fixed       (getf body :fixed-formulas))
+        (cell-height (or (getf body :cell-height) 1))
+        (cell-width  (or (getf body :cell-width) 1))
+        (inst-params (getf body :inst-params)))
     `(defun ,name (&key data params ,@inst-params)
-       (xl-table :contenido (or data '())
+       (xl-table :id ',name
+                 :contenido (or data '())
                  :headers ',headers
                  :col-names ',col-names
                  :computed (list ,@(loop for (col expr) in computed
@@ -279,10 +292,8 @@
                  :fixed-formulas (list ,@(loop for (cell-form expr-form) in fixed
                                                 collect `(xl-fixed-formula :cell-ref ,cell-form :expr ,expr-form)))
                  :style-rules (list ,@(when render (list render)))
-                 :first-row ,(or first-row nil)
                  :cell-height ,cell-height
                  :cell-width ,cell-width
-                 :paired-columns ',paired-columns
                  :params params))))
 
 ;; =============================================================================
@@ -309,16 +320,14 @@
 (defmacro tabla (first &rest args)
   (if (listp first)
       ;; ── forma inline ──────────────────────────────────────────────────────
-      (let* ((col-names      (mapcar #'first first))
-             (headers        (mapcar #'second first))
-             (data           (getf args :data))
-             (computed       (getf args :computed))
-             (params         (getf args :params))
-             (fixed          (getf args :fixed-formulas))
-             (first-row      (getf args :first-row))
-             (cell-height    (or (getf args :cell-height) 1))
-             (cell-width     (or (getf args :cell-width) 1))
-             (paired-columns (getf args :paired-columns)))
+      (let* ((col-names   (mapcar #'first first))
+             (headers     (mapcar #'second first))
+             (data        (getf args :data))
+             (computed    (getf args :computed))
+             (params      (getf args :params))
+             (fixed       (getf args :fixed-formulas))
+             (cell-height (or (getf args :cell-height) 1))
+             (cell-width  (or (getf args :cell-width) 1)))
         `(xl-table :contenido (or ,data '()) :headers ',headers
                    :col-names ',col-names
                    :computed (list ,@(loop for (col expr) in computed
@@ -326,10 +335,8 @@
                    :fixed-formulas (list ,@(loop for (cell-form expr-form) in fixed
                                                   collect `(xl-fixed-formula :cell-ref ,cell-form :expr ,expr-form)))
                    :style-rules (list ,@(when (getf args :render) (list (getf args :render))))
-                   :first-row ,(or first-row nil)
                    :cell-height ,cell-height
                    :cell-width ,cell-width
-                   :paired-columns ',paired-columns
                    :params (list ,@(loop for (name val) in params
                                          collect `(cons ',name ,val)))))
       ;; ── forma instancia ───────────────────────────────────────────────────

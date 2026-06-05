@@ -114,14 +114,21 @@
 ;;   sheet : símbolo de la variable de hoja (ej. G), declarado en collect-over
 ;;   xcol  : símbolo de columna — resuelto por resolve-cross-col en generate-code:
 ;;             si está en *turno-dia-col-map* → letra Excel; si no → symbol-name
-;;   row   : entero fijo O expresión (ej. xl-expr-turno-aula-row)
+;;   row   : entero fijo O expresión (ej. (turno-aula-row), (source-row ...))
 (defclass* xl-expr-cross-cell () (sheet xcol row))
 
-;; Fila del aula correspondiente al turno actual dentro de la turno-table
-;; de un grupo. Valor concreto calculado en compile-excel-formula:
-;;   first-row-grupo + (row-num - first-row-tabla) * cell-height + aula-offset
-;; Encapsula el conocimiento de la estructura interna de turno-table.
-(defclass* xl-expr-turno-aula-row () ())
+;; Fila de una celda en una tabla origen, mapeada desde la fila lógica actual.
+;; table-id identifica la tabla fuente; el generador busca su first-row y
+;; cell-height en *source-table-schemas* (conocimiento del backend, no del DSL).
+;; offset selecciona la subcelda dentro de una fila compuesta (0=primera, 1=segunda...).
+(defclass* xl-expr-source-row () (table-id offset))
+
+
+;; Identificador canónico de la hoja ligada a sheet en *sheet-env*.
+;; Cada backend decide cómo recuperarlo: Excel usa la celda A1, otro
+;; backend puede leerlo de un atributo, un diccionario, etc.
+;;   sheet : símbolo de la variable de hoja (ej. G), declarado en collect-over
+(defclass* xl-expr-sheet-id () (sheet))
 
 ;; Combinator: aplica body sobre cada hoja de groups, ligando sheet-var
 ;; al nombre de cada hoja en *sheet-env*, y concatena los resultados en:
@@ -158,10 +165,9 @@
 ;;   first-row    : fila Excel donde empieza el área de datos (nil = 2)
 ;;   cell-height  : filas Excel por fila lógica (default 1)
 ;;   cell-width   : columnas Excel por columna lógica (default 1)
-;;   paired-columns: columnas que se expanden en pares (asig/aula)
 (defclass* xl-table () (id cols rows contenido headers computed col-names
                         params style-rules fixed-formulas
-                        first-row cell-height cell-width paired-columns))
+                        first-row cell-height cell-width))
 
 ;; =============================================================================
 ;; ESTRUCTURA DEL WORKBOOK

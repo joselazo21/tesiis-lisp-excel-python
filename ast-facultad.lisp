@@ -14,10 +14,8 @@
 
 (def-table turno-table
   ((turno "") (lun "") (mar "") (mie "") (jue "") (vie ""))
-  :first-row 4
   :cell-height 2
   :cell-width 1
-  :paired-columns (lun mar mie jue vie)
   :fixed-formulas (((cell 16 7) (str "Total:"))
                    ((cell 17 7) (sum-range (range frec)))
                    ((cell 17 6) (str "Σ Frec:"))))
@@ -28,7 +26,6 @@
 
 (def-table stats-table
   ((abrev "") (asig "") (frec "") (faltan "") (asignadas ""))
-  :first-row 4
   :cell-height 1
   :cell-width 1
   :computed ((asignadas (countif (range lun vie) (col abrev)))
@@ -41,7 +38,6 @@
 
 (def-table aulas-table
   ((aulas ""))
-  :first-row 4
   :cell-height 1
   :cell-width 1)
 
@@ -58,58 +54,58 @@
 (def-table aulas-dia-table
   ((dia "") (aula1 "") (aula2 "") (aula3 "") (aula4 "") (aula5 "")
    (aula6 "") (aula7 "") (aula8 "") (aula9 "") (lab ""))
-  :first-row 2 :cell-height 1 :cell-width 1
+  :cell-height 1 :cell-width 1
   :inst-params (dia)
   :computed
     ((aula1 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 1"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula2 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 2"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula3 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 3"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula4 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 4"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula5 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 5"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula6 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 6"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula7 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 7"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula8 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 8"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (aula9 (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Aula 9"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))
      (lab   (collect-over *grupos-all* (g)
                (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
                             (str "Lab"))
-                    (concat (cross-cell :sheet g :col 'a :row 1) (str " "))
+                    (concat (sheet-id :sheet g) (str " "))
                     (str ""))))))
 
 ;; =====================================================================

@@ -52,7 +52,7 @@
                                 collect v)
           do
           (push (append (list turno-label) pair-row) turno-rows)
-          (push (list abrev asig-name (princ-to-string frec) "0" "") stats-rows)
+          (push (list abrev asig-name frec 0 "") stats-rows)
           (dolist (aula aula-list)
             (push (list aula) aulas-rows)))
     (values (append (list turno-title turno-blank turno-header) (nreverse turno-rows))
