@@ -1,0 +1,312 @@
+% ===========================================================================
+%  Capítulo 5 — Detalles de implementación
+% ===========================================================================
+\chapter{Detalles de implementaci\'on}
+\label{cap:implementacion}
+
+Este cap\'{\i}tulo describe los aspectos internos del sistema: la organizaci\'on
+de los archivos con sus responsabilidades, los macros que implementan el DSL,
+el patr\'on de extensibilidad del backend y la validaci\'on del sistema sobre
+los tres casos de uso presentados en el cap\'{\i}tulo~\ref{cap:dominio}.
+
+% ---------------------------------------------------------------------------
+\section{Organizaci\'on en cuatro archivos}
+\label{sec:organizacion}
+% ---------------------------------------------------------------------------
+
+El sistema est\'a organizado en cuatro archivos Lisp con responsabilidades
+estrictamente separadas.  La dependencia entre ellos es un\'{\i}voca:
+cada archivo carga \'unicamente al que le precede.
+
+\begin{table}[h!]
+\centering
+\caption{Archivos del sistema y sus responsabilidades.}
+\label{tab:archivos}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{9.0cm}}
+\toprule
+\textbf{Archivo} & \textbf{Responsabilidad} \\
+\midrule
+\file{codigo-tesis.lisp}
+  & Utilidades generales: \dsl{symb}, \dsl{mkstr}, \dsl{keywd},
+    \dsl{ppme} y la macro \dsl{defclass*}.  No conoce ning\'un concepto
+    del dominio de hojas de c\'alculo. \\
+\midrule
+\file{ast-def.lisp}
+  & Definici\'on de todas las clases del AST con \dsl{defclass*}.
+    Backend-agn\'ostico: no contiene ninguna letra de columna Excel,
+    cadena de f\'ormula ni referencia a ninguna biblioteca de salida. \\
+\midrule
+\file{code-generation-utils.lisp} \newline
+\file{generate-code-direct.lisp}
+  & Backend Excel/Python.  \'Unico lugar del sistema donde viven letras
+    de columna, cadenas de f\'ormula, estructuras openpyxl y conocimiento
+    de la disposici\'on concreta del workbook.  El primero contiene
+    las utilidades y variables din\'amicas; el segundo, los m\'etodos
+    \dsl{compile-excel-formula}. \\
+\midrule
+\file{dsl-directo.lisp}
+  & Macros del DSL: \dsl{def-table}, \dsl{tabla}, \dsl{hoja}, \dsl{hoja-v},
+    \dsl{libro}, \dsl{exists}, \dsl{conditional-rendering}, \dsl{nav},
+    \dsl{col}, \dsl{tcol}, \dsl{trange}, \dsl{countif}, \dsl{counta},
+    \dsl{sum-range}, \dsl{str}, \dsl{concat}, \dsl{time-add}, y dem\'as.
+    No contiene l\'ogica de generaci\'on de c\'odigo. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Esta separaci\'on tiene consecuencias pr\'acticas importantes: es posible
+cargar \file{ast-def.lisp} y construir un AST sin haber cargado el backend,
+lo que facilita las pruebas de la sintaxis y la sem\'antica del DSL de forma
+independiente.
+
+% ---------------------------------------------------------------------------
+\section{Macros del DSL}
+\label{sec:macros-dsl}
+% ---------------------------------------------------------------------------
+
+Los macros del DSL se clasifican en tres grupos seg\'un su papel en la
+jerarqu\'{\i}a del AST.
+
+% ............................................................................
+\subsection{Macros de expresi\'on}
+\label{ssec:macros-expresion}
+% ............................................................................
+
+Los macros de expresi\'on construyen nodos de la familia de expresiones de
+celda.  Todos son equivalencias directas: reciben los argumentos del
+programador y los pasan al constructor CLOS correspondiente, haciendo el
+quoting adecuado para los s\'{\i}mbolos del dominio.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Macros de expresi\'on representativos.}]
+;; (col nombre) -> xl-expr-column-ref con nombre quoteado
+(defmacro col (name &optional context)
+  (if context
+      `(xl-expr-column-ref :name ',name :context ,context)
+      `(xl-expr-column-ref :name ',name :context nil)))
+
+;; (trange tabla desde) / (trange tabla desde hasta)
+;; -> xl-table-range con los dos extremos como xl-expr-table-col-ref
+(defmacro trange (table-id from &optional to)
+  `(xl-table-range
+     :table-id ',table-id
+     :from-col (xl-expr-table-col-ref :table-id ',table-id
+                                       :name ',from :context nil)
+     :to-col   ,(if to
+                    `(xl-expr-table-col-ref :table-id ',table-id
+                                             :name ',to :context nil)
+                    nil)))
+
+;; (exists (var :rows-of tabla) :self-in (...) :matching (...))
+;; -> xl-expr-exists con domain cross-table
+(defmacro exists ((var &rest domain-spec)
+                  &key matching any-overlap self-in)
+  (let ((domain-type (first domain-spec)))
+    (ecase domain-type
+      (:all-rows
+       `(xl-expr-exists :bind-var     ',var
+                         :domain       (xl-domain-rows :table-id nil)
+                         :match-keys   ',matching
+                         :overlap-cols ',any-overlap
+                         :self-in-cols  nil))
+      (:rows-of
+       (let ((table-id (second domain-spec)))
+         `(xl-expr-exists :bind-var     ',var
+                           :domain       (xl-domain-rows
+                                           :table-id ',table-id)
+                           :match-keys   ',matching
+                           :overlap-cols ',any-overlap
+                           :self-in-cols  ',self-in))))))
+\end{lstlisting}
+
+La regla de quoting de los macros es determinista: un s\'{\i}mbolo que es
+nombre de columna o tabla en el dominio se quotea (\dsl{',sym}); un
+s\'{\i}mbolo que es una variable Lisp en scope no se quotea (\dsl{,sym}).
+Esta distinci\'on es expl\'{\i}cita en todos los macros.
+
+% ............................................................................
+\subsection{Macros de estructura}
+\label{ssec:macros-estructura}
+% ............................................................................
+
+Los macros \dsl{def-table}, \dsl{hoja}, \dsl{hoja-v} y \dsl{libro}
+construyen los nodos de la jerarqu\'{\i}a del workbook.
+
+\dsl{def-table} es el m\'as complejo: genera una funci\'on que construye
+un \dsl{xl-table} con sus slots rellenos.  Los \dsl{:inst-params} declarados
+se a\~naden a la firma de esa funci\'on, lo que permite instanciar la misma
+plantilla de tabla con valores de par\'ametro distintos:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Expansi\'on simplificada de def-table.}]
+(def-table aulas-dia-table
+  ((dia "") (aula1 "") ...)
+  :inst-params (dia)
+  :computed ((aula1 (collect-over *grupos-all* (g) ...))))
+
+;; Genera la funcion:
+(defun aulas-dia-table (&key data params dia)
+  (xl-table :id 'aulas-dia-table
+            :col-names '(dia aula1 ...)
+            :computed (list (cons 'aula1 (collect-over ...)))
+            ...))
+
+;; Que luego se instancia con:
+(tabla aulas-dia-table :dia lun :data *datos-aulas-lunes*)
+;; -> (aulas-dia-table :data *datos-aulas-lunes* :dia 'lun)
+\end{lstlisting}
+
+% ............................................................................
+\subsection{El macro \texttt{nav} y el sistema de posicionamiento}
+\label{ssec:macro-nav}
+% ............................................................................
+
+El macro \dsl{nav} convierte una secuencia plana de pares direcci\'on--cantidad
+en una lista de cons-celdas:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Implementaci\'on del macro nav.}]
+(defmacro nav (anchor &rest steps)
+  (let ((step-pairs
+         (loop for (dir n) on steps by #'cddr
+               collect `(cons ',dir ,n))))
+    `(xl-nav :anchor ,anchor
+             :steps (list ,@step-pairs))))
+
+;; Ejemplo: (nav (ultima-fila t c) abajo 1 derecha 2)
+;; Expande a:
+;; (xl-nav :anchor (xl-anchor :table-id 't :col-name 'c
+;;                              :anchor-type :ultima-fila)
+;;          :steps (list (cons 'abajo 1) (cons 'derecha 2)))
+\end{lstlisting}
+
+El backend resuelve los pasos en tiempo de generaci\'on: dado el n\'umero de
+fila de la \'ultima celda de datos, suma o resta las cantidades seg\'un la
+direcci\'on y produce la coordenada Excel absoluta.
+
+% ---------------------------------------------------------------------------
+\section{Extensibilidad del sistema}
+\label{sec:extensibilidad}
+% ---------------------------------------------------------------------------
+
+La extensibilidad es una consecuencia directa del uso de CLOS y de la
+separaci\'on en archivos.  Considrese el ejemplo de a\~nadir soporte para
+la funci\'on \texttt{AVERAGEIF} de Excel, que actualmente no est\'a en el
+lenguaje.
+
+\textbf{Paso 1 --- Nuevo nodo AST} (en \file{ast-def.lisp}):
+\begin{lstlisting}[language=CommonLisp]
+(defclass* xl-expr-averageif () (average-range criteria))
+\end{lstlisting}
+
+\textbf{Paso 2 --- Nuevo macro} (en \file{dsl-directo.lisp}):
+\begin{lstlisting}[language=CommonLisp]
+(defmacro averageif (range-expr criteria)
+  `(xl-expr-averageif :average-range ,range-expr
+                       :criteria ,criteria))
+\end{lstlisting}
+
+\textbf{Paso 3 --- Nuevo m\'etodo} (en \file{generate-code-direct.lisp}):
+\begin{lstlisting}[language=CommonLisp]
+(defmethod compile-excel-formula
+    ((e clase-xl-expr-averageif) col-map data-names
+     row-num first-row last-row)
+  (let ((range-str (compile-excel-formula
+                     (average-range e) col-map data-names
+                     row-num first-row last-row))
+        (criteria  (compile-excel-formula
+                     (criteria e) col-map data-names
+                     row-num first-row last-row)))
+    (format nil "AVERAGEIF(~a,~a)" range-str criteria)))
+\end{lstlisting}
+
+Ning\'un c\'odigo existente necesita modificarse.  El macro \dsl{defclass*}
+garantiza que la nueva clase tiene exactamente la misma interfaz que las dem\'as.
+
+% ---------------------------------------------------------------------------
+\section{Validaci\'on sobre los casos de uso}
+\label{sec:validacion}
+% ---------------------------------------------------------------------------
+
+Los tres casos de uso descritos en el cap\'{\i}tulo~\ref{cap:dominio} se
+validaron ejecutando el DSL y verificando manualmente el archivo
+\xlsx{} generado.
+
+% ............................................................................
+\subsection{Horario de Defensas de Tesis}
+\label{ssec:val-defensas}
+% ............................................................................
+
+El programa DSL del listado~\ref{lst:tutorial} genera \texttt{Horario\_Tesis.xlsx}
+con la estructura esperada.  La verificaci\'on confirm\'o:
+
+\begin{itemize}
+  \item La columna \texttt{Defensas} de \dsl{profesores-table} muestra los
+    valores correctos: Piad~=~2, Garc\'{\i}a~=~2, L\'opez~=~3, Torres~=~3,
+    Ruiz~=~2, Soto~=~2.
+  \item Los profesores L\'opez y Torres, que participan en las dos defensas
+    del slot \texttt{Lunes~10:00}, aparecen resaltados en rojo.
+  \item Los totales en la fila inferior a las tablas son correctos:
+    ``Total defensas: 3'' y ``Total profesores: 6'' con las sumas esperadas.
+  \item La \texttt{FormulaRule} persiste en el archivo: al cambiar
+    manualmente la hora de la tercera defensa de \texttt{10:00} a
+    \texttt{14:00}, el resaltado de L\'opez y Torres desaparece
+    autom\'aticamente en Excel.
+\end{itemize}
+
+% ............................................................................
+\subsection{Horario Docente de la Facultad}
+\label{ssec:val-facultad}
+% ............................................................................
+
+El programa \file{ast-facultad.lisp} genera \texttt{Horario\_Facultad.xlsx}
+con diecisiete hojas de grupo (Ciencia de la Computaci\'on en cuatro a\~nos,
+Matem\'atica en cuatro a\~nos y Ciencia de Datos en cuatro a\~nos) m\'as una
+hoja de ocupaci\'on de aulas.
+
+La verificaci\'on confirm\'o:
+
+\begin{itemize}
+  \item Las columnas \dsl{asignadas} y \dsl{faltan} de \dsl{stats-table}
+    calculan correctamente para cada grupo a partir del contenido de
+    \dsl{turno-table}.
+  \item La hoja de aulas muestra en cada celda los grupos que ocupan cada
+    aula en cada turno, con la lista de grupos separada por comas producida
+    por las f\'ormulas \texttt{SUBSTITUTE(TRIM(\ldots))}.
+  \item Las celdas compuestas de \dsl{turno-table} (\dsl{cell-height~=~2})
+    se generan correctamente: la subfila superior muestra la asignatura y
+    la inferior el aula.
+\end{itemize}
+
+Este caso ejercita, adem\'as, la caracter\'{\i}stica de \dsl{inst-params}:
+la tabla \dsl{aulas-dia-table} se define una sola vez y se instancia una
+vez por d\'{\i}a de la semana, con \dsl{:dia lun}, \dsl{:dia mar}, etc.
+
+% ............................................................................
+\subsection{Discusi\'on comparativa}
+\label{ssec:val-comparacion}
+% ............................................................................
+
+Para ilustrar el beneficio del DSL, se estima la cantidad de c\'odigo
+necesaria para implementar el caso de defensas de forma imperativa directa
+en Python con openpyxl, en comparaci\'on con el programa DSL.
+
+La versi\'on imperativa directa requiere calcular manualmente las letras de
+columna, construir las cadenas de f\'ormula COUNTIF con interpolaci\'on de
+texto, y ensamblar la f\'ormula SUMPRODUCT con referencias absolutas calculadas
+a partir del n\'umero de filas.  Una implementaci\'on representativa ocupa
+aproximadamente 80--100 l\'{\i}neas de Python.
+
+El programa DSL equivalente (listado~\ref{lst:tutorial}) ocupa 40 l\'{\i}neas,
+de las cuales la mayor parte son la declaraci\'on de datos
+(\dsl{def-table}, \dsl{libro}) y la expresi\'on de intenci\'on
+(\dsl{exists}, \dsl{conditional-rendering}).  Ning\'una l\'{\i}nea
+contiene una letra de columna, un \'{\i}ndice de fila o una cadena de f\'ormula.
+
+M\'as importante que el n\'umero de l\'{\i}neas es que el programa DSL es
+resistente a cambios estructurales: a\~nadir una columna a \dsl{defensas-table}
+s\'olo requiere a\~nadir un par \dsl{(nombre "Cabecera")} a la lista de columnas;
+el compilador recalcula autom\'aticamente todas las letras y rangos.  En la
+versi\'on imperativa, el mismo cambio requiere actualizar manualmente todas
+las referencias a columnas afectadas.

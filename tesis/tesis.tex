@@ -1,0 +1,440 @@
+% ===========================================================================
+%  Documento principal — Tesis de Diploma
+%  Título: Un lenguaje de dominio específico para la generación declarativa
+%          de hojas de cálculo de planificación
+%  Autor:  Jose Morales Lazo
+%  Tutor:  MSc. Fernando Rodríguez Flores
+%  MATCOM — Universidad de La Habana, 2026
+% ===========================================================================
+\documentclass[12pt,a4paper]{report}
+
+% ---- Codificación e idioma -------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting,es-noshorthands]{babel}
+
+% ---- Geometría -------------------------------------------------------------
+\usepackage{geometry}
+\geometry{left=3cm,right=2.5cm,top=3cm,bottom=2.5cm}
+
+% ---- Tipografía ------------------------------------------------------------
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% ---- Matemáticas -----------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---- Tablas ----------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+
+% ---- Gráficos --------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+
+% ---- Colores ---------------------------------------------------------------
+\usepackage{xcolor}
+\definecolor{lispkw}{rgb}{0.0,0.35,0.65}
+\definecolor{lispstr}{rgb}{0.13,0.55,0.13}
+\definecolor{lispcomment}{rgb}{0.5,0.5,0.5}
+\definecolor{lispbg}{rgb}{0.97,0.97,0.99}
+\definecolor{pybg}{rgb}{0.97,0.99,0.97}
+\definecolor{nodeborder}{rgb}{0.3,0.45,0.7}
+\definecolor{sectioncolor}{rgb}{0.15,0.25,0.5}
+\definecolor{graylight}{rgb}{0.94,0.94,0.94}
+
+% ---- Listados de código ----------------------------------------------------
+\usepackage{listings}
+
+\lstdefinelanguage{CommonLisp}{
+  keywords={defclass,defmacro,defun,defparameter,defvar,defgeneric,defmethod,
+            progn,let,let*,loop,for,collect,append,list,when,unless,if,cond,
+            load,format,lambda,provide,values,ecase,mapcar,
+            def-table,conditional-rendering,exists,col,tcol,trange,
+            countif,counta,sum-range,str,nav,ultima-fila,primera-fila,
+            libro,hoja,hoja-v,tabla,xl-generate,xl-run-generated,
+            add,subtract,multiply,divide,equals,different,
+            non-empty,previous-row,next-of,previous-of,show-nothing,
+            concat,time-add,range,lookup,sheet-ref,cross-cell,
+            source-row,turno-aula-row,sheet-id,collect-over,param,
+            defclass*,symb,mkstr,keywd},
+  keywordstyle=\color{lispkw}\bfseries,
+  sensitive=false,
+  comment=[l]{;;},
+  commentstyle=\color{lispcomment}\itshape,
+  morestring=[b]",
+  stringstyle=\color{lispstr},
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{lispbg},
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true, showstringspaces=false,
+  tabsize=2, xleftmargin=1em, xrightmargin=0.5em,
+  aboveskip=0.8em, belowskip=0.5em,
+}
+
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{pybg},
+  keywordstyle=\color{lispkw}\bfseries,
+  stringstyle=\color{lispstr},
+  commentstyle=\color{lispcomment}\itshape,
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true, showstringspaces=false,
+  tabsize=4, xleftmargin=1em, xrightmargin=0.5em,
+  aboveskip=0.8em, belowskip=0.5em,
+}
+
+\lstset{language=CommonLisp}
+
+% ---- Formato de secciones --------------------------------------------------
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{sectioncolor}}
+  {\chaptertitlename\ \thechapter}{16pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{sectioncolor}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{sectioncolor!80}}{\thesubsection}{1em}{}
+
+% ---- Enumeraciones ---------------------------------------------------------
+\usepackage{enumitem}
+
+% ---- Teoremas y definiciones -----------------------------------------------
+\usepackage{amsthm}
+\newtheoremstyle{defstyle}{6pt}{6pt}{\itshape}{}{\bfseries}{.}{0.5em}{}
+\theoremstyle{defstyle}
+\newtheorem{definition}{Definici\'on}[chapter]
+
+% ---- Hipervínculos ---------------------------------------------------------
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+  pdftitle={Un DSL para la generaci\'on declarativa de hojas de c\'alculo de planificaci\'on},
+  pdfauthor={Jose Morales Lazo},
+}
+
+% ---- Encabezados -----------------------------------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\thepage}
+\fancyhead[RE]{\nouppercase{\leftmark}}
+\fancyhead[LO]{\nouppercase{\rightmark}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---- Utilidades ------------------------------------------------------------
+\newcommand{\dsl}[1]{\texttt{#1}}
+\newcommand{\file}[1]{\texttt{#1}}
+\newcommand{\xlsx}{\texttt{.xlsx}}
+
+% ===========================================================================
+\begin{document}
+
+% ---------------------------------------------------------------------------
+%  PORTADA
+% ---------------------------------------------------------------------------
+\begin{titlepage}
+\centering
+{\large Universidad de La Habana\\
+Facultad de Matem\'atica y Computaci\'on}
+
+\vspace{2cm}
+% \includegraphics[width=3cm]{uh-logo}  % añadir logo si disponible
+\vspace{2cm}
+
+{\LARGE\bfseries Un lenguaje de dominio espec\'{\i}fico para la\\[6pt]
+generaci\'on declarativa de hojas de c\'alculo\\[6pt]
+de planificaci\'on}
+
+\vspace{2.5cm}
+
+{\large Autor: \textbf{Jose Morales Lazo}}
+
+\vspace{0.8cm}
+
+{\large Tutor:\\
+\textbf{MSc. Fernando Rodr\'{\i}guez Flores}}
+
+\vspace{2cm}
+
+{\normalsize Trabajo de Diploma\\
+presentado en opci\'on al t\'{\i}tulo de\\
+Licenciado en Ciencia de la Computaci\'on}
+
+\vfill
+{\normalsize La Habana, junio 2026}
+\end{titlepage}
+
+% ---------------------------------------------------------------------------
+%  FRASE
+% ---------------------------------------------------------------------------
+\thispagestyle{empty}
+\vspace*{8cm}
+\begin{flushright}
+\itshape ``La simplicidad es el prerrequisito de la fiabilidad.''\\[4pt]
+\upshape Edsger W. Dijkstra
+\end{flushright}
+\newpage
+
+% ---------------------------------------------------------------------------
+%  AGRADECIMIENTOS
+% ---------------------------------------------------------------------------
+\chapter*{Agradecimientos}
+\addcontentsline{toc}{chapter}{Agradecimientos}
+\thispagestyle{plain}
+
+A mi tutor, el MSc. Fernando Rodr\'{\i}guez Flores, por su paciencia, sus ideas
+y su entusiasmo permanente ante los lenguajes y las hojas de c\'alculo.
+
+A mi familia, por el apoyo incondicional a lo largo de la carrera.
+
+A los colegas y profesores de MATCOM que convirtieron cada problema
+acad\'emico en una oportunidad de automatizarlo.
+
+\newpage
+
+% ---------------------------------------------------------------------------
+%  OPINIÓN DEL TUTOR
+% ---------------------------------------------------------------------------
+\chapter*{Opini\'on del Tutor}
+\addcontentsline{toc}{chapter}{Opini\'on del Tutor}
+\thispagestyle{plain}
+
+La gesti\'on de la informaci\'on en entornos acad\'emicos genera, de forma
+recurrente, documentos de planificaci\'on tabular: horarios de docencia,
+calendarios de defensas, distribuciones de aulas. En todos estos casos, la
+herramienta elegida es la hoja de c\'alculo. Nada de esto sorprende; lo que
+s\'{\i} resulta costoso es que cada vez que se quiere automatizar la creaci\'on
+de esa hoja se repite el mismo patr\'on: c\'odigo imperativo que mezcla la
+l\'ogica del problema con los detalles de la \textit{API} de la biblioteca
+de salida.
+
+El trabajo que se presenta en este documento aborda precisamente ese costo.
+Jose Morales Lazo dise\~n\'o e implement\'o un lenguaje de dominio espec\'{\i}fico
+(DSL) interno en Common Lisp que permite declarar tablas, columnas calculadas,
+reglas de visualizaci\'on condicional y relaciones entre tablas, sin escribir
+una sola letra de columna Excel, un solo \'{\i}ndice de fila ni una cadena de
+f\'ormula. El compilador del DSL, implementado como un backend de funciones
+gen\'ericas CLOS, produce autom\'aticamente el programa Python que construye
+el archivo \xlsx{} con todas las f\'ormulas y reglas de formato condicional
+incrustadas.
+
+El diplomante demostr\'o durante el trabajo una notable capacidad para
+identificar la abstracci\'on correcta, dise\~narla y construirla con rigor.
+Los tres casos de uso reales validados ---horario de defensas de tesis,
+horario docente de la facultad y horario de programaci\'on televisiva---
+muestran que el lenguaje es suficientemente expresivo para cubrir problemas
+de complejidad creciente.
+
+Estoy muy satisfecho con los resultados obtenidos y considero que el trabajo
+re\'une los m\'eritos suficientes para optar al t\'{\i}tulo de Licenciado en
+Ciencia de la Computaci\'on.
+
+\vspace{2cm}
+\begin{flushright}
+\rule{6cm}{0.4pt}\\
+MSc. Fernando Rodr\'{\i}guez Flores\\
+Facultad de Matem\'atica y Computaci\'on\\
+Universidad de La Habana\\
+Junio, 2026
+\end{flushright}
+\newpage
+
+% ---------------------------------------------------------------------------
+%  RESUMEN
+% ---------------------------------------------------------------------------
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+\thispagestyle{plain}
+
+La creaci\'on autom\'atica de hojas de c\'alculo de planificaci\'on exige, en
+la pr\'actica, c\'odigo imperativo que entremezcla la l\'ogica del problema
+---qui\'en tiene conflicto de horario, cu\'antas defensas acumula un profesor---
+con los detalles mec\'anicos de la API de salida: letras de columna Excel,
+\'{\i}ndices de fila absolutos, cadenas de f\'ormula, llamadas a la biblioteca
+de formato condicional.  Esta mezcla eleva el costo de desarrollo y dificulta
+la reutilizaci\'on en problemas similares.
+
+El objetivo de este trabajo es separar ambas capas mediante un lenguaje de
+dominio espec\'{\i}fico (DSL) interno en Common~Lisp.  El programador declara
+\emph{qu\'e} debe contener el libro ---tablas, columnas calculadas, cuantificadores
+existenciales, reglas de coloreado, totales relativos--- y un compilador basado en
+el Sistema de Objetos de Common Lisp (CLOS) traduce esa declaraci\'on a un
+programa Python que construye el archivo \xlsx{}.  Las reglas de formato
+condicional se incrustan como \texttt{FormulaRule} y se reevaluan autom\'aticamente
+en Excel al editar los datos, sin necesidad de volver a ejecutar el DSL.
+
+La validaci\'on sobre tres casos reales de la Facultad de Matem\'atica y
+Computaci\'on de la Universidad de La Habana confirma que el lenguaje captura
+los patrones recurrentes de la planificaci\'on tabular con una cantidad
+de c\'odigo significativamente menor que la alternativa imperativa.
+
+\medskip\noindent
+\textbf{Palabras clave:} Lenguaje de dominio espec\'{\i}fico; Hoja de c\'alculo;
+Generaci\'on autom\'atica de c\'odigo; Common Lisp; CLOS; Macros;
+Formato condicional; openpyxl.
+\newpage
+
+% ---------------------------------------------------------------------------
+%  ABSTRACT
+% ---------------------------------------------------------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\thispagestyle{plain}
+
+Automatically generating planning spreadsheets requires, in practice,
+imperative code that interleaves domain logic---who has a scheduling
+conflict, how many thesis defenses a professor is involved in---with
+the mechanical details of the output API: Excel column letters, absolute
+row indices, formula strings, and conditional formatting library calls.
+This interleaving raises development costs and hampers reuse across
+similar problems.
+
+The objective of this work is to separate these two layers through an
+internal domain-specific language (DSL) built in Common~Lisp.  The
+programmer declares \emph{what} the workbook should contain---tables,
+computed columns, existential quantifiers, coloring rules, relative
+totals---and a compiler based on the Common Lisp Object System (CLOS)
+translates that declaration into a Python program that builds the
+\xlsx{} file.  Conditional formatting rules are embedded as
+\texttt{FormulaRule} objects and are automatically re-evaluated in
+Excel when data is edited, without re-running the DSL.
+
+Validation on three real use cases from the Faculty of Mathematics and
+Computer Science of the University of Havana confirms that the language
+captures the recurring patterns of tabular planning with significantly
+less code than the imperative alternative.
+
+\medskip\noindent
+\textbf{Keywords:} Domain-specific language; Spreadsheet;
+Automatic code generation; Common Lisp; CLOS; Macros;
+Conditional formatting; openpyxl.
+\newpage
+
+% ---------------------------------------------------------------------------
+%  ÍNDICE GENERAL
+% ---------------------------------------------------------------------------
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------------------------
+%  CUERPO PRINCIPAL
+% ---------------------------------------------------------------------------
+\input{cap-intro}
+\input{cap1}
+\input{cap2}
+\input{cap3}
+\input{cap4}
+\input{cap5}
+\input{cap-conclusiones}
+
+% ---------------------------------------------------------------------------
+%  REFERENCIAS
+% ---------------------------------------------------------------------------
+\bibliographystyle{unsrt}
+\begin{thebibliography}{99}
+
+\bibitem{fowler2010}
+M. Fowler.
+\newblock \textit{Domain-Specific Languages}.
+\newblock Addison-Wesley Professional, 2010.
+
+\bibitem{aho2006}
+A.~V. Aho, M.~S. Lam, R. Sethi y J.~D. Ullman.
+\newblock \textit{Compilers: Principles, Techniques, and Tools}.
+\newblock Pearson/Addison-Wesley, 2\textsuperscript{a} ed., 2006.
+
+\bibitem{steele1990}
+G.~L. Steele.
+\newblock \textit{Common Lisp: The Language}.
+\newblock Digital Press, 2\textsuperscript{a} ed., 1990.
+
+\bibitem{graham1993}
+P. Graham.
+\newblock \textit{On Lisp: Advanced Techniques for Common Lisp}.
+\newblock Prentice-Hall, 1993.
+
+\bibitem{seibel2005}
+P. Seibel.
+\newblock \textit{Practical Common Lisp}.
+\newblock Apress, 2005.
+
+\bibitem{keene1989}
+S.~E. Keene.
+\newblock \textit{Object-Oriented Programming in Common Lisp: A Programmer's
+  Guide to CLOS}.
+\newblock Addison-Wesley, 1989.
+
+\bibitem{openpyxl}
+E. Gazoni y C. Clark.
+\newblock openpyxl --- A Python library to read/write Excel 2010 xlsx/xlsm/xltx/xltm files.
+\newblock \url{https://openpyxl.readthedocs.io}, 2010--2024.
+
+\bibitem{ooxml}
+{ISO/IEC}.
+\newblock \textit{ISO/IEC 29500: Information technology --- Office Open XML File Formats}.
+\newblock International Organization for Standardization, 2008.
+
+\bibitem{van-deursen2000}
+A. van Deursen, P. Klint y J. Visser.
+\newblock Domain-specific languages: an annotated bibliography.
+\newblock \textit{ACM SIGPLAN Notices}, 35(6):26--36, 2000.
+
+\bibitem{mernik2005}
+M. Mernik, J. Heering y A.~M. Sloane.
+\newblock When and how to develop domain-specific languages.
+\newblock \textit{ACM Computing Surveys}, 37(4):316--344, 2005.
+
+\bibitem{mccarthy1960}
+J. McCarthy.
+\newblock Recursive functions of symbolic expressions and their computation by
+  machine, {P}art {I}.
+\newblock \textit{Communications of the ACM}, 3(4):184--195, 1960.
+
+\bibitem{clos1988}
+D.~G. Bobrow, L.~G. DeMichiel, R.~P. Gabriel, S.~E. Keene, G. Kiczales y D.~A. Moon.
+\newblock Common Lisp Object System specification.
+\newblock \textit{ACM SIGPLAN Notices}, 23(S):1--142, 1988.
+
+\bibitem{kiczales1991}
+G. Kiczales, J. des Rivières y D.~G. Bobrow.
+\newblock \textit{The Art of the Metaobject Protocol}.
+\newblock MIT Press, 1991.
+
+\bibitem{microsoft-excel}
+{Microsoft Corporation}.
+\newblock \textit{Excel for Microsoft 365 --- Reference Guide}.
+\newblock Microsoft Docs, 2023.
+
+\bibitem{ldmag2025}
+R.~A. C\'apiro Colomar.
+\newblock \textit{{LDMAG}: Lenguaje para el dise\~no de microaplicaciones de
+  gesti\'on}.
+\newblock Trabajo de Diploma, Facultad de Matem\'atica y Computaci\'on,
+  Universidad de La Habana, 2025.
+
+\bibitem{watt2004}
+D.~A. Watt.
+\newblock \textit{Programming Language Design Concepts}.
+\newblock Wiley, 2004.
+
+\bibitem{liskov1974}
+B. Liskov y S. Zilles.
+\newblock Programming with abstract data types.
+\newblock \textit{ACM SIGPLAN Notices}, 9(4):50--59, 1974.
+
+\bibitem{scott2015}
+M.~L. Scott.
+\newblock \textit{Programming Language Pragmatics}.
+\newblock Morgan Kaufmann, 4\textsuperscript{a} ed., 2015.
+
+\end{thebibliography}
+
+\end{document}

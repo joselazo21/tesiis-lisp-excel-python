@@ -1,0 +1,311 @@
+% ===========================================================================
+%  Capítulo 2 — Análisis del dominio de planificación tabular
+% ===========================================================================
+\chapter{An\'alisis del dominio de planificaci\'on tabular}
+\label{cap:dominio}
+
+Para dise\~nar un lenguaje que capture los patrones recurrentes de la
+planificaci\'on tabular, es necesario estudiar primero los casos concretos
+que el lenguaje debe resolver.  En este cap\'{\i}tulo se presentan tres
+casos de uso reales de la Facultad de Matem\'atica y Computaci\'on de la
+Universidad de La Habana, se identifican los elementos comunes entre ellos
+y se derivan los requisitos del lenguaje.
+
+% ---------------------------------------------------------------------------
+\section{Casos de uso}
+\label{sec:casos}
+% ---------------------------------------------------------------------------
+
+% ............................................................................
+\subsection{Horario de defensas de tesis}
+\label{ssec:caso-defensas}
+% ............................................................................
+
+El proceso de planificaci\'on de defensas de tesis de diploma asigna a cada
+estudiante un conjunto de cinco profesores que forman el tribunal ---tutor,
+oponente, presidente, vocal y secretario---, una fecha y hora de exposici\'on,
+y un local donde esta se celebra.  El coordinador de defensas debe detectar
+conflictos: un mismo profesor asignado a dos defensas con el mismo slot
+horario (mismo d\'{\i}a y hora), lo que hace imposible su presencia en
+ambas.
+
+La hoja de c\'alculo que da soporte a este proceso contiene dos tablas:
+
+\begin{description}
+  \item[Tabla de defensas.] Una fila por defensa, con columnas para el
+    estudiante y los cinco roles del tribunal, m\'as las columnas de d\'{\i}a,
+    hora y local.  Esta tabla no necesita columnas calculadas: toda la
+    informaci\'on se introduce manualmente.
+
+  \item[Tabla de profesores.] Una fila por profesor, con su nombre, grado
+    acad\'emico y el n\'umero de defensas en que participa.  Este \'ultimo dato
+    se calcula autom\'aticamente contando cu\'antas veces aparece el nombre del
+    profesor en cualquiera de los cinco roles de la tabla de defensas.
+    Adem\'as, las filas de los profesores con conflicto de horario se resaltan
+    en rojo.
+\end{description}
+
+Los datos del caso de validaci\'on incluyen tres defensas y seis profesores.
+Dos de las defensas comparten el slot \texttt{Lunes~10:00} con integrantes
+de tribunal en com\'un, lo que genera un conflicto que la hoja debe detectar
+y resaltar:
+
+\begin{table}[h!]
+\centering
+\caption{Datos de las defensas del caso de validaci\'on.}
+\label{tab:datos-defensas}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{llllllll}
+\hline
+\textbf{Estudiante} & \textbf{Tutor} & \textbf{Opon.}
+  & \textbf{Pres.} & \textbf{Vocal} & \textbf{Secr.}
+  & \textbf{D\'{\i}a} & \textbf{Hora} \\
+\hline
+Juan D\'{\i}az  & Piad   & Garc\'{\i}a & L\'opez  & Torres & Ruiz   & Lunes & 10:00 \\
+Mar\'{\i}a Vega & Garc\'{\i}a & L\'opez  & Piad   & Soto   & Torres & Lunes & 14:00 \\
+Luis Mora   & L\'opez  & Torres & Garc\'{\i}a & Ruiz   & Soto   & Lunes & 10:00 \\
+\hline
+\end{tabular}
+\end{table}
+
+Las defensas de Juan D\'{\i}az y Luis Mora comparten el slot
+\texttt{Lunes~10:00}.  El profesor L\'opez participa como oponente en la
+primera y como tutor en la segunda; el profesor Torres como vocal en la
+primera y como oponente en la segunda.  Ambos tienen conflicto y deben
+aparecer resaltados en rojo en la tabla de profesores.
+
+Este caso es el que se usa como ejemplo motivador a lo largo del cap\'{\i}tulo~\ref{cap:dsl}.
+
+% ............................................................................
+\subsection{Horario docente de la facultad}
+\label{ssec:caso-facultad}
+% ............................................................................
+
+La asignaci\'on de docencia en la Facultad de Matem\'atica y Computaci\'on
+implica distribuir los turnos de clase de cada semana entre los grupos de las
+tres carreras (Ciencia de la Computaci\'on, Matem\'atica y Ciencia de Datos),
+en cuatro a\~nos cada una.  Cada grupo tiene una hoja propia en el workbook
+con su horario semanal.
+
+La hoja de c\'alculo de planificaci\'on contiene, para cada grupo, tres tablas
+dispuestas en la misma fila de la hoja:
+
+\begin{description}
+  \item[Tabla de turnos (\texttt{turno-table}).] Seis columnas (turno,
+    lunes, martes, mi\'ercoles, jueves y viernes), con dos filas Excel por
+    turno l\'ogico (\dsl{cell-height~=~2}): la primera subfila almacena el
+    nombre de la asignatura y la segunda el aula asignada.
+
+  \item[Tabla de estad\'{\i}sticas (\texttt{stats-table}).] Una fila por
+    asignatura, con su abreviatura, nombre completo, frecuencia semanal
+    requerida, asignaciones ya realizadas (calculadas contando las apariciones
+    de la abreviatura en la tabla de turnos) y horas que faltan por asignar
+    (calculadas como la diferencia entre frecuencia y asignadas).
+
+  \item[Tabla de aulas (\texttt{aulas-table}).] Lista de aulas disponibles
+    para el grupo.
+\end{description}
+
+Adem\'as de las hojas de grupo, existe una hoja de ocupaci\'on de aulas que
+agrega, para cada turno de cada d\'{\i}a, los grupos que ocupan cada aula.
+Esta tabla usa referencias cruzadas din\'amicas (\dsl{collect-over}) que
+iteran sobre todas las hojas de grupo y extraen el aula asignada en cada
+turno.  Diecisiete grupos generan diecisiete hojas y una hoja de aulas con
+referencias a las diecisiete.
+
+Este caso pone a prueba dos caracter\'{\i}sticas del DSL que el caso de
+defensas no ejercita: las tablas con celdas de altura compuesta
+(\dsl{cell-height} mayor que 1) y las referencias cruzadas entre hojas del
+mismo workbook mediante \dsl{collect-over}.
+
+% ............................................................................
+\subsection{Horario de programaci\'on televisiva}
+\label{ssec:caso-tv}
+% ............................................................................
+
+El tercer caso de uso es el horario de programaci\'on semanal de un canal de
+televisi\'on.  Cada programa tiene una hora de inicio, una duraci\'on en
+minutos, un nombre, un tipo y un p\'ublico objetivo.  La hoja de c\'alculo
+muestra una p\'agina por d\'{\i}a, con columnas para cada uno de esos campos
+m\'as una columna de hora de fin, calculada autom\'aticamente a partir de la
+hora de inicio y la duraci\'on.
+
+La f\'ormula de la hora de fin involucra operaciones de tiempo:
+\[
+\texttt{fin} = \texttt{TEXT}(\texttt{TIMEVALUE}(\texttt{inicio}) + \texttt{duraci\'on}/1440, \texttt{"hh:mm"})
+\]
+donde $1440$ es el n\'umero de minutos en un d\'{\i}a.  Adem\'as, cada fila
+se colorea seg\'un el tipo de programa (informativo, musical, infantil, etc.)
+mediante un color distinto en la celda.
+
+Este caso valida que el DSL puede expresar operaciones aritm\'eticas sobre
+valores de tiempo (\dsl{time-add}) y f\'ormulas de celda simples sin
+cuantificadores existenciales.
+
+% ---------------------------------------------------------------------------
+\section{Elementos comunes}
+\label{sec:elementos-comunes}
+% ---------------------------------------------------------------------------
+
+Del an\'alisis de los tres casos se identifican cuatro patrones que se
+repiten en todos o en la mayor\'{\i}a de los documentos de planificaci\'on
+tabular:
+
+% ............................................................................
+\subsection{Tablas relacionadas y referencias cruzadas}
+\label{ssec:elem-tablas}
+% ............................................................................
+
+En todos los casos, el documento contiene m\'as de una tabla cuyos datos est\'an
+relacionados.  La tabla de profesores refencia la tabla de defensas; la tabla
+de estad\'{\i}sticas referencia la tabla de turnos; la hoja de aulas referencia
+las hojas de cada grupo.
+
+Estas referencias son de dos tipos:
+\begin{itemize}
+  \item \textbf{Intrarregi\'on:} ambas tablas est\'an en la misma hoja y
+    se accede a ellas mediante rangos absolutos de columnas (p.~ej.,
+    \texttt{\$B\$4:\$F\$6} para los cinco roles de la tabla de defensas).
+  \item \textbf{Interhoja:} la tabla referenciada est\'a en otra hoja del
+    mismo workbook (p.~ej., la hoja de aulas referencia las hojas de grupos).
+\end{itemize}
+
+El lenguaje debe resolver estas referencias sin que el programador escriba
+letras de columna ni nombres de hoja: los identifica por los s\'{\i}mbolos
+DSL de las columnas y por el identificador de la tabla.
+
+% ............................................................................
+\subsection{Columnas calculadas}
+\label{ssec:elem-computed}
+% ............................................................................
+
+En todos los casos, al menos una columna de alguna tabla muestra un valor
+calculado a partir de datos de otra tabla.  Los tipos de c\'alculo m\'as
+frecuentes son:
+
+\begin{description}
+  \item[\texttt{COUNTIF}.] Cuenta cu\'antas celdas de un rango cumplen un
+    criterio.  Ejemplo: n\'umero de veces que aparece el nombre de un
+    profesor en los cinco roles de la tabla de defensas.
+
+  \item[\texttt{COUNTA}.] Cuenta celdas no vac\'{\i}as en un rango.  Ejemplo:
+    n\'umero de defensas registradas.
+
+  \item[\texttt{SUM}.] Suma un rango.  Ejemplo: total de defensas acumuladas
+    por todos los profesores.
+
+  \item[Aritmética de tiempo.] Suma una duraci\'on en minutos a una hora de
+    inicio.  Ejemplo: hora de fin de un programa televisivo.
+
+  \item[\texttt{collect-over}.] Agrega resultados de la misma posici\'on en
+    m\'ultiples hojas.  Ejemplo: grupos que ocupan el Aula~1 en el turno~3
+    del lunes.
+\end{description}
+
+% ............................................................................
+\subsection{Visualizaci\'on condicional}
+\label{ssec:elem-condicional}
+% ............................................................................
+
+En los casos de defensas y de docencia, la condici\'on de coloreado depende
+de datos de otra tabla.  El color no es est\'atico: si el usuario edita los
+datos directamente en Excel, el coloreado debe recalcularse autom\'aticamente.
+
+El mecanismo adecuado es, por tanto, una \texttt{FormulaRule} de formato
+condicional incrustada en el archivo \xlsx{}, no un coloreado est\'atico
+aplicado en tiempo de generaci\'on.  La condici\'on de la regla es una
+f\'ormula SUMPRODUCT que captura la sem\'antica del cuantificador existencial
+del DSL.
+
+La forma en que el DSL expresa esta condici\'on ---mediante \dsl{exists}---
+y la forma en que el backend la implementa ---mediante SUMPRODUCT--- se
+detallan en los cap\'{\i}tulos~\ref{cap:dsl} y~\ref{cap:generacion},
+respectivamente.
+
+% ............................................................................
+\subsection{Posicionamiento relativo}
+\label{ssec:elem-posicion}
+% ............................................................................
+
+Todos los casos requieren expresiones fuera de las tablas: totales, etiquetas,
+celdas de resumen.  La posici\'on de estas expresiones depende de cu\'antas
+filas de datos tiene la tabla, que var\'{\i}a en cada ejecuci\'on.
+
+La soluci\'on adoptada en el DSL es el sistema de anclas y navegaci\'on
+(\dsl{nav}, \dsl{ultima-fila}, \dsl{primera-fila}): se declara que una
+expresi\'on va ``una fila por debajo de la \'ultima fila de datos de la
+columna \texttt{estudiante} de la tabla de defensas'', y el compilador
+resuelve esa declaraci\'on a la coordenada Excel concreta en tiempo de
+generaci\'on.
+
+% ---------------------------------------------------------------------------
+\section{Requisitos del lenguaje}
+\label{sec:requisitos}
+% ---------------------------------------------------------------------------
+
+Del an\'alisis anterior se derivan los requisitos que el DSL debe satisfacer:
+
+\begin{enumerate}
+  \item \textbf{Declaraci\'on de tablas.} El lenguaje debe permitir definir
+    tablas con nombre, con una lista de columnas identificadas por s\'{\i}mbolos,
+    y con soporte para celdas de altura y anchura compuesta.
+
+  \item \textbf{Columnas computadas.} Debe ser posible asociar una expresi\'on
+    del DSL a una columna; el compilador genera la f\'ormula Excel
+    correspondiente para cada fila de datos.
+
+  \item \textbf{Referencias intrarregi\'on.} El lenguaje debe resolver
+    referencias a columnas de la misma tabla (\dsl{col}) y a rangos de
+    columnas de otra tabla en la misma regi\'on (\dsl{trange}, \dsl{tcol}).
+
+  \item \textbf{Cuantificaci\'on existencial.} El lenguaje debe ofrecer una
+    forma de expresar condiciones de existencia sobre filas de la misma tabla
+    (\dsl{:all-rows}) o de otra tabla (\dsl{:rows-of}), especificando
+    columnas de coincidencia y columnas de solapamiento.
+
+  \item \textbf{Formato condicional persistente.} Las reglas de coloreado
+    condicional deben traducirse a \texttt{FormulaRule} en el \xlsx{}, de
+    modo que persistan y se reevaluen cuando el usuario edita el archivo.
+
+  \item \textbf{Posicionamiento relativo.} Debe ser posible colocar
+    expresiones fijas en posiciones calculadas como un ancla m\'as pasos
+    direccionales, sin coordenadas absolutas codificadas.
+
+  \item \textbf{Referencias interhoja.} El lenguaje debe soportar referencias
+    din\'amicas a celdas de otras hojas mediante iteraci\'on sobre una lista
+    de nombres de hojas (\dsl{collect-over}).
+
+  \item \textbf{Ensamblaje declarativo.} El workbook completo debe poderse
+    describir con formas del DSL (\dsl{libro}, \dsl{hoja}, \dsl{tabla})
+    sin ning\'un conocimiento de las coordenadas del archivo de salida.
+
+  \item \textbf{Independencia del backend.} El AST no debe contener
+    ning\'un detalle del target de generaci\'on.  Agregar un nuevo tipo de
+    expresi\'on no debe requerir modificar el DSL; solo a\~nadir un nuevo
+    m\'etodo al backend.
+\end{enumerate}
+
+La tabla~\ref{tab:requisitos-casos} muestra c\'omo cada requisito se
+manifiesta en los casos de uso analizados.
+
+\begin{table}[h!]
+\centering
+\caption{Requisitos del lenguaje y casos de uso en que se manifiestan.}
+\label{tab:requisitos-casos}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{5.2cm} ccc}
+\toprule
+\textbf{Requisito} & \textbf{Defensas} & \textbf{Facultad} & \textbf{TV} \\
+\midrule
+Declaraci\'on de tablas         & \checkmark & \checkmark & \checkmark \\
+Columnas computadas              & \checkmark & \checkmark & \checkmark \\
+Referencias intrarregi\'on       & \checkmark & \checkmark & --- \\
+Cuantificaci\'on existencial     & \checkmark & --- & --- \\
+Formato condicional persistente  & \checkmark & --- & --- \\
+Posicionamiento relativo         & \checkmark & \checkmark & --- \\
+Referencias interhoja            & --- & \checkmark & --- \\
+Ensamblaje declarativo           & \checkmark & \checkmark & \checkmark \\
+Independencia del backend        & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,104 @@
+% ===========================================================================
+%  Conclusiones y Recomendaciones
+% ===========================================================================
+\chapter*{Conclusiones}
+\addcontentsline{toc}{chapter}{Conclusiones}
+\markboth{Conclusiones}{Conclusiones}
+
+El trabajo alcanz\'o los objetivos propuestos.  Se dise\~n\'o e implement\'o
+un lenguaje de dominio espec\'{\i}fico en Common Lisp para la generaci\'on
+declarativa de hojas de c\'alculo de planificaci\'on, y se valid\'o sobre
+tres casos reales de la Facultad de Matem\'atica y Computaci\'on de la
+Universidad de La Habana.
+
+Las conclusiones principales son las siguientes.
+
+\begin{enumerate}
+
+  \item \textbf{La separaci\'on entre intenci\'on e implementaci\'on es
+    alcanzable con un DSL interno en Lisp.}  El sistema permite declarar
+    tablas relacionadas, columnas calculadas, cuantificadores existenciales
+    y reglas de coloreado condicional sin escribir ninguna letra de columna
+    Excel, ninguna cadena de f\'ormula ni ninguna llamada a la API de destino.
+    El backend es el \'unico punto del c\'odigo donde viven esos detalles.
+
+  \item \textbf{Las macros de Common Lisp son el mecanismo adecuado para
+    implementar el DSL.}  La homoiconicidad del lenguaje hace que los macros
+    sean transformadores de c\'odigo completamente naturales: cada forma del
+    DSL es una lista anidada que el macro convierte en constructores CLOS,
+    sin ning\'un parser externo.
+
+  \item \textbf{El despacho m\'ultiple de CLOS ofrece extensibilidad sin
+    modificar el c\'odigo existente.}  A\~nadir un nuevo tipo de expresi\'on
+    al lenguaje requiere \'unicamente tres acciones: definir la clase del nodo
+    con \dsl{defclass*}, definir el macro de superficie y definir el m\'etodo
+    del backend.  El patr\'on se replic\'o consistentemente en los m\'as de
+    veinte tipos de nodo implementados.
+
+  \item \textbf{El cuantificador \dsl{exists} captura correctamente las
+    condiciones de conflicto de planificaci\'on.}  Las dos variantes
+    (\dsl{:all-rows} y \dsl{:rows-of}) cubren los patrones de conflicto
+    m\'as frecuentes en los documentos analizados.  El backend genera
+    f\'ormulas SUMPRODUCT que implementan esas sem\'anticas de forma robusta
+    y producen \texttt{FormulaRule} persistentes en el \xlsx{}.
+
+  \item \textbf{El posicionamiento relativo con \dsl{nav} elimina las
+    coordenadas absolutas de los programas del DSL.}  Totales, etiquetas y
+    celdas de resumen se colocan siempre en la posici\'on correcta
+    independientemente del n\'umero de filas de datos, lo que hace al
+    programa resiliente ante cambios en el tama\~no de los conjuntos.
+
+  \item \textbf{El sistema genera archivos \xlsx{} con formato condicional
+    activo.}  La decisi\'on de usar \texttt{FormulaRule} en lugar de coloreado
+    est\'atico significa que la hoja de c\'alculo sigue siendo funcional cuando
+    el usuario la edita directamente en Excel, sin necesidad de volver a
+    ejecutar el DSL.
+
+\end{enumerate}
+
+% ---------------------------------------------------------------------------
+\chapter*{Recomendaciones}
+\addcontentsline{toc}{chapter}{Recomendaciones}
+\markboth{Recomendaciones}{Recomendaciones}
+
+A partir del trabajo realizado se identifican las siguientes l\'{\i}neas de
+extensi\'on para investigaciones futuras.
+
+\begin{enumerate}
+
+  \item \textbf{Soporte para m\'as funciones de celda.}  El DSL actual cubre
+    \texttt{COUNTIF}, \texttt{COUNTA}, \texttt{SUM}, \texttt{IF},
+    \texttt{AVERAGEIF} y operaciones de tiempo.  Funciones como
+    \texttt{INDEX/MATCH}, \texttt{XLOOKUP}, \texttt{PIVOTBY} y las nuevas
+    funciones de matrices din\'amicas de Excel~365 podr\'{\i}an a\~nadirse
+    siguiendo exactamente el mismo patr\'on de extensi\'on descrito en la
+    secci\'on~\ref{sec:extensibilidad}.
+
+  \item \textbf{Backends alternativos.}  La independencia del backend respecto
+    al AST hace posible implementar generadores de c\'odigo para otros
+    formatos: ODS (LibreOffice Calc), CSV anotado, HTML con tablas,
+    o incluso bases de datos SQL.  La capa del DSL no requiere ning\'un cambio.
+
+  \item \textbf{Interfaz de usuario gr\'afica.}  El AST es una estructura de
+    datos de primera clase en Lisp.  Una interfaz gr\'afica podr\'{\i}a visualizar
+    y editar el AST directamente, permitiendo a usuarios no programadores
+    configurar las reglas de coloreado y los c\'alculos sin escribir c\'odigo.
+
+  \item \textbf{Verif\'{\i}caci\'on de tipos del DSL.}  El sistema actual no
+    comprueba en tiempo de expansi\'on de macros que los s\'{\i}mbolos de columna
+    referenciados en \dsl{exists} y \dsl{trange} existan en las tablas
+    correspondientes.  Un verificador de tipos a nivel del AST detectar\'{\i}a
+    estos errores antes de la generaci\'on del c\'odigo Python.
+
+  \item \textbf{Generaci\'on incremental.}  El sistema genera el programa
+    Python completo en cada ejecuci\'on.  Un modo incremental que detecte
+    qu\'e tablas cambiaron y s\'olo regenere las hojas afectadas reducir\'{\i}a
+    el tiempo de ciclo en workbooks con muchas hojas.
+
+  \item \textbf{Plantillas reutilizables.}  Las plantillas de tabla definidas
+    con \dsl{def-table} podr\'{\i}an exportarse a una biblioteca de plantillas
+    est\'andar para los documentos m\'as comunes de la facultad (horarios de
+    docencia, defensas, actas de ex\'amen), reduciendo el esfuerzo de
+    configuraci\'on inicial para cada nuevo caso.
+
+\end{enumerate}

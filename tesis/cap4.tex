@@ -1,0 +1,408 @@
+% ===========================================================================
+%  Capítulo 4 — Generación de código
+% ===========================================================================
+\chapter{Generaci\'on de c\'odigo}
+\label{cap:generacion}
+
+La generaci\'on de c\'odigo es la etapa del sistema que traduce el AST
+construido por las formas del DSL a un programa Python que produce el archivo
+\xlsx{}.  Este cap\'{\i}tulo describe c\'omo el backend resuelve las
+coordenadas Excel, c\'omo compila cada tipo de nodo de expresi\'on a una
+cadena de f\'ormula, y c\'omo genera las f\'ormulas SUMPRODUCT que
+implementan el formato condicional persistente.
+
+% ---------------------------------------------------------------------------
+\section{Arquitectura del backend}
+\label{sec:arquitectura-backend}
+% ---------------------------------------------------------------------------
+
+El backend est\'a organizado en dos archivos con responsabilidades separadas:
+
+\begin{description}
+  \item[\file{code-generation-utils.lisp}.] Funciones auxiliares, variables
+    din\'amicas de configuraci\'on y la funci\'on de entrada principal.
+    Incluye: \dsl{col->letter} (conversi\'on de n\'umero de columna a letra
+    Excel), \dsl{build-col-map} (construcci\'on del mapa s\'{\i}mbolo~DSL
+    $\to$ letra), \dsl{xl-generate} y \dsl{xl-run-generated}.
+
+  \item[\file{generate-code-direct.lisp}.] Los m\'etodos CLOS de la
+    funci\'on gen\'erica \dsl{compile-excel-formula} y los m\'etodos del
+    generador de c\'odigo Python.  Este archivo es el \'unico lugar del
+    sistema donde pueden aparecer letras de columna Excel, cadenas de
+    f\'ormula y llamadas a openpyxl.
+\end{description}
+
+El principio de separaci\'on de responsabilidades queda codificado en la
+propia arquitectura: \file{ast-def.lisp} declara \emph{qu\'e existe},
+\file{dsl-directo.lisp} declara \emph{c\'omo se escribe} y
+\file{generate-code-direct.lisp} declara \emph{a qu\'e se traduce}.
+
+% ---------------------------------------------------------------------------
+\section{Resoluci\'on de coordenadas}
+\label{sec:resolucion-coordenadas}
+% ---------------------------------------------------------------------------
+
+% ............................................................................
+\subsection{Conversi\'on de n\'umero de columna a letra Excel}
+\label{ssec:col-letter}
+% ............................................................................
+
+La funci\'on \dsl{col->letter} convierte un entero $n$ (la posici\'on
+ordinal de una columna, con base~1) a la letra o letras de columna
+correspondientes en Excel: columna~1~$\to$~\texttt{A}, columna~26~$\to$~\texttt{Z},
+columna~27~$\to$~\texttt{AA}, etc.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Funci\'on col-\textgreater{}letter.}]
+(defun col->letter (n)
+  (with-output-to-string (s)
+    (loop while (> n 0)
+          do (multiple-value-bind (q r) (floor (1- n) 26)
+               (setf n q)
+               (write-char (code-char (+ 65 r)) s)))))
+\end{lstlisting}
+
+El algoritmo es una conversi\'on de base 10 a base 26 con el ajuste
+habitual ($\lfloor (n-1)/26 \rfloor$, $((n-1) \bmod 26) + 65$) que mapea
+los residuos a los caracteres ASCII de las letras may\'usculas.
+
+% ............................................................................
+\subsection{Construcci\'on del mapa de columnas}
+\label{ssec:col-map}
+% ............................................................................
+
+Para cada tabla de la regi\'on se construye un \emph{mapa de columnas}:
+una lista de asociaci\'on que relaciona cada s\'{\i}mbolo DSL de columna con
+su letra Excel absoluta.  La funci\'on \dsl{build-col-map} construye el mapa
+de una tabla sola, asumiendo que empieza en la columna~1.  La funci\'on
+\dsl{build-table-col-maps} construye el mapa global de toda la regi\'on,
+teniendo en cuenta el desplazamiento de cada tabla dentro de la regi\'on:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Construcci\'on del mapa de columnas de una regi\'on.}]
+(defun build-col-map (tbl)
+  (loop for name in (col-names tbl)
+        for i from 1
+        collect (cons name (col->letter i))))
+
+(defun build-table-col-maps (tables offsets)
+  (loop for tbl in tables
+        for offset in offsets
+        collect (cons (id tbl)
+                      (loop for name in (col-names tbl)
+                            for i from 1
+                            collect (cons name
+                                          (col->letter (+ offset i)))))))
+\end{lstlisting}
+
+El resultado se almacena en la variable din\'amica \dsl{*table-col-maps*},
+disponible durante toda la compilaci\'on de la regi\'on.
+
+% ............................................................................
+\subsection{Cálculo de rangos de fila}
+\label{ssec:rangos-fila}
+% ............................................................................
+
+Cada tabla tiene una primera fila de datos (\dsl{first-row}, configurable,
+por defecto~4) y una \'ultima fila que depende del n\'umero de filas de datos
+y de \dsl{cell-height}:
+
+\begin{equation}
+\textit{last-row} = \textit{first-row} + |\textit{datos}| \times \textit{cell-height} - 1
+\end{equation}
+
+Estos valores se almacenan en la variable din\'amica \dsl{*table-data-rows*}
+como una lista de asociaci\'on \dsl{(table-id . (first-row . last-row))},
+lo que permite que los nodos \dsl{xl-table-range} usen los rangos de fila
+correctos para cada tabla aunque la compilaci\'on se realice dentro del
+contexto de una tabla diferente.
+
+% ---------------------------------------------------------------------------
+\section{La funci\'on gen\'erica \texttt{compile-excel-formula}}
+\label{sec:compile-excel-formula}
+% ---------------------------------------------------------------------------
+
+El m\'etodo central del backend es la funci\'on gen\'erica
+\dsl{compile-excel-formula}, que toma un nodo AST y devuelve la cadena de
+f\'ormula Excel correspondiente.  Su firma es:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Declaraci\'on de compile-excel-formula.}]
+(defgeneric compile-excel-formula
+    (expr col-map data-names row-num first-row last-row)
+  (:documentation
+   "Compila un nodo AST de expresion a string de formula Excel"))
+\end{lstlisting}
+
+Los par\'ametros son:
+\begin{description}
+  \item[\dsl{expr}] El nodo AST a compilar.
+  \item[\dsl{col-map}] El mapa de columnas de la tabla actual
+    (\dsl{sym $\to$ letra}).
+  \item[\dsl{data-names}] Lista de s\'{\i}mbolos DSL de la tabla actual
+    (para \dsl{VLOOKUP}).
+  \item[\dsl{row-num}] N\'umero de fila Excel que se est\'a compilando
+    (para referencias relativas).
+  \item[\dsl{first-row}] Primera fila de datos de la tabla actual.
+  \item[\dsl{last-row}] \'Ultima fila de datos de la tabla actual.
+\end{description}
+
+El despacho m\'ultiple de CLOS garantiza que, para cada tipo de nodo, se
+ejecuta el m\'etodo correcto sin ning\'un \dsl{cond} centralizado.
+A\~nadir un nuevo tipo de expresi\'on al lenguaje s\'olo requiere:
+\begin{enumerate}
+  \item Definir una nueva clase con \dsl{defclass*} en \file{ast-def.lisp}.
+  \item Definir un macro en \file{dsl-directo.lisp} que construya el nodo.
+  \item Definir un \dsl{defmethod} de \dsl{compile-excel-formula} en
+    \file{generate-code-direct.lisp}.
+\end{enumerate}
+
+Ning\'un c\'odigo existente necesita modificarse.
+
+% ............................................................................
+\subsection{M\'etodos para expresiones simples}
+\label{ssec:metodos-simples}
+% ............................................................................
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={M\'etodos compile-excel-formula para expresiones simples.}]
+;; Referencia a columna de la tabla actual: "K4"
+(defmethod compile-excel-formula
+    ((e clase-xl-expr-column-ref) col-map data-names
+     row-num first-row last-row)
+  (let* ((letter (cdr (assoc (name e) col-map)))
+         (ctx (context e)))
+    (if (typep ctx 'clase-xl-expr-previous-row)
+        (format nil "~a~a" letter (1- row-num))
+        (format nil "~a~a" letter row-num))))
+
+;; Comparacion de igualdad: "K4=B4"
+(defmethod compile-excel-formula
+    ((e clase-xl-expr-equals) col-map data-names
+     row-num first-row last-row)
+  (format nil "~a=~a"
+          (compile-excel-formula (a e) col-map data-names
+                                  row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names
+                                  row-num first-row last-row)))
+
+;; Literal de texto: "\"Total\""
+(defmethod compile-excel-formula
+    ((e clase-xl-expr-string) col-map data-names
+     row-num first-row last-row)
+  (format nil "~s" (value e)))
+\end{lstlisting}
+
+% ............................................................................
+\subsection{M\'etodos para rangos y agregados}
+\label{ssec:metodos-rangos}
+% ............................................................................
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={M\'etodo para xl-table-range.}]
+;; Rango absoluto de columnas de una tabla especifica de la region.
+;; Usa *table-data-rows* para obtener los limites exactos de esa tabla.
+(defmethod compile-excel-formula
+    ((e clase-xl-table-range) col-map data-names
+     row-num first-row last-row)
+  (let* ((tmap        (cdr (assoc (table-id e) *table-col-maps*)))
+         (from-letter (cdr (assoc (name (from-col e)) tmap)))
+         (to-letter   (if (to-col e)
+                          (cdr (assoc (name (to-col e)) tmap))
+                          from-letter))
+         (tbl-rows    (cdr (assoc (table-id e) *table-data-rows*)))
+         (act-first   (if tbl-rows (car tbl-rows) first-row))
+         (act-last    (if tbl-rows (cdr tbl-rows) last-row)))
+    (format nil "$~a$~a:$~a$~a"
+            from-letter act-first to-letter act-last)))
+\end{lstlisting}
+
+La clave t\'ecnica de este m\'etodo es que consulta \dsl{*table-data-rows*}
+con el identificador de la \emph{tabla referenciada}, no con el de la tabla
+actual.  As\'{\i}, \dsl{(trange defensas-table tutor secretario)} compila al
+rango de \dsl{defensas-table} aunque se est\'e compilando una f\'ormula de
+\dsl{profesores-table}.
+
+% ---------------------------------------------------------------------------
+\section{Generaci\'on de formato condicional}
+\label{sec:cf-generacion}
+% ---------------------------------------------------------------------------
+
+El formato condicional es el aspecto t\'ecnicamente m\'as elaborado de la
+generaci\'on de c\'odigo.  El backend recibe un nodo \dsl{xl-expr-exists} y
+produce una f\'ormula SUMPRODUCT que implementa la sem\'antica del
+cuantificador existencial declarado.
+
+% ............................................................................
+\subsection{Variante same-table: SUMPRODUCT con exclusi\'on de fila actual}
+\label{ssec:cf-same-table}
+% ............................................................................
+
+Cuando \dsl{exists} usa \dsl{:all-rows}, el backend genera una f\'ormula
+SUMPRODUCT que, para cada fila, multiplica tres factores:
+\begin{enumerate}
+  \item Coincidencia en las columnas de agrupaci\'on (\dsl{:matching}).
+  \item Exclusi\'on de la fila actual (para no comparar una fila consigo misma).
+  \item Solapamiento en al menos una columna de rol (\dsl{:any-overlap}).
+\end{enumerate}
+
+Para una regla con \dsl{:matching (dia hora)} y
+\dsl{:any-overlap (tutor \ldots\ secretario)}, la f\'ormula generada para
+la fila~4 es:
+
+\begin{lstlisting}[style=pythonstyle,
+  caption={F\'ormula Excel CF para la variante same-table (fila 4).}]
+=SUMPRODUCT(
+    ($G$4:$G$6=$G4) *          -- dia coincide en ambas filas
+    ($H$4:$H$6=$H4) *          -- hora coincide en ambas filas
+    (ROW($B$4:$B$6)<>ROW($B4)) *  -- excluir la fila actual
+    (($B$4:$B$6=$B4)+($C$4:$C$6=$C4)+...+($F$4:$F$6=$F4))
+) > 0
+\end{lstlisting}
+
+Las referencias con columna fija y fila relativa (p.\,ej.\ \texttt{\$G4})
+hacen que la f\'ormula se eval\'ue correctamente para cada fila del rango:
+al desplazarse de la fila~4 a la fila~5, las referencias de ``fila actual''
+avanzan autom\'aticamente.  El resultado de \texttt{SUMPRODUCT} es el n\'umero
+de filas del dominio que satisfacen las tres condiciones; la comparaci\'on
+\texttt{> 0} convierte ese conteo en un valor booleano para la regla de
+formato condicional.
+
+% ............................................................................
+\subsection{Variante cross-table: SUMPRODUCT con COUNTIFS}
+\label{ssec:cf-cross-table}
+% ............................................................................
+
+Cuando \dsl{exists} usa \dsl{:rows-of}, el backend genera una f\'ormula
+SUMPRODUCT que combina dos condiciones:
+\begin{enumerate}
+  \item Que el valor de la celda actual aparezca en al menos una columna de
+    rol de la tabla referenciada (\dsl{:self-in}).
+  \item Que el slot de tiempo de esa fila tenga m\'as de una defensa
+    programada (\dsl{:matching} con \texttt{COUNTIFS}).
+\end{enumerate}
+
+Para la regla de \dsl{profesores-table} con
+\dsl{:self-in (tutor \ldots\ secretario)} y \dsl{:matching (dia hora)},
+la f\'ormula generada para la celda K4 es:
+
+\begin{lstlisting}[style=pythonstyle,
+  caption={F\'ormula Excel CF para la variante cross-table (celda K4).}]
+=SUMPRODUCT(
+    (($B$4:$B$6=$K4)+($C$4:$C$6=$K4)+($D$4:$D$6=$K4)+
+     ($E$4:$E$6=$K4)+($F$4:$F$6=$K4)) *
+    (COUNTIFS($G$4:$G$6,$G$4:$G$6,
+              $H$4:$H$6,$H$4:$H$6) > 1)
+) > 0
+\end{lstlisting}
+
+La referencia \texttt{\$K4} corresponde al nombre del profesor en la celda
+actual (columna~K bloqueada, fila relativa).  Los rangos
+\texttt{\$B\$4:\$B\$6} a \texttt{\$F\$4:\$F\$6} son las columnas de rol de
+\dsl{defensas-table}, completamente absolutas.
+
+\texttt{COUNTIFS} con cada par de columnas de coincidencia iguales a s\'{\i}
+mismas produce el n\'umero de filas que comparten exactamente los mismos
+valores en esas columnas; comparar el resultado con~$1$ selecciona los
+slots de tiempo con m\'as de una defensa.  El producto SUMPRODUCT de ambas
+condiciones devuelve el n\'umero de filas de \dsl{defensas-table} en que el
+profesor actual participa en un slot conflictivo.
+
+Al ser una \texttt{FormulaRule} incrustada en el archivo Excel, cualquier
+edici\'on posterior de los datos provoca una reevaluaci\'on autom\'atica del
+coloreado, sin necesidad de volver a ejecutar el DSL.
+
+% ---------------------------------------------------------------------------
+\section{Generaci\'on de referencias cruzadas entre hojas}
+\label{sec:cf-cross-sheet}
+% ---------------------------------------------------------------------------
+
+El nodo \dsl{xl-expr-collect-over} itera sobre una lista de hojas del
+workbook y agrega la expresi\'on del cuerpo para cada una.  El mecanismo de
+iteraci\'on usa la variable din\'amica \dsl{*sheet-env*}: durante la
+compilaci\'on de cada t\'ermino, la variable de iteraci\'on (\dsl{sheet-var})
+se liga temporalmente al nombre de la hoja actual.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={M\'etodo compile-excel-formula para collect-over.}]
+(defmethod compile-excel-formula
+    ((e clase-xl-expr-collect-over) col-map data-names
+     row-num first-row last-row)
+  (let* ((groups (groups e))
+         (sh-var (sheet-var e))
+         (body   (body e))
+         (terms  (mapcar
+                   (lambda (g)
+                     ;; Liga sh-var -> g solo durante este termino
+                     (let ((*sheet-env* (acons sh-var g *sheet-env*)))
+                       (compile-excel-formula body col-map data-names
+                                              row-num first-row last-row)))
+                   groups))
+         (inner  (format nil "~{~a~^&~}" terms)))
+    (format nil "SUBSTITUTE(TRIM(~a),\" \",\",\")" inner)))
+\end{lstlisting}
+
+La f\'ormula resultante concatena los $N$ t\'erminos con \texttt{\&} y los
+envuelve en \texttt{SUBSTITUTE(TRIM(\ldots))} para eliminar espacios extras
+y reemplazarlos con comas, produciendo una lista de grupos separada por comas.
+
+Para el horario de la facultad con 17 grupos, el m\'etodo genera una f\'ormula
+que agrega la ocupaci\'on del Aula~1 en el turno~3 del lunes a trav\'es de
+las 17 hojas del workbook, sin que el programador haya escrito ning\'un
+nombre de hoja ni letra de columna.
+
+% ---------------------------------------------------------------------------
+\section{Generaci\'on del programa Python}
+\label{sec:generacion-python}
+% ---------------------------------------------------------------------------
+
+El generador principal recorre el \'arbol del workbook y emite un programa
+Python que usa \texttt{openpyxl} para construir el archivo \xlsx{}.  El
+programa generado:
+
+\begin{enumerate}
+  \item Crea un workbook openpyxl.
+  \item Para cada hoja, crea una hoja de trabajo y la configura.
+  \item Para cada tabla de cada regi\'on, escribe las cabeceras y los datos.
+  \item Para cada columna calculada, escribe la f\'ormula en cada fila de
+    datos (compilada por \dsl{compile-excel-formula} en tiempo de generaci\'on
+    del Python).
+  \item Para cada regla de estilo condicional, crea una
+    \texttt{FormulaRule} con la f\'ormula SUMPRODUCT generada y la a\~nade
+    al rango correspondiente.
+  \item Para cada expresi\'on fija, resuelve la posici\'on \dsl{nav} y escribe
+    la expresi\'on compilada en la celda correspondiente.
+  \item Guarda el workbook en el archivo \xlsx{} configurado.
+\end{enumerate}
+
+El listado siguiente muestra el fragmento del programa Python generado para
+la columna calculada \dsl{defensas} de \dsl{profesores-table}:
+
+\begin{lstlisting}[style=pythonstyle,
+  caption={Fragmento del programa Python generado para la columna computed.}]
+# Columna: defensas (profesores-table)
+ws["M4"] = "=COUNTIF($B$4:$F$6,K4)"
+ws["M5"] = "=COUNTIF($B$4:$F$6,K5)"
+ws["M6"] = "=COUNTIF($B$4:$F$6,K6)"
+ws["M7"] = "=COUNTIF($B$4:$F$6,K7)"
+ws["M8"] = "=COUNTIF($B$4:$F$6,K8)"
+ws["M9"] = "=COUNTIF($B$4:$F$6,K9)"
+
+# FormulaRule para profesores-table, columna nombre
+from openpyxl.formatting.rule import FormulaRule
+from openpyxl.styles import PatternFill
+red_fill = PatternFill(start_color="FF6666",
+                       end_color="FF6666", fill_type="solid")
+formula = ("SUMPRODUCT((($B$4:$B$6=$K4)+($C$4:$C$6=$K4)+"
+           "($D$4:$D$6=$K4)+($E$4:$E$6=$K4)+($F$4:$F$6=$K4))*"
+           "(COUNTIFS($G$4:$G$6,$G$4:$G$6,$H$4:$H$6,$H$4:$H$6)>1))>0")
+ws.conditional_formatting.add(
+    "K4:K9",
+    FormulaRule(formula=[formula], fill=red_fill))
+\end{lstlisting}
+
+Las f\'ormulas de las celdas est\'an calculadas en tiempo de generaci\'on del
+Python: el programa Python que se ejecuta s\'olo asigna cadenas de texto a las
+celdas.  Las referencias relativas dentro de las f\'ormulas las eval\'ua Excel
+al abrir el archivo.  La \texttt{FormulaRule}, en cambio, se reevalua
+en Excel din\'amicamente cada vez que cambian los datos.

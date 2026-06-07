@@ -1,0 +1,71 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {chapter}{Agradecimientos}{2}{chapter*.1}%
+\contentsline {chapter}{Opini\'on del Tutor}{3}{chapter*.2}%
+\contentsline {chapter}{Resumen}{4}{chapter*.3}%
+\contentsline {chapter}{Abstract}{5}{chapter*.4}%
+\contentsline {chapter}{Introducci\'on}{8}{chapter*.6}%
+\contentsline {chapter}{\numberline {1}Preliminares te\'oricos}{11}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Hojas de c\'alculo}{11}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Planificaci\'on tabular en el \'ambito acad\'emico}{12}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Lenguajes de dominio espec\'{\i }fico}{12}{section.1.3}%
+\contentsline {section}{\numberline {1.4}\'Arboles de sintaxis abstracta}{13}{section.1.4}%
+\contentsline {section}{\numberline {1.5}El lenguaje de programaci\'on Common Lisp}{14}{section.1.5}%
+\contentsline {subsection}{\numberline {1.5.1}Notaci\'on prefija y homoiconicidad}{14}{subsection.1.5.1}%
+\contentsline {subsection}{\numberline {1.5.2}Macros}{14}{subsection.1.5.2}%
+\contentsline {subsection}{\numberline {1.5.3}El Sistema de Objetos de Common Lisp (CLOS)}{14}{subsection.1.5.3}%
+\contentsline {subsection}{\numberline {1.5.4}La macro \texttt {defclass*}}{15}{subsection.1.5.4}%
+\contentsline {chapter}{\numberline {2}An\'alisis del dominio de planificaci\'on tabular}{17}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Casos de uso}{17}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Horario de defensas de tesis}{17}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Horario docente de la facultad}{18}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Horario de programaci\'on televisiva}{18}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Elementos comunes}{19}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Tablas relacionadas y referencias cruzadas}{19}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Columnas calculadas}{19}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Visualizaci\'on condicional}{20}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Posicionamiento relativo}{20}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Requisitos del lenguaje}{20}{section.2.3}%
+\contentsline {chapter}{\numberline {3}El lenguaje de dominio espec\'{\i }fico}{22}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Visi\'on general}{22}{section.3.1}%
+\contentsline {section}{\numberline {3.2}\'Arbol de sintaxis abstracta}{23}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Estructura del workbook}{23}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Expresiones de celda}{23}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}Cuantificaci\'on existencial}{23}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Formato condicional y posicionamiento}{23}{subsection.3.2.4}%
+\contentsline {section}{\numberline {3.3}Definici\'on de tablas: \texttt {def-table}}{24}{section.3.3}%
+\contentsline {section}{\numberline {3.4}Expresiones de celda}{27}{section.3.4}%
+\contentsline {section}{\numberline {3.5}El cuantificador existencial \texttt {exists}}{28}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Variante same-table: \texttt {:all-rows}}{28}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Variante cross-table: \texttt {:rows-of}}{28}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}Formato condicional declarativo}{29}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Ensamblaje del workbook}{29}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Posicionamiento relativo: \texttt {nav}}{30}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Generaci\'on y ejecuci\'on}{30}{section.3.9}%
+\contentsline {section}{\numberline {3.10}Ejemplo completo: Horario de Defensas de Tesis}{30}{section.3.10}%
+\contentsline {chapter}{\numberline {4}Generaci\'on de c\'odigo}{33}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Arquitectura del backend}{33}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Resoluci\'on de coordenadas}{33}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Conversi\'on de n\'umero de columna a letra Excel}{33}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Construcci\'on del mapa de columnas}{34}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Cálculo de rangos de fila}{34}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}La funci\'on gen\'erica \texttt {compile-excel-formula}}{35}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}M\'etodos para expresiones simples}{35}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}M\'etodos para rangos y agregados}{36}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Generaci\'on de formato condicional}{36}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Variante same-table: SUMPRODUCT con exclusi\'on de fila actual}{37}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Variante cross-table: SUMPRODUCT con COUNTIFS}{37}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Generaci\'on de referencias cruzadas entre hojas}{38}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Generaci\'on del programa Python}{39}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Detalles de implementaci\'on}{41}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Organizaci\'on en cuatro archivos}{41}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Macros del DSL}{41}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Macros de expresi\'on}{41}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Macros de estructura}{43}{subsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.2.3}El macro \texttt {nav} y el sistema de posicionamiento}{44}{subsection.5.2.3}%
+\contentsline {section}{\numberline {5.3}Extensibilidad del sistema}{44}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Validaci\'on sobre los casos de uso}{45}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Horario de Defensas de Tesis}{45}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Horario Docente de la Facultad}{45}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Discusi\'on comparativa}{46}{subsection.5.4.3}%
+\contentsline {chapter}{Conclusiones}{47}{chapter*.15}%
+\contentsline {chapter}{Recomendaciones}{49}{chapter*.16}%

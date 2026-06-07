@@ -586,290 +586,328 @@
           (incf key-count))))))
 
 ; =====================================================================
+; GENERATE-CODE — REGION HELPERS
+; Pure functions: no closures, usable outside this method.
+; =====================================================================
+
+(defun region/col-count (tbl)
+  (length (col-names tbl)))
+
+(defun region/effective-first-row (tbl)
+  (or (first-row tbl) 4))
+
+(defun region/logical-rows (tbl)
+  (let* ((con (contenido tbl))
+         (ef  (first-row tbl))
+         (pr  (if ef (max 0 (1- ef)) 0)))
+    (max 0 (- (length con) pr))))
+
+(defun region/physical-rows (tbl)
+  (* (region/logical-rows tbl) (max 1 (or (cell-height tbl) 1))))
+
+(defun region/tbl-last-row (tbl)
+  (let* ((fr (region/effective-first-row tbl))
+         (pr (region/physical-rows tbl)))
+    (if (> pr 0) (1- (+ fr pr)) (1- fr))))
+
+(defun region/compute-offsets (tables)
+  "Returns a list of column offsets, one per table, with a gap column between tables."
+  (loop with cur = 0
+        for tbl in tables
+        for start = cur
+        do (incf cur (1+ (region/col-count tbl)))
+        collect start))
+
+(defun region/build-global-col-map (tables)
+  "Builds an alist (col-name . excel-letter) across all tables left to right."
+  (let ((cur 1) (map nil))
+    (dolist (tb tables (nreverse map))
+      (dolist (name (col-names tb))
+        (push (cons name (col->letter cur)) map)
+        (incf cur))
+      (incf cur))))   ;; skip separator column
+
+(defun region/letter->col-num (letter-str)
+  "Converts an Excel column letter string (e.g. \"C\") to a 1-based integer."
+  (loop for i from 0 below (length letter-str)
+        sum (* (- (char-code (char letter-str i)) 64)
+               (expt 26 (- (length letter-str) i 1)))))
+
+(defun region/adjust-range-offset (range offset)
+  "Shifts the column of a relative range string by offset.
+   Example: (region/adjust-range-offset \"B4:B9\" 5) => \"G4:G9\""
+  (let* ((col-end    (position-if #'digit-char-p range))
+         (tbl-letter (subseq range 0 col-end))
+         (rest-str   (subseq range col-end))
+         (abs-letter (col->letter (+ (region/letter->col-num tbl-letter) offset)))
+         (colon      (position #\: rest-str))
+         (row1       (subseq rest-str 0 colon))
+         (tail       (subseq rest-str (1+ colon)))
+         (col2-end   (position-if #'digit-char-p tail))
+         (row2       (subseq tail col2-end)))
+    (format nil "~a~a:~a~a" abs-letter row1 abs-letter row2)))
+
+(defun region/resolve-nav (nav-node tables offsets)
+  "Resolves a nav anchor node to an absolute (row col) pair using *table-data-rows*."
+  (let* ((anchor (anchor nav-node))
+         (steps  (steps nav-node))
+         (tid    (table-id anchor))
+         (cname  (col-name anchor))
+         (atype  (anchor-type anchor))
+         (pair   (loop for tbl in tables for o in offsets
+                       when (eq (id tbl) tid) return (cons tbl o)))
+         (tbl    (car pair))
+         (offset (cdr pair)))
+    (when tbl
+      (let* ((cidx  (position cname (col-names tbl) :test #'string-equal))
+             (pcol  (+ offset cidx 1))
+             (trows (cdr (assoc (id tbl) *table-data-rows*)))
+             (arow  (ecase atype
+                      (:ultima-fila  (cdr trows))
+                      (:primera-fila (car trows)))))
+        (let ((row arow) (col pcol))
+          (loop for (dir . n) in steps do
+            (case dir
+              (abajo     (incf row n))
+              (arriba    (decf row n))
+              (derecha   (incf col n))
+              (izquierda (decf col n))))
+          (list row col))))))
+
+; =====================================================================
 ; GENERATE-CODE — REGIONES
 ; =====================================================================
 
 (defmethod generate-code ((region clase-xl-region) (lang xl-out) (stream t))
   (let ((tables (tables region)))
     (unless tables (return-from generate-code (format stream "{}")))
-    (labels ((col-count (tbl) (length (col-names tbl)))
-             (effective-first-row (tbl)
-               (or (first-row tbl) 4))
-             (logical-rows (tbl)
-               (let* ((con (contenido tbl))
-                      (ef (first-row tbl))
-                      (pr (if ef (max 0 (1- ef)) 0)))
-                 (max 0 (- (length con) pr))))
-             (physical-rows (tbl)
-               (* (logical-rows tbl) (max 1 (or (cell-height tbl) 1))))
-             (tbl-last-row (tbl)
-               (let* ((fr (effective-first-row tbl))
-                      (pr (physical-rows tbl)))
-                 (if (> pr 0) (1- (+ fr pr)) (1- fr))))
-             (build-global-col-map (tbls)
-               (let ((cur 1) (map nil))
-                 (dolist (tb tbls (nreverse map))
-                   (dolist (name (col-names tb))
-                     (push (cons name (col->letter cur)) map)
-                     (incf cur))
-                   (incf cur)))))  ;; skip gap column
-     (let* ((offsets (loop with cur = 0
-                            for tbl in tables
-                            for start = cur
-                            do (incf cur (1+ (col-count tbl)))
-                            collect start))
-             (main-tbl (first tables))
-             (ref-first-row (effective-first-row main-tbl))
-             (ref-physical-rows (physical-rows main-tbl))
-             (last-row (if (> ref-physical-rows 0)
-                           (1- (+ ref-first-row ref-physical-rows))
-                           (1- ref-first-row)))
-             (total-cols (loop for tbl in tables sum (1+ (col-count tbl))))
-             (last-col-letter (col->letter total-cols))
-             (global-col-map (build-global-col-map tables))
-             (*table-col-maps* (build-table-col-maps tables offsets))
-             (*table-data-rows* (loop for tbl in tables
-                                       collect (cons (id tbl)
-                                                     (cons (effective-first-row tbl)
-                                                           (tbl-last-row tbl)))))
-             (global-dnames (loop for tbl in tables append (data-col-names tbl)))
-             (all-expanded (loop for tbl in tables collect (expand-table-content tbl)))
-             (max-rows (loop for exp in all-expanded maximize (length exp))))
-       (flet ((resolve-nav (nav-node)
-                (let* ((anchor  (anchor nav-node))
-                       (steps   (steps nav-node))
-                       (tid     (table-id anchor))
-                       (cname   (col-name anchor))
-                       (atype   (anchor-type anchor))
-                       (pair    (loop for tbl in tables for o in offsets
-                                      when (eq (id tbl) tid) return (cons tbl o)))
-                       (tbl     (car pair))
-                       (offset  (cdr pair)))
-                  (when tbl
-                    (let* ((cidx  (position cname (col-names tbl) :test #'string-equal))
-                           (pcol  (+ offset cidx 1))
-                           (trows (cdr (assoc (id tbl) *table-data-rows*)))
-                           (fr    (car trows))
-                           (lr    (cdr trows))
-                           (arow  (ecase atype
-                                    (:ultima-fila  lr)
-                                    (:primera-fila fr))))
-                      (let ((row arow) (col pcol))
-                        (loop for (dir . n) in steps do
-                          (case dir
-                            (abajo     (incf row n))
-                            (arriba    (decf row n))
-                            (derecha   (incf col n))
-                            (izquierda (decf col n))))
-                        (list row col)))))))
+
+    ;; ── 1. Layout ────────────────────────────────────────────────────────────
+    ;; Precompute all positional constants shared by the emit sections.
+    (let* ((offsets          (region/compute-offsets tables))
+           (ref-first-row    (region/effective-first-row (first tables)))
+           (total-cols       (loop for tbl in tables sum (1+ (region/col-count tbl))))
+           (last-col-letter  (col->letter total-cols))
+           (global-col-map   (region/build-global-col-map tables))
+           (*table-col-maps*   (build-table-col-maps tables offsets))
+           (*table-data-rows*  (loop for tbl in tables
+                                     collect (cons (id tbl)
+                                                   (cons (region/effective-first-row tbl)
+                                                         (region/tbl-last-row tbl)))))
+           (global-dnames    (loop for tbl in tables append (data-col-names tbl)))
+           (all-expanded     (loop for tbl in tables collect (expand-table-content tbl)))
+           (max-rows         (loop for exp in all-expanded maximize (length exp))))
+
+      ;; ── 2. Emit sections ─────────────────────────────────────────────────
+      ;; Each flet closes over the layout vars above and emits exactly one JSON key.
+      (flet
+
+        ((emit-data ()
+           ;; Tables with :params need an extra row 0 to seed the param cell ($G$2).
+           ;; The separator column between tables doubles as the param cell column.
+           (let* ((any-params (some #'params tables))
+                  (padded-max (if any-params (1+ max-rows) max-rows)))
+             (format stream "        \"data\": ")
+             (xl-write
+               (loop for r from 0 below padded-max
+                     collect (loop for tbl in tables for exp in all-expanded
+                                   for prms  = (params tbl)
+                                   for nc    = (region/col-count tbl)
+                                   for data-r = (if prms (1- r) r)
+                                   for row   = (if (and prms (zerop r))
+                                                   (make-list nc :initial-element "")
+                                                   (if (< data-r (length exp))
+                                                       (nth data-r exp)
+                                                       (make-list nc :initial-element "")))
+                                   append (subseq row 0 (min (length row) nc))
+                                   collect (if (and prms (zerop r)) (cdar prms) "")))
+               stream)
+             (format stream ",~%")))
+
+         (emit-headers ()
+           (format stream "        \"headers\": ")
+           (xl-write (loop for tbl in tables
+                           append (append (headers tbl) (list "")))
+                     stream)
+           (format stream ",~%"))
+
+         (emit-formulas ()
+           ;; Two sources collected into one list, sorted by (row col), emitted together:
+           ;;   (a) :computed columns  — one formula per data row per computed column.
+           ;;   (b) fixed expressions  — single cells positioned via nav anchors on the sheet.
+           (let ((formulas nil))
+             ;; (a) computed columns
+             (loop for tbl in tables
+                   for offset    in offsets
+                   for cell-h    = (max 1 (or (cell-height tbl) 1))
+                   for first-row = (region/effective-first-row tbl)
+                   for tbl-lr    = (region/tbl-last-row tbl)
+                   for ldr       = (region/logical-rows tbl)
+                   for param-cells = (loop for (n . v) in (params tbl)
+                                           for idx from 1
+                                           for col-num = (+ (region/col-count tbl) idx)
+                                           collect (cons n (format nil "$~a~a"
+                                                                   (col->letter (+ offset col-num))
+                                                                   2)))
+                   do (loop for (col . expr) in (computed tbl)
+                            for abs-col = (+ offset
+                                             (or (position col (col-names tbl) :test #'string-equal) -1)
+                                             1)
+                            do (loop for i from 0 below ldr
+                                     for row     = (+ first-row (* i cell-h))
+                                     for formula = (let ((*param-cells* param-cells))
+                                                     (compile-excel-formula
+                                                       expr global-col-map global-dnames
+                                                       row first-row tbl-lr))
+                                     do (push (list row abs-col formula) formulas))))
+             ;; (b) nav-anchored fixed expressions
+             (let ((region-ids (mapcar #'id tables)))
+               (dolist (fe *sheet-fixed-expressions*)
+                 (let* ((nav-node (pos fe))
+                        (atid     (table-id (anchor nav-node))))
+                   (when (member atid region-ids)
+                     (let* ((cell-pos (region/resolve-nav nav-node tables offsets))
+                            (fe-rows  (cdr (assoc atid *table-data-rows*)))
+                            (formula  (let ((*param-cells* nil))
+                                        (compile-excel-formula
+                                          (expr fe) global-col-map global-dnames
+                                          (first cell-pos) (car fe-rows) (cdr fe-rows)))))
+                       (when cell-pos
+                         (push (list (first cell-pos) (second cell-pos) formula)
+                               formulas)))))))
+             (setf formulas
+                   (sort formulas (lambda (a b)
+                                    (or (< (first a) (first b))
+                                        (and (= (first a) (first b))
+                                             (< (second a) (second b)))))))
+             (when formulas
+               (format stream "        \"formulas\": [")
+               (loop for (row col formula) in formulas for i from 0
+                     do (when (> i 0) (format stream ", "))
+                        (format stream "{\"row\": ~a, \"col\": ~a, \"value\": \"=~a\"}"
+                                row col (escape-python-string formula)))
+               (format stream "],~%"))))
+
+         (emit-styles ()
+           ;; Style rules split by the type of their condition node:
+           ;;   xl-expr-exists → FormulaRule SUMPRODUCT (recalculates inside Excel).
+           ;;   anything else  → static colors baked at generation time.
+           (let ((all-styles nil) (all-cf nil))
+             (loop for tbl    in tables
+                   for offset in offsets
+                   for tbl-first = (region/effective-first-row tbl)
+                   for tbl-last  = (region/tbl-last-row tbl)
+                   for tbl-lmap  = (loop for name in (col-names tbl)
+                                         for idx from (1+ offset)
+                                         collect (cons name (col->letter idx)))
+                   do (dolist (rule (or (style-rules tbl) nil))
+                        (if (typep (rule-condition rule) 'clase-xl-expr-exists)
+                            ;; CF path: resolve domain table then build SUMPRODUCT formula
+                            (let* ((exists-node (rule-condition rule))
+                                   (domain-tid  (table-id (domain exists-node)))
+                                   (targets     (target-columns rule))
+                                   (target-ltrs (remove nil
+                                                  (loop for col in targets
+                                                        collect (cdr (assoc col tbl-lmap
+                                                                            :test #'string-equal)))))
+                                   (domain-pair (when domain-tid
+                                                  (loop for t2 in tables for o2 in offsets
+                                                        when (eq (id t2) domain-tid)
+                                                        return (cons t2 o2))))
+                                   (domain-lmap (when domain-pair
+                                                  (loop for name in (col-names (car domain-pair))
+                                                        for idx from (1+ (cdr domain-pair))
+                                                        collect (cons name (col->letter idx)))))
+                                   (domain-rows (when domain-tid
+                                                  (cdr (assoc domain-tid *table-data-rows*))))
+                                   (formula     (compile-exists-to-cf-formula
+                                                  exists-node tbl-lmap tbl-first tbl-last
+                                                  :domain-letter-map domain-lmap
+                                                  :domain-first-row  (when domain-rows (car domain-rows))
+                                                  :domain-last-row   (when domain-rows (cdr domain-rows))
+                                                  :self-col-letter   (first target-ltrs)))
+                                   (range-str   (when target-ltrs
+                                                  (format nil "~a~a:~a~a"
+                                                          (first target-ltrs) tbl-first
+                                                          (car (last target-ltrs)) tbl-last))))
+                              (when (and formula range-str)
+                                (push (list range-str formula) all-cf)))
+                            ;; static path: relative column letters → absolute
+                            (dolist (rs (collect-range-styles-from-rules
+                                          tbl (list rule) tbl-first tbl-last))
+                              (push (cons (region/adjust-range-offset (car rs) offset)
+                                          (cdr rs))
+                                    all-styles)))))
+             (when all-styles
+               (format stream "        \"range_styles\": [")
+               (loop for (range . color) in (nreverse all-styles) for i from 0
+                     do (when (> i 0) (format stream ", "))
+                        (format stream "{\"range\": ~s, \"style\": {\"font_color\": ~s}}"
+                                range color))
+               (format stream "],~%"))
+             (when all-cf
+               (format stream "        \"conditional_formats\": [")
+               (loop for (range formula) in (nreverse all-cf) for i from 0
+                     do (when (> i 0) (format stream ", "))
+                        (format stream "{\"range\": ~s, \"formula\": ~s, \"style\": {\"font_color\": \"#FF0000\"}}"
+                                range formula))
+               (format stream "],~%"))))
+
+         (emit-layout ()
+           ;; table_ranges: overall bounding box (fallback if no block_sizes).
+           ;; table_block_sizes: per-table range + cell-height/width step for borders.
+           (let ((global-last-row (loop for tbl in tables maximize (region/tbl-last-row tbl))))
+             (format stream "        \"table_ranges\": [~s],~%"
+                     (format nil "A~a:~a~a" ref-first-row last-col-letter global-last-row)))
+           (format stream "        \"table_block_sizes\": [")
+           (loop for tbl    in tables
+                 for offset in offsets
+                 for tbl-fr = (region/effective-first-row tbl)
+                 for tbl-lr = (region/tbl-last-row tbl)
+                 for range-str = (format nil "~a~a:~a~a"
+                                         (col->letter (1+ offset))    tbl-fr
+                                         (col->letter (+ offset (region/col-count tbl))) tbl-lr)
+                 for i from 0
+                 do (when (> i 0) (format stream ", "))
+                    (format stream "{\"range\": ~s, \"row_step\": ~a, \"col_step\": ~a}"
+                            range-str
+                            (max 1 (or (cell-height tbl) 1))
+                            (max 1 (or (cell-width  tbl) 1))))
+           (format stream "],~%"))
+
+         (emit-col-widths ()
+           (format stream "        \"column_widths\": {")
+           (let ((idx 1) (first t))
+             (dolist (tbl tables)
+               (dolist (name (col-names tbl))
+                 (unless first (format stream ", "))
+                 (setf first nil)
+                 (format stream "~a: ~a" idx
+                         (case (if (symbolp name) name (intern (string-upcase name)))
+                           ((programa-calc) 30) ((duracion) 8)  ((tipo) 10)
+                           ((hora-inicio) 10)   ((hora-terminacion) 10) ((tipo-calc) 8)
+                           (otherwise 10)))
+                 (incf idx))
+               (unless first (format stream ", "))
+               (format stream "~a: 0" idx)   ;; separator column = zero width
+               (incf idx))
+             (loop for tbl in tables do
+               (loop for (n . v) in (params tbl) do
+                 (format stream ", ~a: 8" idx)
+                 (incf idx))))
+           (format stream "},~%")))
+
+        ;; ── 3. Pipeline ───────────────────────────────────────────────────────
         (format stream "{~%")
-        ;; ── data ──
-        ;; For tables with params: prepend a param row so $G2 (param cell) has
-        ;; the initial value. The separator column doubles as the param column,
-        ;; so r=0 writes the param value there instead of the usual "".
-        (let* ((any-params (some (lambda (tbl) (params tbl)) tables))
-               (padded-max (if any-params (1+ max-rows) max-rows)))
-          (format stream "        \"data\": ")
-          (xl-write
-            (loop for r from 0 below padded-max
-                  collect (loop for tbl in tables for exp in all-expanded
-                                for prms = (params tbl)
-                                for nc = (col-count tbl)
-                                for data-r = (if prms (1- r) r)
-                                for row = (if (and prms (zerop r))
-                                              (make-list nc :initial-element "")
-                                              (if (< data-r (length exp))
-                                                  (nth data-r exp)
-                                                  (make-list nc :initial-element "")))
-                                append (subseq row 0 (min (length row) nc))
-                                collect (if (and prms (zerop r))
-                                            (cdar prms)
-                                            "")))
-            stream))
-        (format stream ",~%")
-        ;; ── headers ──
-        (format stream "        \"headers\": ")
-        (xl-write (loop for tbl in tables append (append (headers tbl) (list ""))) stream)
-        (format stream ",~%")
-        ;; ── formulas ──
-        (let ((formulas nil))
-          (loop for tbl in tables
-                for offset in offsets
-                for cell-h = (max 1 (or (cell-height tbl) 1))
-                for first-row = (effective-first-row tbl)
-                for tbl-lr = (tbl-last-row tbl)
-                for ldr = (logical-rows tbl)
-                for prms = (params tbl)
-                for param-cells = (when prms
-                                    (loop for (n . v) in prms for idx from 1
-                                          for col-num = (+ (col-count tbl) idx)
-                                          collect (cons n (format nil "$~a~a" (col->letter (+ offset col-num)) 2))))
-                do
-                ;; computed formulas (per-row)
-                (loop for (col . expr) in (computed tbl)
-                      for tbl-col-idx = (position col (col-names tbl) :test #'string-equal)
-                      for abs-col = (+ offset (or tbl-col-idx -1) 1)
-                      do
-                      (loop for i from 0 below ldr
-                            for row = (+ first-row (* i cell-h))
-                            for formula = (let ((*param-cells* param-cells))
-                                            (compile-excel-formula expr global-col-map global-dnames row first-row tbl-lr))
-                            do (push (list row abs-col formula) formulas))))
-          ;; sheet-level fixed expressions (resolved via nav anchors)
-          (let ((region-ids (mapcar #'id tables)))
-            (dolist (fe *sheet-fixed-expressions*)
-              (let* ((nav-node (pos fe))
-                     (atid     (table-id (anchor nav-node))))
-                (when (member atid region-ids)
-                  (let* ((cell-pos  (resolve-nav nav-node))
-                         (fe-rows   (cdr (assoc atid *table-data-rows*)))
-                         (fe-first  (car fe-rows))
-                         (fe-last   (cdr fe-rows))
-                         (formula   (let ((*param-cells* nil))
-                                      (compile-excel-formula
-                                        (expr fe) global-col-map global-dnames
-                                        (first cell-pos) fe-first fe-last))))
-                    (when cell-pos
-                      (push (list (first cell-pos) (second cell-pos) formula)
-                            formulas)))))))
-          (setf formulas (sort formulas (lambda (a b)
-                                          (or (< (first a) (first b))
-                                              (and (= (first a) (first b))
-                                                   (< (second a) (second b)))))))
-          (when formulas
-            (format stream "        \"formulas\": [")
-            (loop for (row col formula) in formulas for i from 0
-                  do (when (> i 0) (format stream ", "))
-                     (format stream "{\"row\": ~a, \"col\": ~a, \"value\": \"=~a\"}"
-                             row col (escape-python-string formula)))
-            (format stream "],~%")))
-        ;; ── range_styles / conditional_formats ──
-        ;; El backend decide el mecanismo según el tipo del nodo condición:
-        ;;   xl-expr-exists → FormulaRule SUMPRODUCT (recalcula en Excel)
-        ;;   cualquier otro → colores estáticos baked en tiempo de generación
-        (let ((all-styles nil)
-              (all-cf nil))
-          (loop for tbl in tables
-                for offset in offsets
-                for tbl-first = (effective-first-row tbl)
-                for tbl-last  = (tbl-last-row tbl)
-                for tbl-letter-map = (loop for name in (col-names tbl)
-                                           for idx from (1+ offset)
-                                           collect (cons name (col->letter idx)))
-                do (dolist (rule (or (style-rules tbl) nil))
-                     (if (typep (rule-condition rule) 'clase-xl-expr-exists)
-                         ;; CF path — SUMPRODUCT FormulaRule
-                         (let* ((exists-node  (rule-condition rule))
-                                (domain-tid   (table-id (domain exists-node)))
-                                (targets      (target-columns rule))
-                                (target-ltrs  (remove nil
-                                               (loop for col in targets
-                                                     collect (cdr (assoc col tbl-letter-map
-                                                                         :test #'string-equal)))))
-                                ;; Resolución de tabla dominio (cross-table)
-                                (domain-pair  (when domain-tid
-                                               (loop for t2 in tables for o2 in offsets
-                                                     when (eq (id t2) domain-tid)
-                                                     return (cons t2 o2))))
-                                (domain-lmap  (when domain-pair
-                                               (loop for name in (col-names (car domain-pair))
-                                                     for idx from (1+ (cdr domain-pair))
-                                                     collect (cons name (col->letter idx)))))
-                                (domain-rows  (when domain-tid
-                                               (cdr (assoc domain-tid *table-data-rows*))))
-                                (formula      (compile-exists-to-cf-formula
-                                               exists-node tbl-letter-map tbl-first tbl-last
-                                               :domain-letter-map domain-lmap
-                                               :domain-first-row  (when domain-rows (car domain-rows))
-                                               :domain-last-row   (when domain-rows (cdr domain-rows))
-                                               :self-col-letter   (first target-ltrs)))
-                                (range-str    (when target-ltrs
-                                               (format nil "~a~a:~a~a"
-                                                       (first target-ltrs) tbl-first
-                                                       (car (last target-ltrs)) tbl-last))))
-                           (when (and formula range-str)
-                             (push (list range-str formula) all-cf)))
-                         ;; static path — colores generados row a row
-                         (let ((raw-styles (collect-range-styles-from-rules
-                                             tbl (list rule) tbl-first tbl-last)))
-                           (dolist (rs raw-styles)
-                             (let* ((range (car rs))
-                                    (color (cdr rs))
-                                    (col-end (position-if (lambda (c) (digit-char-p c)) range))
-                                    (tbl-letter (subseq range 0 col-end))
-                                    (rest-str  (subseq range col-end))
-                                    (tbl-col-num (loop for i from 0 below (length tbl-letter)
-                                                       sum (* (- (char-code (char tbl-letter i)) 64)
-                                                              (expt 26 (- (length tbl-letter) i 1)))))
-                                    (abs-col-num (+ tbl-col-num offset))
-                                    (abs-letter (col->letter abs-col-num))
-                                    (adjusted (let* ((colon (position #\: rest-str))
-                                                     (row1  (subseq rest-str 0 colon))
-                                                     (tail  (subseq rest-str (1+ colon)))
-                                                     (col2-end (position-if #'digit-char-p tail))
-                                                     (row2 (subseq tail col2-end)))
-                                                (format nil "~a~a:~a~a"
-                                                        abs-letter row1 abs-letter row2))))
-                               (push (cons adjusted color) all-styles)))))))
-          (when all-styles
-            (format stream "        \"range_styles\": [")
-            (loop for (range . color) in (nreverse all-styles) for i from 0
-                  do (when (> i 0) (format stream ", "))
-                     (format stream "{\"range\": ~s, \"style\": {\"font_color\": ~s}}"
-                             range color))
-            (format stream "],~%"))
-          (when all-cf
-            (format stream "        \"conditional_formats\": [")
-            (loop for (range formula) in (nreverse all-cf) for i from 0
-                  do (when (> i 0) (format stream ", "))
-                     (format stream "{\"range\": ~s, \"formula\": ~s, \"style\": {\"font_color\": \"#FF0000\"}}"
-                             range formula))
-            (format stream "],~%")))
-        ;; ── table_ranges ──
-        (let ((global-last-row (loop for tbl in tables maximize (tbl-last-row tbl))))
-          (format stream "        \"table_ranges\": [~s],~%"
-                  (format nil "A~a:~a~a" ref-first-row last-col-letter global-last-row)))
-        ;; ── table_block_sizes ──
-        (format stream "        \"table_block_sizes\": [")
-        (loop for tbl in tables
-              for offset in offsets
-              for cell-h = (max 1 (or (cell-height tbl) 1))
-              for cell-w = (max 1 (or (cell-width tbl) 1))
-              for from-letter = (col->letter (1+ offset))
-              for to-letter = (col->letter (+ offset (col-count tbl)))
-              for tbl-fr = (effective-first-row tbl)
-              for tbl-lr = (tbl-last-row tbl)
-              for range-str = (format nil "~a~a:~a~a" from-letter tbl-fr to-letter tbl-lr)
-              for i from 0
-              do (when (> i 0) (format stream ", "))
-                 (format stream "{\"range\": ~s, \"row_step\": ~a, \"col_step\": ~a}"
-                         range-str cell-h cell-w))
-        (format stream "],~%")
-        ;; ── column_widths ──
-        (format stream "        \"column_widths\": {")
-        (let ((idx 1) (first t))
-          (dolist (tbl tables)
-            (dolist (name (col-names tbl))
-              (unless first (format stream ", "))
-              (setf first nil)
-              (format stream "~a: ~a" idx
-                      (case (if (symbolp name) name (intern (string-upcase name)))
-                        ((programa-calc) 30) ((duracion) 8) ((tipo) 10)
-                        ((hora-inicio) 10) ((hora-terminacion) 10) ((tipo-calc) 8)
-                        (otherwise 10)))
-              (incf idx))
-            (unless first (format stream ", "))
-            (format stream "~a: 0" idx)
-            (incf idx))
-          (loop for tbl in tables do
-            (loop for (n . v) in (params tbl) do
-                  (format stream ", ~a: 8" idx)
-                  (incf idx))))
-        (format stream "},~%")
-        ;; ── border_color ──
+        (emit-data)
+        (emit-headers)
+        (emit-formulas)
+        (emit-styles)
+        (emit-layout)
+        (emit-col-widths)
         (format stream "        \"border_color\": \"4F81BD\",~%")
         (format stream "        \"border_style\": \"thick\"~%")
-        (format stream "    }"))))))  ;; flet / let* / labels / let ((tables)) / defmethod
+        (format stream "    }")))))
 
 ; =====================================================================
 ; GENERATE-CODE — HOJAS
