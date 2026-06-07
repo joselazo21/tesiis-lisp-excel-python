@@ -1,0 +1,56 @@
+(defclass* tiene-nombre ()
+  (nombre))
+
+(def-entidad grado ()
+  (id))
+  
+(def-grado Lic "Lic")
+(def-grado Msc "Msc")
+(def-grado Dr "Dr")
+
+
+(def-entidad profesor (tiene-nombre)
+   (grado))
+   
+(profesor piad Dr "Alejandro Piad")
+
+   
+(def-entidad estudiante (tiene-nombre))
+or
+(def-entidad tribunal ()
+  (estudiante tutor oponente presidente vocal secretario))
+  
+  
+(def-entidad fecha ()
+   (dia mes))
+
+(def-entidad momento ()
+    (hora))
+    
+(def-entidad local (tiene-nombre))
+
+(def-comb asignacion 
+   (tribunal fecha momento local))
+   
+(def-consulta profesor-en-tribunal (prof trib)
+   :comprueba (h-or (es-igual (nombre (tutor    trib)) prof)
+                    (es-igual (nombre (oponente trib)) prof)
+                    (es-igual (nombre (presidente trib)) prof)
+                    (es-igual (nombre (vocal trib)) prof)
+                    (es-igual (nombre (secretario trib)) prof)
+   
+(def-consulta profesor-con-dos-asignaciones-a-la-misma-vez ()
+   :itera-sobre (p profesores) (a1 asignacion) (a2 asignacion)
+   :comprueba (h-and (profesor-en-tribunal a1)
+                     (profesor-en-tribunal a2)
+                     (es-igual (fecha a1) (fecha a2))
+                     (es-igual (momento a1) (momento a2))
+                     (es-distinto (estudiante a1) (estudiante a2))
+   :operacion suma
+   :devuelve 1))
+
+
+    
+(nppq (sea-mayor (profesor-con-dos-asignaciones-a-la-misma-vez) 0))
+
+      

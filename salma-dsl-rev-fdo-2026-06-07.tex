@@ -1,0 +1,707 @@
+% ===========================================================================
+%  Capítulo: El lenguaje de dominio específico  — archivo autocontenido
+% ===========================================================================
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+% \usepackage{geometry}
+% \geometry{left=3cm,right=2.5cm,top=3cm,bottom=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[lmargin=2.5cm, rmargin=5cm]{geometry}
+\input{../../../../word-comments.tex}
+
+
+\definecolor{lispkw}{rgb}{0.0,0.35,0.65}
+\definecolor{lispstr}{rgb}{0.13,0.55,0.13}
+\definecolor{lispcomment}{rgb}{0.5,0.5,0.5}
+\definecolor{lispbg}{rgb}{0.97,0.97,0.99}
+\definecolor{pybg}{rgb}{0.97,0.99,0.97}
+\definecolor{nodeborder}{rgb}{0.3,0.45,0.7}
+\definecolor{sectioncolor}{rgb}{0.15,0.25,0.5}
+
+\lstdefinelanguage{CommonLisp}{
+  keywords={defclass, defmacro, defun, defparameter, defvar, progn, let, let*,
+            loop, for, collect, append, list, when, unless, if, cond,
+            load, format, lambda,
+            def-entidad, def-comb, def-grado, def-consulta,
+            def-nppq, def-tqpq, def-tdpq, def-sbqp,
+            def-minimizar, def-maximizar,
+            def-op-and, def-op-or, def-op-not,
+            def-op-igual, def-op-distinto,
+            def-op-mayor, def-op-menor, def-op-mayor-igual, def-op-menor-igual,
+            def-op-suma, def-op-resta, def-op-multiplicacion, def-op-division},
+  keywordstyle=\color{lispkw}\bfseries,
+  sensitive=false,
+  comment=[l]{;;},
+  commentstyle=\color{lispcomment}\itshape,
+  morestring=[b]",
+  stringstyle=\color{lispstr},
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{lispbg},
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true, showstringspaces=false,
+  tabsize=2, xleftmargin=1em, xrightmargin=0.5em,
+  aboveskip=0.8em, belowskip=0.5em,
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{pybg},
+  keywordstyle=\color{lispkw}\bfseries,
+  stringstyle=\color{lispstr},
+  commentstyle=\color{lispcomment}\itshape,
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true, showstringspaces=false,
+  tabsize=4, xleftmargin=1em, xrightmargin=0.5em,
+  aboveskip=0.8em, belowskip=0.5em,
+}
+\lstset{language=CommonLisp}
+
+\hypersetup{
+  pdftitle={El Lenguaje de Dominio Específico},
+  pdfauthor={Jose Morales Lazo},
+  colorlinks=true,
+  linkcolor=sectioncolor,
+}
+
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{sectioncolor}}
+  {\chaptertitlename\ \thechapter}{16pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{sectioncolor}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{sectioncolor!80}}{\thesubsection}{1em}{}
+
+
+  
+\begin{document}
+
+\chapter{El Lenguaje de Dominio Específico}
+\label{cap:dsl}
+
+% ---------------------------------------------------------------------------
+\section{Visión general}
+% ---------------------------------------------------------------------------
+
+El lenguaje de dominio específico (DSL) desarrollado en este trabajo
+permite describir problemas de planificación combinatoria mediante tres
+conceptos fundamentales: \emph{entidades} del dominio, \emph{consultas}
+que calculan métricas sobre un horario, y \emph{restricciones} que expresan
+las reglas que todo horario válido debe satisfacer.
+
+El DSL está implementado como un conjunto de \agregaesto{funciones y}
+macros de Common~Lisp.  Cada forma del lenguaje construye, en tiempo
+de carga, un \emph{árbol de sintaxis abstracta} (AST) cuyos nodos son
+instancias de clases CLOS.  Ese árbol puede recorrerse posteriormente
+para generar código\agregaesto{, en} Python \agregaesto{o en cualquier
+  otro lenguaje que se decida,} \cambio{que evalua}{para evaluar} la
+calidad de un horario y \cambio{lo optimiza}{poderlo optimizar}
+mediante una metaheurística de búsqueda local.
+
+\comment{La figura siguiente muestra}{¿esta figura dónde está? Si acaso ponle un label a la figura y referencialo aquí con el comando ref. también puedes usar el comando pageref para decir en qué página está la imagen.} la jerarquía de clases que compone el AST.
+Las siguientes secciones describen cada grupo de nodos con sus atributos
+y su papel en el lenguaje, intercalando ejemplos extraídos del caso de
+uso de planificación de defensas de tesis.
+
+% ---------------------------------------------------------------------------
+\section{Nodos base y representación de entidades}
+\label{sec:nodos-base}
+% ---------------------------------------------------------------------------
+
+Todo nodo del árbol es instancia, directa o indirecta, de \texttt{nodo-ast}.
+Las entidades del dominio se representan mediante dos familias de clases:
+las referencias genéricas, que nombran un tipo de entidad, y las referencias
+específicas, que son instancias concretas con atributos propios.
+
+\notaparaelautor{Antes de poner la tablita, explica con palabras el objetivo de esas clases.}
+
+\begin{table}[h!]
+\centering
+\caption{Nodos base y de representación de entidades.}
+\label{tab:nodos-base}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{nodo-ast}
+  & (ninguno)
+  & Clase base absoluta de todos los nodos del árbol. Sirve
+    de raíz común para despacho polimórfico. \\
+\hline
+\texttt{ref-gen-entidad}
+  & \texttt{nombre-entidad}
+  & Referencia genérica a un tipo de entidad del dominio.
+    El atributo guarda el símbolo con el nombre del tipo
+    (p.\,ej.\ \texttt{profesor}). \\
+\hline
+\texttt{ref-especifica-ent}
+  & (heredados del tipo concreto)
+  & Clase base para las instancias concretas de una entidad.
+    Cada tipo de entidad genera una subclase con sus propios
+    atributos. \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+\noindent
+Cuando el usuario escribe \comment{\texttt{(def-entidad profesor
+    (tiene-nombre) (grado))}}{uffff... ¿qué es el def-entidad ese?
+  Creo que sería bueno reorganizar lo que se va a presnetar, de forma
+  que no tengamos estar referencias a cosas de las que no hemos
+  hablado todavía...}, la macro expande esa forma en tres
+definiciones: \comment{la subclase específica
+  \texttt{REF-ESPECIFICA-A-PROFESOR}}{Bueno... en realidad, eso
+  debeŕia hacerse cuando definas a un profesor específico, no con la
+  definición de la entidad. Con la definición de la entidad solo deberías generar la referencia genérica, que quizás sea útil en las consultas y restricciones...} (con
+slots \texttt{nombre} y \texttt{grado}), la subclase genérica
+\texttt{REF-GEN-A-PROFESOR}, y la variable global \texttt{profesor},
+ligada a una instancia de la clase genérica.
+
+\begin{lstlisting}[language=CommonLisp, caption={Definicion de entidades del dominio.}]
+;; mixin reutilizable
+(defclass* tiene-nombre () (nombre))
+
+;; entidades simples
+(def-entidad profesor  (tiene-nombre) (grado))
+(def-entidad estudiante (tiene-nombre))
+(def-entidad local      (tiene-nombre))
+
+;; entidad enumerada (valores fijos)
+(def-entidad grado () (id))
+(def-grado grado-lic "Lic")
+(def-grado grado-msc "Msc")
+(def-grado grado-dr  "Dr")
+\end{lstlisting}
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+% ---------------------------------------------------------------------------
+\section{Estructuras de datos: combinaciones y listas}
+\label{sec:estructuras}
+% ---------------------------------------------------------------------------
+
+Además de las \queesesto{entidades atómicas}, el lenguaje dispone de dos nodos para
+agrupar valores: las \emph{combinaciones de entidades} y las \emph{listas}.
+
+\notaparaelautor{Igual que arriba, antes de poner la información en la tabla, explica las cosas con palabras.}
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de estructuras de datos.}
+\label{tab:estructuras}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{comb-entidades}
+  & \texttt{comb-entidades-lista}
+  & Representa un grupo heterogéneo de entidades relacionadas
+    (una \emph{combinación}). Se usa para modelar la entidad
+    principal del problema de horario (p.\,ej.\ una asignación). \\
+\hline
+\texttt{lista}
+  & \texttt{lista-elementos}
+  & Colección homogénea de valores. Sirve como contenedor
+    en operaciones de comprobación de conjuntos y en dominios
+    de iteración. \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+\noindent
+La macro \texttt{def-comb} es azúcar sintáctico sobre \texttt{def-entidad}:
+genera una entidad sin mixins cuyos componentes son referencias a otras
+entidades del dominio.
+
+\begin{lstlisting}[language=CommonLisp, caption={Definicion de la combinacion central del problema.}]
+;; entidades participantes
+(def-entidad tribunal () (estudiante tutor oponente presidente vocal secretario))
+(def-entidad fecha   () (dia mes))
+(def-entidad momento () (hora))
+
+;; combinacion: una asignacion agrupa tribunal, fecha, momento y local
+(def-comb asignacion (tribunal fecha momento local))
+\end{lstlisting}
+
+Cada instancia de \texttt{asignacion} es un nodo \texttt{comb-entidades}
+cuyos cuatro componentes son referencias específicas a sus entidades
+constituyentes.
+
+% ---------------------------------------------------------------------------
+\section{Acceso a datos}
+\label{sec:acceso}
+% ---------------------------------------------------------------------------
+
+Para leer el valor de un atributo o de un componente de una entidad se
+generan nodos de acceso que preservan, en el árbol, la cadena de
+navegación hasta el dato final.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de acceso a datos.}
+\label{tab:acceso}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{acceso-a-atributo-de-entidad}
+  & \texttt{acceso-atributo}\newline\texttt{acceso-entidad}
+  & Representa la lectura de un atributo de una entidad.
+    \texttt{acceso-atributo} es el símbolo del slot;
+    \texttt{acceso-entidad} es el nodo que produce la entidad
+    sobre la que se accede. \\
+\hline
+\texttt{acceso-a-elemento-de-comb}
+  & \texttt{acceso-comb-entidad}\newline\texttt{acceso-comb-origen}
+  & Extrae un componente de una combinación.
+    \texttt{acceso-comb-entidad} identifica el componente deseado;
+    \texttt{acceso-comb-origen} es la combinación de origen. \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+\noindent
+Cuando se escribe \texttt{(tutor (tribunal asig))}, la macro genera un
+\texttt{acceso-a-atributo-de-entidad} cuyo atributo es \texttt{tutor} y
+cuya entidad es a su vez un \texttt{acceso-a-elemento-de-comb} que extrae
+el componente \texttt{tribunal} de \texttt{asig}.  \comment{El generador de código
+traduce esta cadena en la expresión Python \texttt{asig.tribunal.tutor}.}{Bueno... esto es muy específico de esa generación de código... quizás no haga falta ponerlo aquí.}
+
+\begin{lstlisting}[language=CommonLisp, caption={Acceso encadenado a atributos de una combinacion.}]
+;; Leer el tutor de la asignacion asig:
+(tutor (tribunal asig))   ; -> asig.tribunal.tutor  (en Python)
+
+;; Leer la hora del momento de otra asignacion:
+(hora (momento asig))     ; -> asig.momento.hora
+\end{lstlisting}
+
+\notaparaelautor{Sería bueno decir que \texttt{asig} es una asignación... porque todo el tiempo he estado pensando que es asignatura.}
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+% ---------------------------------------------------------------------------
+\section{Consultas}
+\label{sec:consultas}
+% ---------------------------------------------------------------------------
+
+El nodo \texttt{consulta-simple} es el \queesesto{bloque fundamental de cómputo del
+lenguaje}.  Representa \queesesto{una operación de tipo \emph{comprehensión}}: itera
+sobre uno o varios dominios, filtra los elementos que satisfacen una
+condición y acumula un resultado.
+
+\notaparaelautor{Antes de la tabla, explica las cosas con palabras, cuál es su necesidad, en qué escenarios se usa, y así.}
+
+\begin{table}[h!]
+\centering
+\caption{Nodo de consulta.}
+\label{tab:consulta}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{consulta-simple}
+  & \texttt{consulta-args}\newline
+    \texttt{consulta-var-iter}\newline
+    \texttt{consulta-dominio}\newline
+    \texttt{consulta-comprobacion}\newline
+    \texttt{consulta-operacion}\newline
+    \texttt{consulta-retorno}
+  & Consulta parametrizable con iteración sobre dominios,
+    filtrado por condición y acumulación de un resultado.
+    \texttt{consulta-args} son parámetros externos adicionales;
+    \texttt{consulta-var-iter} y \texttt{consulta-dominio}
+    definen los bucles de iteración;
+    \texttt{consulta-comprobacion} es el predicado de filtrado;
+    \texttt{consulta-operacion} indica la forma de acumulación
+    (\texttt{suma}, \texttt{contar-distintos-dias}, etc.);
+    \texttt{consulta-retorno} es el símbolo que se acumula. \\
+\hline
+\end{tabular}
+\end{table}
+
+\medskip
+\noindent
+\comment{La macro \texttt{def-consulta} tiene dos modos de uso.  Sin la clave
+\texttt{:itera-sobre} define una función reutilizable que recibe variables
+AST y devuelve un nodo condición.  Con \texttt{:itera-sobre} genera una
+variable global ligada a un nodo \texttt{consulta-simple} listo para ser
+evaluado o generado.}{Esto no lo entendí :-(.}
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Consulta que verifica si un profesor pertenece a un tribunal
+           y consulta que cuenta conflictos de horario.}]
+;; Funcion auxiliar: devuelve un nodo condicion (sin :itera-sobre)
+(def-consulta profesor-en-tribunal (prof asig)
+  :comprueba
+  (def-op-or (def-op-igual (tutor      (tribunal asig)) prof)
+             (def-op-igual (oponente   (tribunal asig)) prof)
+             (def-op-igual (presidente (tribunal asig)) prof)
+             (def-op-igual (vocal      (tribunal asig)) prof)
+             (def-op-igual (secretario (tribunal asig)) prof)))
+
+;; Consulta completa: itera sobre profesores y pares de asignaciones
+(def-consulta conflictos-de-horario ()
+  :itera-sobre (p profesor) (a1 asignacion) (a2 asignacion)
+  :comprueba
+  (def-op-and (profesor-en-tribunal p a1)
+              (profesor-en-tribunal p a2)
+              (def-op-igual    (fecha   a1) (fecha   a2))
+              (def-op-igual    (momento a1) (momento a2))
+              (def-op-distinto (tribunal a1) (tribunal a2)))
+  :operacion suma
+  :devuelve 1)
+\end{lstlisting}
+
+\notaparaelautor{Las operaciones binarias no deberían tener \texttt{def-} delante. deberían ser directamente el nombre de la operación. (or (es-igual ...)) y así.}
+
+\notaparaelautor{Creo que aquí van a hacer falta más ejemplos... más contexto}
+
+En el ejemplo, \texttt{conflictos-de-horario} itera sobre tres dominios
+(\texttt{profesor}, \texttt{asignacion}×\texttt{asignacion}), filtra por
+la condición compuesta y acumula la suma de unos; el generador de código
+traduce todo esto en tres bucles \texttt{for} anidados con un \texttt{if}
+interior.
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+% ---------------------------------------------------------------------------
+\section{Cuantificadores de restricción}
+\label{sec:cuantificadores}
+% ---------------------------------------------------------------------------
+
+Las restricciones del problema se expresan mediante cuantificadores \queesesto{que
+envuelven una comprobación} (posiblemente una consulta) e indican cómo
+debe interpretarse su resultado: como restricción dura, blanda u objetivo
+de optimización.
+
+\notaparaelautor{Antes de la tabla, explica con palabras.}
+
+\begin{table}[h!]
+\centering
+\caption{Nodo base y subclases de cuantificador.}
+\label{tab:cuantificadores}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{cuantificador-restriccion}
+  & \texttt{cuanti-operador}\newline
+    \texttt{cuanti-comprobacion}\newline
+    \texttt{cuanti-elemento}
+  & Clase base de todos los cuantificadores.
+    \texttt{cuanti-comprobacion} es el nodo condición o consulta
+    que se evalúa; \texttt{cuanti-elemento} es el dominio de
+    referencia en los cuantificadores de optimización. \\
+\hline
+\texttt{nppq}
+  & (heredados)
+  & \emph{No Puede Pasar Que.} Restricción dura: la comprobación
+    no puede ser verdadera.  Genera peso alto en la función
+    objetivo. \\
+\hline
+\texttt{tqpq}
+  & (heredados)
+  & \emph{Todo Que Pasa Que.} Restricción dura: la comprobación
+    debe ser verdadera. \\
+\hline
+\texttt{tdpq}
+  & (heredados)
+  & \emph{Todos Deben Pasar Que.} Restricción blanda análoga a
+    \texttt{nppq} pero con peso menor; penaliza sin invalidar
+    la solución. \\
+\hline
+\texttt{sbqp}
+  & (heredados)
+  & \emph{Solo Bien Para Que.} Restricción blanda análoga a
+    \texttt{tqpq}. \\
+\hline
+\texttt{minimizar}
+  & (heredados)
+  & Objetivo de minimización: penaliza el máximo valor que toma
+    la consulta en el dominio \texttt{cuanti-elemento}. \\
+\hline
+\texttt{maximizar}
+  & (heredados)
+  & Objetivo de maximización: penaliza el negativo del mínimo
+    valor de la consulta en el dominio. \\
+\hline
+\end{tabular}
+\end{table}
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Restriccion dura y objetivo de minimizacion.}]
+;; Restriccion dura: ningun profesor puede estar en dos defensas al mismo tiempo.
+;; nppq: "No Puede Pasar Que" conflictos-de-horario sea mayor que 0.
+(defvar restriccion-sin-conflictos-de-horario
+  (def-nppq (def-op-mayor conflictos-de-horario 0)))
+
+;; Consulta auxiliar: dias distintos que asiste un profesor
+(def-consulta dias-asistidos (prof)
+  :itera-sobre (asig asignacion)
+  :comprueba (profesor-en-tribunal prof asig)
+  :operacion contar-distintos-dias
+  :devuelve n-dias)
+
+;; Objetivo blando: minimizar la carga del profesor que mas dias asiste.
+(defvar restriccion-minimizar-carga-maxima
+  (def-minimizar dias-asistidos profesor))
+\end{lstlisting}
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+% ---------------------------------------------------------------------------
+\section{Comprobaciones de conjuntos}
+\label{sec:comprobaciones}
+% ---------------------------------------------------------------------------
+
+El lenguaje incluye dos nodos especializados para expresar condiciones
+sobre colecciones de valores sin necesidad de construir bucles explícitos.
+
+\notaparaelautor{Antes de la tabla, explica con palabras.}
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de comprobación de conjuntos.}
+\label{tab:comprobaciones}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{hay-elementos-duplicados}
+  & \texttt{check-duplicados-lista}
+  & Comprueba si la lista referenciada por
+    \texttt{check-duplicados-lista} contiene elementos
+    repetidos.  Genera código que verifica unicidad. \\
+\hline
+\texttt{pertenece}
+  & \texttt{pertenece-elemento}\newline
+    \texttt{pertenece-coleccion}
+  & Comprueba si \texttt{pertenece-elemento} es miembro de
+    \texttt{pertenece-coleccion}.  Equivale al operador
+    \texttt{in} de Python. \\
+\hline
+\end{tabular}
+\end{table}
+
+\agregaesto{Aquí sería bueno poner ejemplos.}
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+% ---------------------------------------------------------------------------
+\section{Operaciones}
+\label{sec:operaciones}
+% ---------------------------------------------------------------------------
+
+\queesesto{Las expresiones del lenguaje} se construyen mediante una jerarquía de
+nodos de operación.  Todos heredan de \texttt{operacion-binaria} u
+\texttt{operacion-unaria}, \comment{que guardan los operandos}{¿qué significa esto?}.
+
+\notaparaelautor{Antes de la tabla, explica con palabras.}
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de operación.}
+\label{tab:operaciones}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.8cm} p{4.5cm} p{5.5cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{operacion-binaria}
+  & \texttt{op-izq}\newline\texttt{op-der}
+  & Clase base de todas las operaciones con dos operandos.
+    \texttt{op-izq} y \texttt{op-der} son nodos AST. \\
+\hline
+\texttt{operacion-unaria}
+  & \texttt{op-operando}
+  & Clase base de las operaciones con un único operando. \\
+\hline
+\hline
+\multicolumn{3}{l}{\textit{Operaciones aritméticas (heredan de
+  \texttt{operacion-binaria})}} \\
+\hline
+\texttt{op-suma}
+  & (heredados) & Suma aritmética (\texttt{+}). \\
+\texttt{op-resta}
+  & (heredados) & Resta aritmética (\texttt{-}). \\
+\texttt{op-multiplicacion}
+  & (heredados) & Multiplicación (\texttt{*}). \\
+\texttt{op-division}
+  & (heredados) & División (\texttt{/}). \\
+\hline
+\hline
+\multicolumn{3}{l}{\textit{Comprobaciones aritméticas (heredan de
+  \texttt{operacion-binaria})}} \\
+\hline
+\texttt{op-igual}
+  & (heredados) & Igualdad (\texttt{==}). \\
+\texttt{op-distinto}
+  & (heredados) & Diferencia (\texttt{!=}). \\
+\texttt{op-mayor}
+  & (heredados) & Mayor estricto (\texttt{>}). \\
+\texttt{op-menor}
+  & (heredados) & Menor estricto (\texttt{<}). \\
+\texttt{op-mayor-igual}
+  & (heredados) & Mayor o igual (\texttt{>=}). \\
+\texttt{op-menor-igual}
+  & (heredados) & Menor o igual (\texttt{<=}). \\
+\hline
+\hline
+\multicolumn{3}{l}{\textit{Operaciones lógicas}} \\
+\hline
+\texttt{op-and}
+  & (heredados, variádico)
+  & Conjunción lógica (\texttt{and}).  El constructor
+    acepta $n$ operandos y los encadena por reducción. \\
+\texttt{op-or}
+  & (heredados, variádico)
+  & Disyunción lógica (\texttt{or}).  Ídem variádico. \\
+\texttt{op-not}
+  & \texttt{op-operando}
+  & Negación lógica (\texttt{not}). \\
+\hline
+\end{tabular}k
+\end{table}
+
+\medskip
+Los operadores \texttt{op-and} y \texttt{op-or} son \queesesto{variádicos}: aceptan
+cualquier número de operandos en el DSL y los almacenan como un árbol binario
+derecho mediante reducción interna.  El generador de código \queesesto{los aplana} \comment{al
+producir la expresión Python final}{No solo es python, puede ser a cualquier formato...  incluyendo un modelo de optimización.}.
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Uso combinado de operaciones logicas, relacionales y aritmeticas.}]
+;; Condicion compuesta: un profesor esta en un tribunal
+;; (disyuncion de cinco igualdades)
+(def-op-or (def-op-igual (tutor      (tribunal asig)) prof)
+           (def-op-igual (oponente   (tribunal asig)) prof)
+           (def-op-igual (presidente (tribunal asig)) prof)
+           (def-op-igual (vocal      (tribunal asig)) prof)
+           (def-op-igual (secretario (tribunal asig)) prof))
+
+;; Condicion de conflicto: mismo dia y hora, pero tribunales distintos
+(def-op-and (def-op-igual    (fecha   a1) (fecha   a2))
+            (def-op-igual    (momento a1) (momento a2))
+            (def-op-distinto (tribunal a1) (tribunal a2)))
+
+;; Expresion aritmetica en una restriccion
+(def-op-mayor conflictos-de-horario 0)
+\end{lstlisting}
+
+El código Python generado a partir de estas expresiones es:
+
+\begin{lstlisting}[style=pythonstyle, caption={Expresiones Python generadas por el compilador del DST.}]
+# (def-op-or ...) sobre cinco igualdades
+(asig.tribunal.tutor == prof or asig.tribunal.oponente == prof or
+ asig.tribunal.presidente == prof or asig.tribunal.vocal == prof or
+ asig.tribunal.secretario == prof)
+
+# (def-op-and ...) de condiciones de conflicto
+(a1.fecha == a2.fecha and a1.momento == a2.momento
+ and a1.tribunal != a2.tribunal)
+
+# (def-op-mayor consulta 0)
+(conflictos_de_horario(horario) > 0)
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{Resumen de la jerarquía del AST}
+\label{sec:resumen-jerarquia}
+% ---------------------------------------------------------------------------
+
+La tabla~\ref{tab:jerarquia-completa} recoge todos los nodos del AST con
+su clase padre directa, sus atributos propios y su nivel en la jerarquía
+de herencia.
+
+\notaparaelautor{Ufff... esto más que aquí en el capítulo debería estar en un anexo.}
+
+\begin{table}[h!]
+\centering
+\caption{Jerarquía completa de nodos del AST.}
+\label{tab:jerarquia-completa}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{5cm} p{4cm} p{5.3cm}}
+\hline
+\textbf{Nodo} & \textbf{Padre directo} & \textbf{Atributos propios} \\
+\hline
+\texttt{nodo-ast}            & ---                          & (ninguno) \\
+\texttt{ref-gen-entidad}     & \texttt{nodo-ast}            & \texttt{nombre-entidad} \\
+\texttt{ref-especifica-ent}  & \texttt{nodo-ast}            & (generados por \texttt{def-entidad}) \\
+\hline
+\texttt{comb-entidades}      & \texttt{nodo-ast}            & \texttt{comb-entidades-lista} \\
+\texttt{lista}               & \texttt{nodo-ast}            & \texttt{lista-elementos} \\
+\hline
+\texttt{acceso-a-atributo-de-entidad} & \texttt{nodo-ast}   & \texttt{acceso-atributo}, \texttt{acceso-entidad} \\
+\texttt{acceso-a-elemento-de-comb}    & \texttt{nodo-ast}   & \texttt{acceso-comb-entidad}, \texttt{acceso-comb-origen} \\
+\hline
+\texttt{consulta-simple}     & \texttt{nodo-ast}
+  & \texttt{consulta-args}, \texttt{consulta-var-iter},
+    \texttt{consulta-dominio}, \texttt{consulta-comprobacion},
+    \texttt{consulta-operacion}, \texttt{consulta-retorno} \\
+\hline
+\texttt{hay-elementos-duplicados} & \texttt{nodo-ast}       & \texttt{check-duplicados-lista} \\
+\texttt{pertenece}           & \texttt{nodo-ast}            & \texttt{pertenece-elemento}, \texttt{pertenece-coleccion} \\
+\hline
+\texttt{operacion-binaria}   & \texttt{nodo-ast}            & \texttt{op-izq}, \texttt{op-der} \\
+\texttt{operacion-unaria}    & \texttt{nodo-ast}            & \texttt{op-operando} \\
+\hline
+\texttt{operacion-aritmetica}     & \texttt{operacion-binaria} & (ninguno) \\
+\texttt{op-suma}             & \texttt{operacion-aritmetica} & (ninguno) \\
+\texttt{op-resta}            & \texttt{operacion-aritmetica} & (ninguno) \\
+\texttt{op-multiplicacion}   & \texttt{operacion-aritmetica} & (ninguno) \\
+\texttt{op-division}         & \texttt{operacion-aritmetica} & (ninguno) \\
+\hline
+\texttt{comprobacion-aritmetica}  & \texttt{operacion-binaria} & (ninguno) \\
+\texttt{op-igual}            & \texttt{comprobacion-aritmetica} & (ninguno) \\
+\texttt{op-distinto}         & \texttt{comprobacion-aritmetica} & (ninguno) \\
+\texttt{op-mayor}            & \texttt{comprobacion-aritmetica} & (ninguno) \\
+\texttt{op-menor}            & \texttt{comprobacion-aritmetica} & (ninguno) \\
+\texttt{op-mayor-igual}      & \texttt{comprobacion-aritmetica} & (ninguno) \\
+\texttt{op-menor-igual}      & \texttt{comprobacion-aritmetica} & (ninguno) \\
+\hline
+\texttt{operacion-logica-binaria} & \texttt{operacion-binaria} & (ninguno) \\
+\texttt{op-and}              & \texttt{operacion-logica-binaria} & (variádico) \\
+\texttt{op-or}               & \texttt{operacion-logica-binaria} & (variádico) \\
+\hline
+\texttt{operacion-logica-unaria}  & \texttt{operacion-unaria}  & (ninguno) \\
+\texttt{op-not}              & \texttt{operacion-logica-unaria} & (ninguno) \\
+\hline
+\texttt{cuantificador-restriccion} & \texttt{nodo-ast}
+  & \texttt{cuanti-operador}, \texttt{cuanti-comprobacion}, \texttt{cuanti-elemento} \\
+\texttt{nppq}                & \texttt{cuantificador-restriccion} & (ninguno) \\
+\texttt{tqpq}                & \texttt{cuantificador-restriccion} & (ninguno) \\
+\texttt{tdpq}                & \texttt{cuantificador-restriccion} & (ninguno) \\
+\texttt{sbqp}                & \texttt{cuantificador-restriccion} & (ninguno) \\
+\texttt{minimizar}           & \texttt{cuantificador-restriccion} & (ninguno) \\
+\texttt{maximizar}           & \texttt{cuantificador-restriccion} & (ninguno) \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{document}

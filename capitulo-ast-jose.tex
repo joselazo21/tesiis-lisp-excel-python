@@ -1,0 +1,932 @@
+% ===========================================================================
+%  Capítulo: El lenguaje de dominio específico  — archivo autocontenido
+% ===========================================================================
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{left=3cm,right=2.5cm,top=3cm,bottom=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+
+\definecolor{lispkw}{rgb}{0.0,0.35,0.65}
+\definecolor{lispstr}{rgb}{0.13,0.55,0.13}
+\definecolor{lispcomment}{rgb}{0.5,0.5,0.5}
+\definecolor{lispbg}{rgb}{0.97,0.97,0.99}
+\definecolor{pybg}{rgb}{0.97,0.99,0.97}
+\definecolor{nodeborder}{rgb}{0.3,0.45,0.7}
+\definecolor{sectioncolor}{rgb}{0.15,0.25,0.5}
+
+\lstdefinelanguage{CommonLisp}{
+  keywords={defclass, defmacro, defun, defparameter, defvar, progn, let, let*,
+            loop, for, collect, append, list, when, unless, if, cond,
+            load, format, lambda, provide, values,
+            def-table, conditional-rendering, exists, col, trange,
+            countif, counta, sum-range, str, nav, ultima-fila, primera-fila,
+            libro, hoja, tabla, xl-generate, xl-run-generated},
+  keywordstyle=\color{lispkw}\bfseries,
+  sensitive=false,
+  comment=[l]{;;},
+  commentstyle=\color{lispcomment}\itshape,
+  morestring=[b]",
+  stringstyle=\color{lispstr},
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{lispbg},
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true, showstringspaces=false,
+  tabsize=2, xleftmargin=1em, xrightmargin=0.5em,
+  aboveskip=0.8em, belowskip=0.5em,
+}
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{pybg},
+  keywordstyle=\color{lispkw}\bfseries,
+  stringstyle=\color{lispstr},
+  commentstyle=\color{lispcomment}\itshape,
+  frame=single, framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true, showstringspaces=false,
+  tabsize=4, xleftmargin=1em, xrightmargin=0.5em,
+  aboveskip=0.8em, belowskip=0.5em,
+}
+\lstset{language=CommonLisp}
+
+\hypersetup{
+  pdftitle={El Lenguaje de Dominio Espec\'{\i}fico},
+  pdfauthor={Jose Morales Lazo},
+  colorlinks=true,
+  linkcolor=sectioncolor,
+}
+
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{sectioncolor}}
+  {\chaptertitlename\ \thechapter}{16pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{sectioncolor}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{sectioncolor!80}}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\chapter{El Lenguaje de Dominio Espec\'{\i}fico}
+\label{cap:dsl}
+
+% ---------------------------------------------------------------------------
+\section{Visi\'on general}
+\label{sec:vision-general}
+% ---------------------------------------------------------------------------
+
+La generaci\'on de libros de c\'alculo de planificaci\'on implica,
+habitualmente, escribir c\'odigo imperativo que mezcla la l\'ogica del
+problema con los detalles de la API de hojas de c\'alculo: letras de
+columna, \'{\i}ndices de fila, cadenas de f\'ormula Excel y llamadas a una
+biblioteca de bajo nivel.  El objetivo del lenguaje de dominio espec\'{\i}fico
+(DSL) desarrollado en este trabajo es eliminar esa mezcla, permitiendo al
+programador declarar \emph{qu\'e} debe contener el libro---tablas, columnas
+calculadas, reglas de coloreado condicional---sin ocuparse de \emph{c\'omo}
+se produce el archivo.
+
+El DSL est\'a implementado como un conjunto de funciones y macros de
+Common~Lisp que construyen, en tiempo de carga, un \emph{\'arbol de sintaxis
+abstracta} (AST) cuyos nodos son instancias de clases CLOS.  La canalizaci\'on
+de compilaci\'on comprende tres etapas claramente separadas:
+
+\begin{enumerate}
+  \item \textbf{Expansi\'on de macros.}  Cada forma del DSL
+    (p.\,ej.\ \texttt{def-table}, \texttt{exists},
+    \texttt{conditional-rendering}) se expande en una llamada al constructor
+    CLOS del nodo AST correspondiente.  El resultado es un \'arbol de objetos
+    en memoria.
+
+  \item \textbf{Generaci\'on de c\'odigo.}  El \'arbol se recorre por el
+    backend, que traduce cada nodo a cadenas de f\'ormula Excel (expresiones
+    de celda y reglas de formato condicional) y a instrucciones de
+    construcci\'on del libro.  El backend es el \'unico punto que conoce los
+    nombres de columna reales, los \'{\i}ndices de fila y las cadenas de la
+    API de destino.
+
+  \item \textbf{Ejecuci\'on.}  El programa generado se ejecuta, produciendo
+    el archivo \texttt{.xlsx} con los datos, f\'ormulas y reglas de formato
+    condicional incrustadas.
+\end{enumerate}
+
+Un principio central de dise\~no es la \emph{separaci\'on entre intenci\'on
+e implementaci\'on}: el DSL expresa la sem\'antica del problema
+(``colorear los profesores que tienen un conflicto de horario'') y el backend
+decide el mecanismo concreto (``generar una \texttt{FormulaRule} SUMPRODUCT
+que persiste y recalcula en Excel'').  El programador del DSL no escribe
+ninguna f\'ormula Excel.
+
+% ---------------------------------------------------------------------------
+\section{\'Arbol de sintaxis abstracta}
+\label{sec:ast}
+% ---------------------------------------------------------------------------
+
+El \'arbol de sintaxis abstracta (AST) es la representaci\'on intermedia que
+separa la capa del DSL de la capa del generador de c\'odigo.  Cada concepto
+del problema---una tabla, una expresi\'on de celda, un cuantificador
+existencial---queda capturado como un nodo AST con atributos propios.  El
+backend opera \'unicamente sobre este \'arbol; no interpreta texto ni
+inspecciona las formas del DSL.
+
+Todos los nodos del AST se definen con la macro \texttt{defclass*}, que
+genera simult\'aneamente una clase CLOS \texttt{clase-xl-\textit{nombre}} y
+una funci\'on constructora \texttt{xl-\textit{nombre}} con par\'ametros por
+clave.  Por ejemplo, el nodo del cuantificador existencial se define y
+construye de la siguiente manera:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Patron de definicion de nodo AST con defclass*.}]
+;; defclass* genera la clase y el constructor xl-expr-exists:
+(defclass* xl-expr-exists ()
+           (bind-var domain match-keys overlap-cols self-in-cols))
+
+;; El constructor acepta los slots como :keywords:
+(xl-expr-exists :bind-var     'r
+                :domain       (xl-domain-rows :table-id nil)
+                :match-keys   '(dia hora)
+                :overlap-cols '(tutor oponente presidente vocal secretario)
+                :self-in-cols  nil)
+\end{lstlisting}
+
+Los nodos del AST se agrupan en cuatro categor\'{\i}as seg\'un su papel en
+el \'arbol.
+
+% ............................................................................
+\subsection{Estructura del workbook}
+\label{sec:ast-estructura}
+% ............................................................................
+
+Los nodos de estructura representan los contenedores del libro de c\'alculo.
+Son los nodos de m\'as alto nivel del \'arbol: el workbook agrupa hojas, las
+hojas agrupan regiones y las regiones agrupan tablas.  Su jerarqu\'{\i}a
+refleja directamente la estructura visible del archivo \texttt{.xlsx}, de
+modo que el programador puede razonar sobre la disposici\'on del libro
+usando los mismos t\'erminos que usar\'{\i}a al abrirlo en Excel.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de estructura del workbook.}
+\label{tab:ast-estructura}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.6cm} p{4.8cm} p{5.4cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{xl-workbook}
+  & \texttt{name}, \texttt{sheets}
+  & Ra\'{\i}z del \'arbol.  \texttt{name} es el nombre del
+    archivo \texttt{.xlsx}; \texttt{sheets} es la lista de
+    hojas. \\
+\hline
+\texttt{xl-sheet}
+  & \texttt{name}, \texttt{regions},\newline
+    \texttt{fixed-expressions}
+  & Una hoja del libro.  Contiene regiones horizontales y
+    expresiones en posici\'on relativa fuera de las tablas. \\
+\hline
+\texttt{xl-region}
+  & \texttt{tables}
+  & Agrupa tablas colocadas una junto a otra en la misma
+    hoja, separadas por una columna en blanco. \\
+\hline
+\texttt{xl-table}
+  & \texttt{id}, \texttt{col-names},\newline
+    \texttt{headers}, \texttt{contenido},\newline
+    \texttt{computed}, \texttt{style-rules},\newline
+    \texttt{cell-height}, \texttt{cell-width}
+  & Plantilla de tabla.  \texttt{col-names} enumera los
+    s\'{\i}mbolos DSL de columna; \texttt{computed} asocia
+    columnas a expresiones de f\'ormula; \texttt{style-rules}
+    almacena las reglas de coloreado condicional. \\
+\hline
+\end{tabular}
+\end{table}
+
+% ............................................................................
+\subsection{Expresiones de celda}
+\label{sec:ast-expresiones}
+% ............................................................................
+
+Las expresiones de celda son los nodos que el backend traduce a cadenas de
+f\'ormula Excel.  Abarcan tanto referencias a columnas de la misma tabla o
+de otra (\texttt{xl-expr-column-ref}, \texttt{xl-table-range}) como
+operaciones de hoja de c\'alculo concretas (\texttt{COUNTIF},
+\texttt{COUNTA}, \texttt{SUM}) y literales de texto.  Gracias a esta
+representaci\'on, el programador escribe \texttt{(countif rango criterio)}
+en lugar de componer manualmente la cadena
+\texttt{"COUNTIF(\$B\$4:\$F\$6,K4)"}.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de expresion de celda.}
+\label{tab:ast-expresiones}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{4.2cm} p{3.8cm} p{5.8cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{xl-expr-column-ref}
+  & \texttt{name}, \texttt{context}
+  & Referencia a la columna \texttt{name} en la fila actual.
+    Produce la letra Excel de esa columna m\'as el n\'umero
+    de fila relativo. \\
+\hline
+\texttt{xl-range}
+  & \texttt{from-col}, \texttt{to-col}
+  & Rango de columnas contiguas de la tabla actual. \\
+\hline
+\texttt{xl-table-range}
+  & \texttt{table-id},\newline
+    \texttt{from-col}, \texttt{to-col}
+  & Rango en una tabla espec\'{\i}fica de la regi\'on
+    (referencia cross-table).  Lo produce la forma
+    \texttt{trange}. \\
+\hline
+\texttt{xl-expr-countif}
+  & \texttt{count-range},\newline\texttt{criteria}
+  & Formula \texttt{COUNTIF} sobre un rango con criterio. \\
+\hline
+\texttt{xl-expr-counta}
+  & \texttt{count-range}
+  & Formula \texttt{COUNTA}: cuenta celdas no vac\'{\i}as. \\
+\hline
+\texttt{xl-expr-sum}
+  & \texttt{count-range}
+  & Formula \texttt{SUM} sobre un rango. \\
+\hline
+\texttt{xl-expr-string}
+  & \texttt{value}
+  & Literal de texto; produce una cadena fija en la celda. \\
+\hline
+\texttt{xl-expr-if}
+  & \texttt{test}, \texttt{then}, \texttt{else}
+  & Condicional \texttt{IF} de tres ramas. \\
+\hline
+\texttt{xl-expr-equals}
+  & \texttt{a}, \texttt{b}
+  & Igualdad entre dos expresiones. \\
+\hline
+\texttt{xl-expr-and}, \texttt{xl-expr-or}
+  & \texttt{a}, \texttt{b}
+  & Conjunci\'on y disyunci\'on l\'ogica. \\
+\hline
+\texttt{xl-expr-concat}
+  & \texttt{a}, \texttt{b}
+  & Concatenaci\'on de texto (\texttt{\&}). \\
+\hline
+\end{tabular}
+\end{table}
+
+% ............................................................................
+\subsection{Cuantificaci\'on existencial}
+\label{sec:ast-cuantificacion}
+% ............................................................................
+
+La cuantificaci\'on existencial es el mecanismo del DSL para expresar
+condiciones de la forma ``existe alguna fila que cumpla ciertos criterios''.
+Mantenerla como un nodo AST propio, y no como una expresi\'on booleana
+expl\'{\i}cita, permite al backend generar la comprobaci\'on m\'as adecuada
+seg\'un el contexto: una formula \texttt{SUMPRODUCT} vectorial en el caso de
+Excel, u otra implementaci\'on para un backend diferente.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de cuantificacion existencial.}
+\label{tab:ast-cuantificacion}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.6cm} p{4.8cm} p{5.4cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{xl-expr-exists}
+  & \texttt{bind-var}, \texttt{domain},\newline
+    \texttt{match-keys},\newline
+    \texttt{overlap-cols},\newline
+    \texttt{self-in-cols}
+  & Cuantificador existencial estructurado.  Declara que debe
+    existir una fila del dominio que cumpla las condiciones
+    expresadas por los slots sem\'anticos.  El backend decide
+    el mecanismo de comprobaci\'on seg\'un el tipo de dominio. \\
+\hline
+\texttt{xl-domain-rows}
+  & \texttt{table-id}
+  & Dominio de filas.  \texttt{table-id = nil} indica la
+    tabla actual; un s\'{\i}mbolo identifica una tabla
+    espec\'{\i}fica de la regi\'on (dominio cross-table). \\
+\hline
+\end{tabular}
+\end{table}
+
+% ............................................................................
+\subsection{Formato condicional y posicionamiento}
+\label{sec:ast-formato}
+% ............................................................................
+
+Estos nodos permiten expresar dos capacidades que van m\'as all\'a de los
+datos de la tabla: el coloreado condicional de celdas y la colocaci\'on de
+expresiones en posiciones relativas a las tablas.  La separaci\'on en nodos
+propios garantiza que el DSL no exponga coordenadas absolutas: el backend
+resuelve las posiciones finales en funci\'on del tama\~no real de los datos.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de formato condicional y posicionamiento relativo.}
+\label{tab:ast-formato}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.6cm} p{4.8cm} p{5.4cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{xl-style-rule}
+  & \texttt{rule-condition},\newline
+    \texttt{target-columns}
+  & Regla de coloreado condicional.  \texttt{rule-condition}
+    es un nodo de expresi\'on booleana; \texttt{target-columns}
+    enumera las columnas que se colorean cuando la condici\'on
+    es verdadera. \\
+\hline
+\texttt{xl-anchor}
+  & \texttt{table-id},\newline
+    \texttt{col-name},\newline
+    \texttt{anchor-type}
+  & Punto de referencia dentro de una tabla.
+    \texttt{anchor-type} es \texttt{:ultima-fila} o
+    \texttt{:primera-fila}. \\
+\hline
+\texttt{xl-nav}
+  & \texttt{anchor}, \texttt{steps}
+  & Posici\'on calculada como un ancla m\'as una secuencia de
+    pasos direccionales (arriba, abajo, izquierda, derecha). \\
+\hline
+\texttt{xl-sheet-fixed-expr}
+  & \texttt{pos}, \texttt{expr}
+  & Expresi\'on colocada en una posici\'on relativa de la hoja.
+    \texttt{pos} es un nodo \texttt{xl-nav}; \texttt{expr} es
+    el nodo de expresi\'on. \\
+\hline
+\end{tabular}
+\end{table}
+
+% ---------------------------------------------------------------------------
+\section{Definici\'on de tablas: \texttt{def-table}}
+\label{sec:def-table}
+% ---------------------------------------------------------------------------
+
+La forma central del DSL para definir datos tabulares es \texttt{def-table}.
+Produce una \emph{plantilla} de tabla reutilizable: una descripci\'on
+abstracta de las columnas, sus cabeceras, las f\'ormulas que se calculan a
+partir de ellas y la regla de coloreado que se aplica sobre sus filas.  La
+plantilla no contiene datos; se instancia con datos concretos al ensamblar
+el workbook (secci\'on~\ref{sec:workbook}).
+
+La sintaxis completa de \texttt{def-table} es:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Sintaxis completa de def-table.}]
+(def-table nombre-tabla
+  ((col1 "Cabecera1") (col2 "Cabecera2") ...)  ; columnas
+  :cell-height N       ; filas por fila logica (default 1)
+  :cell-width  N       ; columnas por columna logica (default 1)
+  :computed            ; formulas derivadas (opcional)
+    ((colN (expresion-dsl)))
+  :render              ; regla de coloreado (opcional)
+    (conditional-rendering
+      :condition (expresion-booleana)
+      :target-columns (col1 col2 ...)))
+\end{lstlisting}
+
+Cada par \texttt{(col "Cabecera")} declara un nombre de columna DSL
+(s\'{\i}mbolo) y el texto de su encabezado visual en la hoja de c\'alculo.
+El orden de las columnas es el orden f\'{\i}sico en Excel; este orden es
+relevante cuando se usan rangos contiguos con \texttt{trange}.
+
+La clave \texttt{:computed} asocia columnas a expresiones DSL que el
+compilador traduce a f\'ormulas Excel.  Los valores iniciales de esas
+columnas en los datos de entrada se ignoran: la celda siempre mostrar\'a el
+resultado de la f\'ormula calculada.
+
+La clave \texttt{:render} acepta una forma \texttt{conditional-rendering}
+que especifica bajo qu\'e condici\'on se colorean determinadas columnas.
+El mecanismo concreto lo decide el backend seg\'un el tipo de condici\'on
+declarada (secci\'on~\ref{sec:formato-condicional}).
+
+El listado siguiente define la tabla de profesores del caso de uso
+principal, incluyendo una columna calculada y una regla de coloreado
+condicional:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Tabla de profesores con columna computed y regla de coloreado.}]
+(def-table profesores-table
+  ((nombre "") (grado "") (defensas ""))
+  :cell-height 1
+  :cell-width  1
+  :computed
+    ;; Cuenta cuantas veces aparece este profesor en los cinco roles
+    ((defensas (countif (trange defensas-table tutor secretario)
+                        (col nombre))))
+  :render
+    (conditional-rendering
+      :condition
+        (exists (r :rows-of defensas-table)
+          :self-in  (tutor oponente presidente vocal secretario)
+          :matching (dia hora))
+      :target-columns (nombre)))
+\end{lstlisting}
+
+La variable \texttt{r} en la forma \texttt{exists} es un alias documental
+de la fila iterada, an\'alogo a un alias de tabla en SQL: facilita la
+lectura del c\'odigo sin que el generador lo eval\'ue directamente.  La
+regla de coloreado declara que la celda \texttt{nombre} debe resaltarse
+cuando el profesor participa en alguna defensa con conflicto de horario; el
+mecanismo lo decide el backend (secci\'on~\ref{sec:formato-condicional}).
+
+% ---------------------------------------------------------------------------
+\section{Expresiones de celda}
+\label{sec:expresiones}
+% ---------------------------------------------------------------------------
+
+El DSL ofrece un conjunto de formas simb\'olicas para construir expresiones
+de celda sin escribir cadenas de f\'ormula Excel directamente.  El
+compilador resuelve los nombres de columna a sus letras reales, los rangos
+a sus coordenadas absolutas y las operaciones a su sintaxis Excel; el
+programador solo declara la intenci\'on.
+
+La tabla~\ref{tab:formas-expresion} recoge las formas disponibles junto con
+su traducci\'on.
+
+\begin{table}[h!]
+\centering
+\caption{Formas de expresion del DSL y su traduccion Excel.}
+\label{tab:formas-expresion}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{5.5cm} p{8.3cm}}
+\hline
+\textbf{Forma DSL} & \textbf{Significado / traduccion Excel} \\
+\hline
+\texttt{(col nombre)}
+  & Valor de la columna \texttt{nombre} en la fila actual.
+    Se resuelve a la letra Excel de esa columna m\'as el
+    n\'umero de fila relativo, p.\,ej.\ \texttt{B4}. \\
+\hline
+\texttt{(trange tabla-id desde hasta)}
+  & Rango que abarca desde la columna \texttt{desde} hasta la
+    columna \texttt{hasta} de \texttt{tabla-id}, para todas
+    las filas de datos.  P.\,ej.\ \texttt{\$B\$4:\$F\$6}. \\
+\hline
+\texttt{(countif rango criterio)}
+  & Formula \texttt{COUNTIF(rango, criterio)}. \\
+\hline
+\texttt{(counta rango)}
+  & Formula \texttt{COUNTA(rango)}: n\'umero de celdas
+    no vac\'{\i}as. \\
+\hline
+\texttt{(sum-range rango)}
+  & Formula \texttt{SUM(rango)}. \\
+\hline
+\texttt{(str "texto")}
+  & Literal de texto; coloca la cadena directamente en la
+    celda. \\
+\hline
+\texttt{(\_equals a b)}
+  & Igualdad: produce \texttt{(a = b)} en la f\'ormula Excel. \\
+\hline
+\texttt{(\_and a b)}, \texttt{(\_or a b)}
+  & Conjunci\'on y disyunci\'on:
+    \texttt{AND(a,b)}, \texttt{OR(a,b)}. \\
+\hline
+\texttt{(nav ancla dir n \ldots)}
+  & Posici\'on relativa: ancla m\'as pasos direccionales.
+    Produce una referencia de celda absoluta. \\
+\hline
+\end{tabular}
+\end{table}
+
+La forma \texttt{trange} merece atenci\'on especial porque produce
+\emph{referencias cross-table}: permite que una expresi\'on en
+\texttt{profesores-table} cite columnas de \texttt{defensas-table} sin que
+el programador conozca las letras de columna reales.  El compilador las
+resuelve en funci\'on del orden de declaraci\'on de las tablas en la
+regi\'on.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Expresiones DSL y sus formulas Excel generadas.}]
+;; (col nombre) en profesores-table se resuelve a la columna K, fila relativa
+(col nombre)          ;; -> K4  (en la fila 4)
+
+;; (trange defensas-table tutor secretario) -> rango absoluto de los cinco roles
+(trange defensas-table tutor secretario)   ;; -> $B$4:$F$6
+
+;; La formula COUNTIF resultante
+(countif (trange defensas-table tutor secretario) (col nombre))
+;; -> COUNTIF($B$4:$F$6, K4)
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{El cuantificador existencial \texttt{exists}}
+\label{sec:exists}
+% ---------------------------------------------------------------------------
+
+El cuantificador \texttt{exists} permite declarar condiciones de
+\emph{existencia} sobre filas de una tabla.  La motivaci\'on de esta forma
+es que preguntas del tipo ``existe otra defensa con el mismo horario'' o
+``aparece este profesor en alguna defensa con conflicto'' son muy frecuentes
+en problemas de planificaci\'on, pero expresarlas mediante disyunciones y
+bucles expl\'{\i}citos produce c\'odigo verboso y dif\'{\i}cil de leer.
+
+Con \texttt{exists} el programador declara la intenci\'on sem\'antica a alto
+nivel; el backend se encarga de generar la comprobaci\'on correcta para cada
+caso.
+
+El cuantificador existe en dos variantes seg\'un el dominio de b\'usqueda.
+
+% ............................................................................
+\subsection{Variante same-table: \texttt{:all-rows}}
+\label{sec:exists-all-rows}
+% ............................................................................
+
+Esta variante busca otra fila dentro de la \emph{misma} tabla que satisfaga
+condiciones de coincidencia de valores y solapamiento en columnas de rol.
+Se usa cuando se quiere detectar si una fila del propio conjunto tiene
+alg\'un conflicto con otra fila del mismo conjunto; por ejemplo, dos
+defensas programadas en el mismo d\'{\i}a y hora con al menos un integrante
+de tribunal en com\'un.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Cuantificador exists sobre la tabla actual.}]
+(exists (r :all-rows)
+  :matching    (dia hora)              ; mismos valores en ambas filas
+  :any-overlap (tutor oponente presidente vocal secretario))
+                                       ; algun valor compartido en estos slots
+\end{lstlisting}
+
+La variable \texttt{r} es el alias de la fila del dominio que se est\'a
+comprobando.  La sem\'antica de la forma anterior es: ``existe otra fila de
+esta tabla (distinta de la actual) cuya columna \texttt{dia} y cuya columna
+\texttt{hora} coinciden con los de la fila actual, y que adem\'as comparte
+al menos un valor en las columnas de rol''.
+
+% ............................................................................
+\subsection{Variante cross-table: \texttt{:rows-of}}
+\label{sec:exists-rows-of}
+% ............................................................................
+
+Esta variante busca en las filas de \emph{otra} tabla, relacionando el
+valor de la celda actual con columnas de esa tabla.  Se usa cuando el
+elemento que se eval\'ua (p.\,ej.\ un profesor) y los datos de planificaci\'on
+(p.\,ej.\ las defensas) residen en tablas distintas.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Cuantificador exists sobre otra tabla (cross-table).}]
+(exists (r :rows-of defensas-table)
+  :self-in  (tutor oponente presidente vocal secretario)
+               ; el valor de la celda actual aparece en alguno de estos slots
+  :matching (dia hora))
+               ; ese slot tiene mas de una defensa programada
+\end{lstlisting}
+
+La sem\'antica de la forma anterior es: ``existe alguna fila de
+\texttt{defensas-table} en la que el valor de la celda actual (el nombre
+del profesor) aparece en una de las cinco columnas de rol, y cuyo par
+(\texttt{dia}, \texttt{hora}) tiene m\'as de una defensa programada''.
+El nombre \texttt{r} identifica, en la lectura del c\'odigo, la fila de
+\texttt{defensas-table} que se est\'a comprobando.
+
+\medskip
+\noindent
+En ambas variantes el alias de fila es puramente documental: el backend
+genera directamente una formula vectorial SUMPRODUCT y no eval\'ua el
+s\'{\i}mbolo como variable de programa.  Su papel es an\'alogo al de un
+alias de tabla en una sentencia SQL \texttt{SELECT}.
+
+% ---------------------------------------------------------------------------
+\section{Formato condicional declarativo}
+\label{sec:formato-condicional}
+% ---------------------------------------------------------------------------
+
+El coloreado de celdas es una herramienta habitual en las hojas de c\'alculo
+de planificaci\'on: resaltar en rojo los profesores con conflicto de horario
+permite detectar problemas de un vistazo.  El DSL ofrece la forma
+\texttt{conditional-rendering} para declarar ese coloreado sin escribir
+f\'ormulas Excel ni llamadas a la API de formato.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Sintaxis de conditional-rendering.}]
+(conditional-rendering
+  :condition      (expresion-booleana)
+  :target-columns (col1 col2 ...))
+\end{lstlisting}
+
+Cuando el nodo condici\'on es una instancia de \texttt{xl-expr-exists}, el
+backend no produce colores est\'aticos en tiempo de compilaci\'on, sino una
+\texttt{FormulaRule} de Excel incrustada en el archivo \texttt{.xlsx}.
+Esta regla persiste en el libro y se reevalua autom\'aticamente cada vez
+que el usuario edita los datos directamente en Excel, sin necesidad de
+volver a ejecutar el DSL.
+
+La decisi\'on de usar \texttt{FormulaRule} en lugar de colorear celdas
+directamente es exclusiva del backend: el programador del DSL no indica en
+ning\'un lugar qu\'e mecanismo de formato se utilizar\'a.
+
+% ............................................................................
+\subsection{F\'ormula generada para la variante same-table}
+\label{sec:cf-same-table}
+% ............................................................................
+
+Cuando \texttt{exists} usa \texttt{:all-rows}, el backend genera una formula
+SUMPRODUCT que, para cada fila, multiplica tres factores: coincidencia en
+las columnas de agrupaci\'on (\texttt{:matching}), exclusi\'on de la fila
+actual (para no comparar una fila consigo misma) y solapamiento en al menos
+una columna de rol (\texttt{:any-overlap}).
+
+Para una regla con \texttt{:matching (dia hora)} y
+\texttt{:any-overlap (tutor \ldots secretario)}, el backend genera la
+siguiente formula, aplicada al rango de la tabla:
+
+\begin{lstlisting}[style=pythonstyle,
+  caption={Formula Excel CF para la variante same-table (escrita para la fila 4).}]
+=SUMPRODUCT(
+    ($G$4:$G$6=$G4) *            -- dia coincide
+    ($H$4:$H$6=$H4) *            -- hora coincide
+    (ROW($B$4:$B$6)<>ROW($B4)) * -- excluir la fila actual
+    (($B$4:$B$6=$B4) + ($C$4:$C$6=$C4) + ... + ($F$4:$F$6=$F4))
+) > 0
+\end{lstlisting}
+
+Las referencias con columna fija y fila relativa (p.\,ej.\ \texttt{\$G4})
+hacen que la f\'ormula se eval\'ue correctamente para cada fila del rango:
+al desplazarse de la fila~4 a la fila~5, las referencias de ``fila actual''
+avanzan autom\'aticamente con la celda.
+
+% ............................................................................
+\subsection{F\'ormula generada para la variante cross-table}
+\label{sec:cf-cross-table}
+% ............................................................................
+
+Cuando \texttt{exists} usa \texttt{:rows-of}, el backend genera una formula
+SUMPRODUCT que combina dos condiciones: que el nombre del profesor aparezca
+en al menos una columna de rol de la tabla de defensas (\texttt{:self-in}),
+y que ese slot de horario tenga m\'as de una defensa programada
+(\texttt{:matching} con \texttt{COUNTIFS}).
+
+Para la regla de \texttt{profesores-table} con
+\texttt{:self-in (tutor \ldots secretario)} y \texttt{:matching (dia hora)},
+el backend genera la siguiente formula, aplicada al rango de la columna
+\texttt{nombre}:
+
+\begin{lstlisting}[style=pythonstyle,
+  caption={Formula Excel CF para la variante cross-table (escrita para K4).}]
+=SUMPRODUCT(
+    (($B$4:$B$6=$K4) + ($C$4:$C$6=$K4) + ($D$4:$D$6=$K4) +
+     ($E$4:$E$6=$K4) + ($F$4:$F$6=$K4)) *   -- aparece en algun rol
+    (COUNTIFS($G$4:$G$6,$G$4:$G$6,
+              $H$4:$H$6,$H$4:$H$6) > 1)      -- slot con mas de 1 defensa
+) > 0
+\end{lstlisting}
+
+La referencia \texttt{\$K4} corresponde al nombre del profesor en la celda
+actual (columna K bloqueada, fila relativa).  Los rangos
+\texttt{\$B\$4:\$B\$6} a \texttt{\$F\$4:\$F\$6} son las columnas de rol
+de \texttt{defensas-table}, completamente absolutas.  \texttt{COUNTIFS}
+cuenta cu\'antas filas comparten el mismo \texttt{dia} y \texttt{hora}; si
+el resultado es mayor que~1, ese slot tiene conflicto.
+
+El resultado es que los profesores marcados en rojo son exactamente aquellos
+que aparecen en al menos una defensa cuyo slot horario tiene m\'as de una
+defensa programada.
+
+% ---------------------------------------------------------------------------
+\section{Ensamblaje del workbook}
+\label{sec:workbook}
+% ---------------------------------------------------------------------------
+
+Una vez definidas las plantillas de tabla, el programador ensambla el
+workbook con tres macros: \texttt{libro} crea el nodo ra\'{\i}z del AST con
+el nombre del archivo de salida; \texttt{hoja} agrupa tablas y expresiones
+fijas en una pesta\~na del libro; \texttt{tabla} instancia una plantilla
+(\texttt{def-table}) con datos concretos.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Ensamblaje del workbook con libro, hoja y tabla.}]
+(libro nombre-libro
+  :filename "Archivo.xlsx"
+  :hojas (list
+    (hoja "NombreHoja"
+      (tabla plantilla1 :data *DATOS-1*)
+      (tabla plantilla2 :data *DATOS-2*)
+      :fixed-expressions
+        (((nav ...) (expresion))
+         ((nav ...) (expresion))))))
+\end{lstlisting}
+
+Cuando una \texttt{hoja} recibe m\'as de una \texttt{tabla}, el generador
+las coloca en la misma \emph{regi\'on horizontal}: las tablas se disponen de
+izquierda a derecha separadas por una columna en blanco.  Este dise\~no
+permite que las referencias cross-table (\texttt{trange}) se resuelvan
+dentro de la misma regi\'on con letras de columna absolutas correctas.
+
+La clave \texttt{:fixed-expressions} acepta una lista de pares
+\texttt{(posici\'on, expresi\'on)}.  La posici\'on se especifica con
+\texttt{nav} (secci\'on~\ref{sec:nav}); la expresi\'on puede ser cualquier
+forma del DSL.  Estas expresiones quedan fuera de las tablas y su posici\'on
+se recalcula seg\'un el tama\~no real de los datos, de modo que los totales
+de pie de tabla se desplazan autom\'aticamente si se a\~naden m\'as filas.
+
+% ---------------------------------------------------------------------------
+\section{Posicionamiento relativo: \texttt{nav}}
+\label{sec:nav}
+% ---------------------------------------------------------------------------
+
+Las expresiones fijas de una hoja (etiquetas de totales, celdas de resumen)
+no pueden tener coordenadas absolutas codificadas, pues esas coordenadas
+dependen de cu\'antas filas de datos tenga cada tabla en cada ejecuci\'on.
+La forma \texttt{nav} resuelve esto: calcula la posici\'on de una celda como
+un \emph{ancla} fija en una tabla m\'as una secuencia de pasos
+direccionales.
+
+Las anclas disponibles son \texttt{ultima-fila} y \texttt{primera-fila},
+que identifican la \'ultima o primera fila de datos de una columna de una
+tabla.  A partir del ancla se pueden encadenar pasos \texttt{abajo},
+\texttt{arriba}, \texttt{izquierda} y \texttt{derecha} con su cantidad:
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Sintaxis de nav y anclas de tabla.}]
+;; Una fila debajo de la ultima fila de datos
+(nav (ultima-fila tabla-id col-name) abajo 1)
+
+;; Una fila debajo y dos columnas a la derecha
+(nav (ultima-fila tabla-id col-name) abajo 1 derecha 2)
+
+;; Una fila encima de la primera fila de datos
+(nav (primera-fila tabla-id col-name) arriba 1)
+\end{lstlisting}
+
+El compilador resuelve \texttt{ultima-fila} a la fila Excel correspondiente
+en tiempo de generaci\'on y produce una referencia de celda absoluta que
+siempre apunta al lugar correcto, independientemente del n\'umero de filas
+de datos.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Expresiones fijas de totales con posicionamiento relativo.}]
+;; Etiqueta una fila debajo de la ultima defensa
+((nav (ultima-fila defensas-table estudiante) abajo 1)
+ (str "Total defensas:"))
+;; Valor COUNTA en la columna siguiente
+((nav (ultima-fila defensas-table estudiante) abajo 1 derecha 1)
+ (counta (trange defensas-table estudiante)))
+
+;; Suma de defensas por profesor
+((nav (ultima-fila profesores-table nombre) abajo 1 derecha 2)
+ (sum-range (trange profesores-table defensas)))
+\end{lstlisting}
+
+% ---------------------------------------------------------------------------
+\section{Generaci\'on y ejecuci\'on}
+\label{sec:generacion}
+% ---------------------------------------------------------------------------
+
+Las dos \'ultimas formas del DSL cierran el ciclo de compilaci\'on:
+\texttt{xl-generate} recorre el \'arbol AST y produce el programa de
+construcci\'on del libro; \texttt{xl-run-generated} ejecuta ese programa
+y crea el archivo \texttt{.xlsx}.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Compilacion del AST y ejecucion.}]
+;; Recorre el AST y genera el programa de construccion del libro
+(xl-generate horario-tesis "horario-tesis.py")
+
+;; Ejecuta el programa generado y crea el archivo .xlsx
+(xl-run-generated "horario-tesis.py")
+\end{lstlisting}
+
+El archivo \texttt{.xlsx} resultante contiene tanto los valores y f\'ormulas
+de celda como las \texttt{FormulaRule} de formato condicional.  Estas
+\'ultimas permanecen activas cuando el usuario abre y edita el libro
+directamente en Excel: el coloreado se recalcula sin necesidad de volver a
+ejecutar el DSL.
+
+% ---------------------------------------------------------------------------
+\section{Ejemplo completo: Horario de Defensas de Tesis}
+\label{sec:ejemplo}
+% ---------------------------------------------------------------------------
+
+El caso de uso principal del DSL es la generaci\'on autom\'atica de un
+horario de defensas de tesis con dos tablas relacionadas.  La primera tabla,
+\texttt{defensas-table}, registra cada defensa con su tribunal (cinco roles:
+tutor, oponente, presidente, vocal y secretario), su slot horario (d\'{\i}a
+y hora) y el local.  La segunda tabla, \texttt{profesores-table}, enumera
+los profesores con su grado acad\'emico y el n\'umero de defensas en que
+participan; adem\'as, sus filas se colorean en rojo cuando el profesor tiene
+un conflicto de horario, es decir, cuando aparece en dos defensas
+programadas en el mismo slot.
+
+El listado siguiente es el programa DSL completo.  En \'el se pueden
+observar todas las construcciones descritas en el cap\'{\i}tulo: definici\'on
+de plantillas de tabla, columna \texttt{computed}, cuantificador
+\texttt{exists} cross-table, formato condicional declarativo, ensamblaje del
+workbook y posicionamiento relativo con \texttt{nav}.
+
+\begin{lstlisting}[language=CommonLisp,
+  caption={Programa DSL completo: Horario de Defensas de Tesis.},
+  label={lst:tutorial}]
+(load "dsl-directo.lisp")
+(load "data-tutorial.lisp")   ; *DATOS-DEFENSAS*, *DATOS-PROFESORES*
+
+;; -- TABLA 1: defensas ------------------------------------------------
+;; Nueve columnas: cinco de rol (tutor...secretario) mas dia, hora, local.
+;; Las cinco columnas de rol son contiguas para poder referenciarlas como
+;; rango con (trange defensas-table tutor secretario).
+;; No tiene regla de coloreado; el analisis se delega a profesores-table.
+(def-table defensas-table
+  ((estudiante "") (tutor "") (oponente "") (presidente "")
+   (vocal "") (secretario "") (dia "") (hora "") (local ""))
+  :cell-height 1
+  :cell-width 1)
+
+;; -- TABLA 2: profesores ----------------------------------------------
+;; La columna "defensas" cuenta apariciones del nombre en los cinco roles.
+;; El formato condicional marca en rojo a quienes tienen conflicto.
+(def-table profesores-table
+  ((nombre "") (grado "") (defensas ""))
+  :cell-height 1
+  :cell-width  1
+  :computed
+    ((defensas (countif (trange defensas-table tutor secretario)
+                        (col nombre))))
+  :render
+    (conditional-rendering
+      :condition
+        (exists (r :rows-of defensas-table)
+          :self-in  (tutor oponente presidente vocal secretario)
+          :matching (dia hora))
+      :target-columns (nombre)))
+
+;; -- WORKBOOK ---------------------------------------------------------
+(libro horario-tesis
+  :filename "Horario_Tesis.xlsx"
+  :hojas (list
+    (hoja "Defensas"
+      (tabla defensas-table   :data *DATOS-DEFENSAS*)
+      (tabla profesores-table :data *DATOS-PROFESORES*)
+      :fixed-expressions
+        (((nav (ultima-fila defensas-table estudiante) abajo 1)
+          (str "Total defensas:"))
+         ((nav (ultima-fila defensas-table estudiante) abajo 1 derecha 1)
+          (counta (trange defensas-table estudiante)))
+         ((nav (ultima-fila profesores-table nombre) abajo 1)
+          (str "Total profesores:"))
+         ((nav (ultima-fila profesores-table nombre) abajo 1 derecha 2)
+          (sum-range (trange profesores-table defensas)))))))
+
+(xl-generate horario-tesis "horario-tesis.py")
+(xl-run-generated "horario-tesis.py")
+\end{lstlisting}
+
+Los datos de entrada contienen tres defensas y seis profesores.  Dos de las
+defensas comparten el slot \texttt{Lunes 10:00} con roles solapados.
+El programa genera \texttt{Horario\_Tesis.xlsx} con la estructura siguiente:
+
+\begin{itemize}
+  \item Columnas A--I: \texttt{defensas-table} con tres filas de datos.
+  \item Columna J: separador en blanco de la regi\'on.
+  \item Columnas K--M: \texttt{profesores-table} con seis filas de datos
+    y la columna \texttt{Defensas} calculada mediante \texttt{COUNTIF}.
+  \item Fila de totales debajo de cada tabla: conteo de defensas con
+    \texttt{COUNTA} y suma de defensas por profesor con \texttt{SUM}.
+  \item Formato condicional \texttt{FormulaRule} aplicado al rango de la
+    columna \texttt{nombre}: los profesores que participan en al menos una
+    defensa con conflicto de horario aparecen resaltados en rojo.
+\end{itemize}
+
+La regla de coloreado generada implementa exactamente la sem\'antica del
+\texttt{exists} declarado en el DSL:
+
+\begin{lstlisting}[style=pythonstyle,
+  caption={FormulaRule SUMPRODUCT+COUNTIFS incrustada en el .xlsx.}]
+-- Rango: K4:K9   Formula escrita para K4 (fila relativa)
+=SUMPRODUCT(
+    (($B$4:$B$6=$K4) + ($C$4:$C$6=$K4) + ($D$4:$D$6=$K4) +
+     ($E$4:$E$6=$K4) + ($F$4:$F$6=$K4)) *
+    (COUNTIFS($G$4:$G$6,$G$4:$G$6,
+              $H$4:$H$6,$H$4:$H$6) > 1)
+) > 0
+\end{lstlisting}
+
+La primera parte comprueba si el nombre del profesor (celda \texttt{K4})
+aparece en alguna de las cinco columnas de rol de \texttt{defensas-table};
+la segunda parte comprueba si ese slot tiene m\'as de una defensa
+programada.  Al ser una \texttt{FormulaRule} incrustada en el archivo Excel,
+cualquier edici\'on posterior de los datos provoca una reevaluaci\'on
+autom\'atica del coloreado, sin necesidad de volver a ejecutar el DSL.
+
+\end{document}

@@ -16,9 +16,7 @@
   ((turno "") (lun "") (mar "") (mie "") (jue "") (vie ""))
   :cell-height 2
   :cell-width 1
-  :fixed-formulas (((cell 16 7) (str "Total:"))
-                   ((cell 17 7) (sum-range (range frec)))
-                   ((cell 17 6) (str "Σ Frec:"))))
+  )
 
 ;; =====================================================================
 ;; TABLA 2 — estadísticas (abreviatura, asignatura, frecuencia)
@@ -28,9 +26,8 @@
   ((abrev "") (asig "") (frec "") (faltan "") (asignadas ""))
   :cell-height 1
   :cell-width 1
-  :computed ((asignadas (countif (range lun vie) (col abrev)))
-             (faltan (subtract (col frec) (col asignadas))))
-  :fixed-formulas (((cell 16 1) (counta (range abrev)))))
+  :computed ((asignadas (countif (trange turno-table lun vie) (col abrev)))
+             (faltan (subtract (col frec) (col asignadas)))))
 
 ;; =====================================================================
 ;; TABLA 3 — aulas por grupo (solo contenido)
@@ -112,13 +109,30 @@
 ;; CONSTRUIR EL WORKBOOK
 ;; =====================================================================
 
+;; hoja-grupo: atajo que incluye las fixed-expressions comunes a todos los grupos.
+;; Las expresiones van en la hoja (no en las tablas) y se resuelven con nav.
+;;   - Debajo de la última fila de turno-table, a la derecha de vie: "Total:" y la suma de frec
+;;   - Debajo de la última fila de stats-table: counta de abrev
+(defmacro hoja-grupo (name turno-data stats-data aulas-data)
+  `(hoja ,name
+     (tabla turno-table :data ,turno-data)
+     (tabla stats-table :data ,stats-data)
+     (tabla aulas-table :data ,aulas-data)
+     :fixed-expressions
+       (((nav (ultima-fila turno-table vie) abajo 1 derecha 1)
+         (str "Total:"))
+        ((nav (ultima-fila turno-table vie) abajo 2 derecha 1)
+         (sum-range (trange stats-table frec)))
+        ((nav (ultima-fila turno-table vie) abajo 2)
+         (str "Sigma Frec:"))
+        ((nav (ultima-fila stats-table abrev) abajo 1)
+         (counta (trange stats-table abrev))))))
+
 (libro horario-facultad
   :filename "Horario_Facultad.xlsx"
   :hojas (list
-    (hoja "D111"
-      (tabla turno-table :data *DATOS-TURNO-D111*)
-      (tabla stats-table :data *DATOS-STATS-D111*)
-      (tabla aulas-table :data *DATOS-AULAS-D111*))
+    (hoja-grupo "D111"
+      *DATOS-TURNO-D111* *DATOS-STATS-D111* *DATOS-AULAS-D111*)
     (hoja "D211"
       (tabla turno-table :data *DATOS-TURNO-D211*)
       (tabla stats-table :data *DATOS-STATS-D211*)
@@ -194,3 +208,4 @@
 (xl-run-generated "horario-facultad.py")
 
 (format t "~%Hecho: Horario_Facultad.xlsx~%")
+  

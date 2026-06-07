@@ -1,0 +1,435 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\geometry{left=3cm,right=2.5cm,top=3cm,bottom=2.5cm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable, skins}
+
+\definecolor{lispkw}{rgb}{0.0,0.35,0.65}
+\definecolor{lispstr}{rgb}{0.13,0.55,0.13}
+\definecolor{lispcomment}{rgb}{0.5,0.5,0.5}
+\definecolor{lispbg}{rgb}{0.97,0.97,0.99}
+\definecolor{nodebg}{rgb}{0.95,0.97,1.0}
+\definecolor{nodeborder}{rgb}{0.3,0.45,0.7}
+\definecolor{sectioncolor}{rgb}{0.15,0.25,0.5}
+
+\lstdefinelanguage{CommonLisp}{
+  keywords={defclass, defmacro, defun, defparameter, progn, let, let*,
+            loop, for, collect, append, list, when, unless, if, cond,
+            load, provide, format, make-instance, lambda,
+            defclass*, xl-table, xl-sheet, xl-workbook, xl-region,
+            xl-expr-if, xl-expr-non-empty, xl-expr-first-row,
+            xl-expr-previous-row, xl-expr-next-row, xl-expr-show-nothing,
+            xl-expr-column-ref, xl-expr-param-ref,
+            xl-expr-equals, xl-expr-different, xl-expr-and, xl-expr-or,
+            xl-expr-add, xl-expr-subtract, xl-expr-multiply, xl-expr-divide,
+            xl-expr-string, xl-expr-concat, xl-expr-time-add,
+            xl-range, xl-expr-countif, xl-expr-counta, xl-expr-sum,
+            xl-expr-lookup, xl-expr-cross-sheet-ref,
+            xl-expr-table-col-ref, xl-table-range,
+            xl-expr-cross-cell, xl-expr-source-row, xl-expr-sheet-id,
+            xl-expr-collect-over, xl-col-def,
+            xl-anchor, xl-nav, xl-sheet-fixed-expr,
+            xl-style-rule, xl-out},
+  keywordstyle=\color{lispkw}\bfseries,
+  sensitive=false,
+  comment=[l]{;;},
+  commentstyle=\color{lispcomment}\itshape,
+  morestring=[b]",
+  stringstyle=\color{lispstr},
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{lispbg},
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{nodeborder!60},
+  breaklines=true,
+  showstringspaces=false,
+  tabsize=2,
+  xleftmargin=1em,
+  xrightmargin=0.5em,
+  aboveskip=0.8em,
+  belowskip=0.5em,
+}
+\lstset{language=CommonLisp}
+
+\newtcolorbox{nodobox}[2][]{
+  colback=nodebg,
+  colframe=nodeborder,
+  fonttitle=\ttfamily\bfseries,
+  title={#2},
+  breakable,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  #1
+}
+
+\hypersetup{
+  pdftitle={Nodos del AST},
+  pdfauthor={Jose Morales Lazo},
+  colorlinks=true,
+  linkcolor=sectioncolor,
+}
+
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries\color{sectioncolor}}
+  {\chaptertitlename\ \thechapter}{16pt}{\Huge}
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{sectioncolor}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries\color{sectioncolor!80}}{\thesubsection}{1em}{}
+
+\begin{document}
+
+\chapter{Nodos del árbol de sintaxis abstracta}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Expresiones}
+\subsection{Flujo de control}
+
+\begin{nodobox}{\texttt{xl-expr-if} \quad \small\textmd{slots:} \texttt{test · then · else}}
+Condicional de tres ramas. Los tres slots son a su vez expresiones del árbol, por lo que pueden anidarse arbitrariamente. El DSL lo expone como \texttt{(\_if test then else)}.
+
+\begin{lstlisting}
+(_if (non-empty (col programa-calc))
+     (_if (it-is-the-first-row)
+          (param hora-inicio-param)
+          (col hora-terminacion
+               (previous-row (col hora-terminacion))))
+     (show-nothing))
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-non-empty} \quad \small\textmd{slots:} \texttt{expr}}
+Predicado de no-vaciedad sobre \texttt{expr}. Verdadero cuando la expresión contiene un valor significativo. Es la guarda más frecuente del DSL: las columnas computadas suelen protegerse con este nodo para no operar sobre filas sin datos.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-first-row} \quad \small\textmd{(sin slots)}}
+Predicado de primera fila. Verdadero únicamente en la primera fila del área de datos de la tabla. Necesario en columnas acumulativas: en la primera fila se toma un valor inicial externo; en las siguientes el valor depende de la fila anterior.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-previous-row} \quad \small\textmd{slots:} \texttt{expr} \qquad\qquad \texttt{xl-expr-next-row} \quad \small\textmd{slots:} \texttt{expr}}
+Desfase de fila. Envuelven una subexpresión y cambian su contexto de evaluación a la fila anterior o siguiente respectivamente. Cualquier referencia de columna dentro de estos nodos se resuelve a la fila $n-1$ o $n+1$ en lugar de la fila actual. El DSL expone \texttt{(previous-row expr)}, \texttt{(previous-of expr)} y \texttt{(next-of expr)}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-show-nothing} \quad \small\textmd{(sin slots)}}
+Valor de celda vacía. Indica que la celda no debe mostrar ningún contenido. Diferente de cero o de un valor nulo: la columna conserva su tipo semántico pero la celda se presenta en blanco. Sin slots porque su semántica es completa por sí misma.
+\end{nodobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Referencias a columnas de la tabla actual}
+
+\begin{nodobox}{\texttt{xl-expr-column-ref} \quad \small\textmd{slots:} \texttt{name · context}}
+Referencia a una columna de la tabla actual. \texttt{name} es el símbolo DSL de la columna (por ejemplo \texttt{hora-inicio}, \texttt{lun}, \texttt{abrev}). \texttt{context} es \texttt{nil} para la fila actual, o un nodo \texttt{xl-expr-previous-row} / \texttt{xl-expr-next-row} para acceder a la misma columna en una fila desplazada. La separación de \texttt{name} y \texttt{context} permite expresar ambas variantes sin duplicar la lógica de resolución.
+
+\begin{lstlisting}
+(col hora-inicio)                              ; fila actual
+(col hora-terminacion (previous-row (col hora-terminacion)))
+                                               ; fila anterior
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-table-col-ref} \quad \small\textmd{slots:} \texttt{table-id · name · context}}
+Referencia a una columna de una tabla específica de la región. Análogo a \texttt{xl-expr-column-ref} pero con \texttt{table-id} como discriminador adicional. Evita la ambigüedad cuando dos tablas de la misma región comparten el mismo nombre de columna. El slot \texttt{context} funciona igual que en \texttt{xl-expr-column-ref}. El DSL lo expone con el macro \texttt{tcol}.
+
+\begin{lstlisting}
+;; En una formula de stats-table: usar "abrev" de stats-table,
+;; no de cualquier otra tabla de la region con ese nombre.
+(countif (trange turno-table lun vie) (tcol stats-table abrev))
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-param-ref} \quad \small\textmd{slots:} \texttt{name}}
+Referencia a un parámetro de instancia. Los parámetros son valores escalares que se pasan al instanciar una tabla y que pueden variar entre instancias de la misma plantilla. \texttt{name} es el símbolo del parámetro. Permite reutilizar una misma plantilla con distintos valores iniciales en cada hoja.
+
+\begin{lstlisting}
+(tabla program-table
+  :data *lunes-progs*
+  :params ((hora-inicio-param *lunes-hour*)))
+
+(param hora-inicio-param)
+\end{lstlisting}
+\end{nodobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Comparaciones lógicas}
+
+Los cuatro nodos de comparación tienen estructura binaria idéntica con slots \texttt{a} y \texttt{b}.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Nodo} & \textbf{DSL} & \textbf{Semántica} \\
+\midrule
+\texttt{xl-expr-equals}    & \texttt{(equals a b)}   & $a = b$ \\
+\texttt{xl-expr-different} & \texttt{(different a b)}& $a \neq b$ \\
+\texttt{xl-expr-and}       & \texttt{(\_and a b)}     & $a \land b$ \\
+\texttt{xl-expr-or}        & \texttt{(\_or a b)}      & $a \lor b$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Aritmética}
+
+Cuatro nodos binarios con slots \texttt{a} y \texttt{b}. No hay nodo n-ario: expresiones con más de dos operandos se construyen anidando nodos binarios.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Nodo} & \textbf{DSL} & \textbf{Semántica} \\
+\midrule
+\texttt{xl-expr-add}      & \texttt{(add a b)}      & $a + b$ \\
+\texttt{xl-expr-subtract} & \texttt{(subtract a b)} & $a - b$ \\
+\texttt{xl-expr-multiply} & \texttt{(multiply a b)} & $a \times b$ \\
+\texttt{xl-expr-divide}   & \texttt{(divide a b)}   & $a \div b$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Texto}
+
+\begin{nodobox}{\texttt{xl-expr-string} \quad \small\textmd{slots:} \texttt{value}}
+Literal de texto. \texttt{value} es la cadena de caracteres concreta. Necesario para distinguir texto literal de un símbolo DSL que referencia una columna o variable.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-concat} \quad \small\textmd{slots:} \texttt{a · b}}
+Concatenación binaria de texto. Al ser binario, concatenaciones de $N$ elementos se expresan como árbol derecho: \texttt{(concat a (concat b c))}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-time-add} \quad \small\textmd{slots:} \texttt{a · b}}
+Suma de dos tiempos expresados como texto en formato \texttt{hh:mm}. \texttt{a} es un tiempo base y \texttt{b} es una duración en minutos. El resultado es el tiempo resultante de sumar \texttt{b} minutos a \texttt{a}, en el mismo formato.
+\end{nodobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Rangos y agregados}
+
+\begin{nodobox}{\texttt{xl-range} \quad \small\textmd{slots:} \texttt{from-col · to-col}}
+Rango contiguo de columnas de la tabla actual. \texttt{from-col} y \texttt{to-col} son nodos \texttt{xl-expr-column-ref}. Si \texttt{to-col} es \texttt{nil}, el rango comprende una sola columna. No es una expresión independiente sino un argumento estructural de los nodos de agregado.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-table-range} \quad \small\textmd{slots:} \texttt{table-id · from-col · to-col}}
+Rango de columnas de una tabla específica de la región. Paralelo a \texttt{xl-range} pero resuelve sus límites de fila a partir de la tabla identificada por \texttt{table-id}, no de la tabla en cuya fórmula aparece. Necesario cuando una columna computada de una tabla agrega datos de otra: sin este nodo el generador usaría los límites de la tabla local, produciendo rangos incorrectos. \texttt{to-col} puede ser \texttt{nil} para rango de una sola columna. El DSL lo expone con el macro \texttt{trange}.
+
+\begin{lstlisting}
+;; En profesores-table: contar apariciones del nombre
+;; en las cinco columnas de rol de defensas-table.
+(defensas
+  (countif (trange defensas-table tutor secretario)
+           (col nombre)))
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-countif} \quad \small\textmd{slots:} \texttt{count-range · criteria}}
+Conteo condicional. Cuenta las celdas del rango \texttt{count-range} cuyo valor coincide con \texttt{criteria}.
+
+\begin{lstlisting}
+(asignadas (countif (range lun vie) (col abrev)))
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-counta} \quad \small\textmd{slots:} \texttt{count-range}}
+Conteo de celdas no vacías en \texttt{count-range}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-sum} \quad \small\textmd{slots:} \texttt{count-range}}
+Suma de los valores de \texttt{count-range}.
+\end{nodobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Búsquedas}
+
+\begin{nodobox}{\texttt{xl-expr-lookup} \quad \small\textmd{slots:} \texttt{value-field · key-expr}}
+Búsqueda en la tabla actual: dado \texttt{key-expr}, busca en la primera columna de la tabla y devuelve el valor de la columna \texttt{value-field} en la fila encontrada.
+
+\begin{lstlisting}
+(time-add (col hora-inicio)
+          (lookup (col programa-calc) duracion))
+\end{lstlisting}
+\end{nodobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Referencias a otras hojas (estáticas)}
+
+\begin{nodobox}{\texttt{xl-expr-cross-sheet-ref} \quad \small\textmd{slots:} \texttt{sheet · cell-template}}
+Referencia a una celda de otra hoja conocida en tiempo de escritura del programa. \texttt{sheet} identifica la hoja destino; \texttt{cell-template} es una plantilla de posición de celda que puede incluir un marcador de fila dinámica.
+\end{nodobox}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\subsection{Referencias a otras hojas (dinámicas)}
+
+Los cuatro nodos siguientes trabajan en conjunto para operar sobre un conjunto de hojas que solo se conoce en tiempo de instanciación del programa.
+
+\begin{nodobox}{\texttt{xl-expr-collect-over} \quad \small\textmd{slots:} \texttt{groups · sheet-var · body}}
+Combinador de iteración sobre un conjunto de hojas. Itera \texttt{groups} (lista de identificadores de hojas), liga \texttt{sheet-var} a cada elemento, evalúa \texttt{body} para cada hoja y acumula los resultados en una lista de los grupos que cumplen la condición expresada en \texttt{body}.
+
+\begin{lstlisting}
+(aula1
+  (collect-over *grupos-all* (g)
+    (_if (equals (cross-cell :sheet g :col dia :row (turno-aula-row))
+                 (str "Aula 1"))
+         (concat (sheet-id :sheet g) (str " "))
+         (str ""))))
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-cross-cell} \quad \small\textmd{slots:} \texttt{sheet · xcol · row}}
+Referencia a una celda de la hoja ligada a \texttt{sheet} por el \texttt{collect-over} padre. \texttt{sheet} es el símbolo de la variable de iteración, no el nombre literal de la hoja. \texttt{xcol} identifica la columna y \texttt{row} la fila, que puede ser un entero fijo o una subexpresión. Solo tiene sentido dentro de un \texttt{collect-over}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-source-row} \quad \small\textmd{slots:} \texttt{table-id · offset}}
+Fila de una subcelda en una tabla origen, mapeada desde la fila lógica actual. Resuelve el problema de tablas con filas compuestas: cuando una fila lógica ocupa múltiples filas físicas, \texttt{offset} selecciona cuál subcelda se quiere referenciar (0 = primera, 1 = segunda, etc.). El alias \texttt{(turno-aula-row)} es azúcar para \texttt{(source-row :table turno-table :offset 1)}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-expr-sheet-id} \quad \small\textmd{slots:} \texttt{sheet}}
+Identificador canónico de la hoja ligada a \texttt{sheet} en el \texttt{collect-over} activo. Es el valor que se acumula en la lista de resultados del combinador.
+\end{nodobox}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Estructura de tabla}
+
+\begin{nodobox}{\texttt{xl-col-def} \quad \small\textmd{slots:} \texttt{name · display-name}}
+Definición explícita de columna. \texttt{name} es el símbolo DSL; \texttt{display-name} es la cadena de cabecera visible. Presente por compatibilidad histórica: en el DSL moderno la definición de columnas se hace implícitamente dentro de \texttt{def-table}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-style-rule} \quad \small\textmd{slots:} \texttt{rule-condition · target-columns}}
+Regla de presentación condicional. Cuando \texttt{rule-condition} es verdadera, se aplica un estilo especial a las columnas listadas en \texttt{target-columns}. Permite ocultar o destacar celdas según la relación entre filas consecutivas.
+
+\begin{lstlisting}
+:render (conditional-rendering
+          :condition (_or (equals (previous-of (col tipo)) (col tipo))
+                          (equals (col tipo) (next-of (col tipo))))
+          :target-columns (hora-inicio hora-terminacion tipo-calc))
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-table} \quad \small\textmd{slots:} \texttt{id · cols · rows · contenido · headers · computed · col-names · params · style-rules · first-row · cell-height · cell-width}}
+Nodo central de la capa de estructura. Reúne todos los aspectos de una tabla:
+
+\begin{description}[leftmargin=2em,labelwidth=3.5cm,labelsep=0.5em]
+  \item[\texttt{id}] Símbolo que identifica la plantilla de tabla.
+  \item[\texttt{col-names}] Lista de símbolos DSL de las columnas.
+  \item[\texttt{headers}] Lista de cabeceras visibles, una por columna.
+  \item[\texttt{contenido}] Lista de filas de datos puros.
+  \item[\texttt{computed}] Lista de pares \texttt{(símbolo . expresión)}, una por columna con fórmula.
+  \item[\texttt{params}] Lista de pares \texttt{(símbolo . valor)} de parámetros de instancia.
+  \item[\texttt{style-rules}] Lista de \texttt{xl-style-rule}.
+  \item[\texttt{first-row}] Posición de la primera fila de datos (\texttt{nil} = valor por defecto).
+  \item[\texttt{cell-height}] Filas físicas por fila lógica (por defecto: 1).
+  \item[\texttt{cell-width}] Columnas físicas por columna lógica (por defecto: 1).
+\end{description}
+
+Los slots de geometría (\texttt{cell-height}, \texttt{cell-width}) permiten tablas donde una fila lógica ocupa más de una fila física: \texttt{turno-table} usa \texttt{cell-height 2} para colocar la asignatura en la primera subcelda y el aula en la segunda. Las expresiones fijas fuera del área de datos ya no son responsabilidad de la tabla sino de la hoja; véase la sección~\ref{sec:posrel}.
+\end{nodobox}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Posicionamiento relativo en la hoja}
+\label{sec:posrel}
+
+Las expresiones fuera del área de datos de las tablas ---totales, etiquetas calculadas, conteos globales--- se ubican mediante un modelo de navegación relativa en lugar de coordenadas absolutas. Esto desacopla su posición de los cambios en el número de filas de datos.
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-anchor} \quad \small\textmd{slots:} \texttt{table-id · col-name · anchor-type}}
+Punto de referencia dentro de una tabla. \texttt{table-id} identifica la tabla; \texttt{col-name} identifica la columna ancla; \texttt{anchor-type} es \texttt{:ultima-fila} o \texttt{:primera-fila}. El generador resuelve el ancla a la fila física correspondiente en tiempo de generación, adaptándose automáticamente al número de filas de datos. Los macros del DSL son \texttt{(ultima-fila tabla col)} y \texttt{(primera-fila tabla col)}.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-nav} \quad \small\textmd{slots:} \texttt{anchor · steps}}
+Navegación desde un ancla hasta la celda destino. \texttt{anchor} es un \texttt{xl-anchor}; \texttt{steps} es una lista de pares \texttt{(dirección . n)} donde dirección es uno de \texttt{abajo}, \texttt{arriba}, \texttt{izquierda} o \texttt{derecha} y \texttt{n} es el número de celdas a desplazar. Los pasos se aplican en orden. El DSL lo expone como \texttt{(nav anchor dir1 n1 dir2 n2 \ldots)}.
+
+\begin{lstlisting}
+;; Dos filas debajo de la ultima fila de la columna "vie",
+;; una columna a la izquierda:
+(nav (ultima-fila turno-table vie) abajo 2 izquierda 1)
+\end{lstlisting}
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-sheet-fixed-expr} \quad \small\textmd{slots:} \texttt{pos · expr}}
+Expresión colocada en una celda de posición relativa dentro de la hoja. \texttt{pos} es un \texttt{xl-nav} que identifica la celda destino; \texttt{expr} es el nodo de expresión AST a emitir. La lista de estas expresiones vive en el slot \texttt{fixed-expressions} de \texttt{xl-sheet} y se procesa al generar la región, una vez resueltos los límites de fila de cada tabla.
+
+\begin{lstlisting}
+:fixed-expressions
+  (((nav (ultima-fila stats-table abrev) abajo 1)
+    (counta (trange stats-table abrev)))
+   ((nav (ultima-fila turno-table vie) abajo 2 derecha 1)
+    (sum-range (trange stats-table frec))))
+\end{lstlisting}
+\end{nodobox}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Estructura del libro}
+
+\begin{nodobox}{\texttt{xl-region} \quad \small\textmd{slots:} \texttt{tables}}
+Agrupación de tablas dispuestas horizontalmente en la hoja. El macro \texttt{hoja} crea una única región con todas sus tablas; el macro \texttt{hoja-v} crea una región por tabla para disponerlas verticalmente.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-sheet} \quad \small\textmd{slots:} \texttt{name · regions · fixed-expressions}}
+Hoja del libro. \texttt{name} es el nombre de la hoja; \texttt{regions} es la lista de \texttt{xl-region} que contiene; \texttt{fixed-expressions} es la lista de \texttt{xl-sheet-fixed-expr} que se colocan fuera del área de datos. Las expresiones fijas se pasan al generador de región vía la variable dinámica \texttt{*sheet-fixed-expressions*} para que puedan resolverse una vez conocidos los límites físicos de cada tabla.
+\end{nodobox}
+
+\vspace{0.5em}
+
+\begin{nodobox}{\texttt{xl-workbook} \quad \small\textmd{slots:} \texttt{name · sheets}}
+Nodo raíz del árbol. \texttt{name} es el nombre del archivo de salida; \texttt{sheets} es la lista de \texttt{xl-sheet} que componen el libro. Todo el árbol se construye a partir de este nodo.
+\end{nodobox}
+
+% ═══════════════════════════════════════════════════════════════════════════════
+\section{Discriminador de generador}
+
+\begin{nodobox}{\texttt{xl-out} \quad \small\textmd{(sin slots)} \qquad \texttt{xl-py} \quad \small\textmd{instancia singleton}}
+Objeto que identifica el generador de código activo. Se usa como argumento en el protocolo de despacho de métodos del generador. La clase no tiene slots porque su identidad es su tipo, no sus datos. Agregar soporte para un nuevo generador requiere únicamente definir una nueva clase análoga y especializar los métodos correspondientes, sin modificar el AST.
+\end{nodobox}
+
+\end{document}
