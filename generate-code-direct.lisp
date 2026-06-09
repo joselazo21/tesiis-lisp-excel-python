@@ -35,6 +35,17 @@
 ;; Allows trange to use per-table row bounds instead of the main-table's bounds.
 (defvar *table-data-rows* nil)
 
+;; Contexto dinámico para compile-style-rule y compile-nav.
+;; Ligados por generate-code de xl-region y xl-table antes de delegar a sub-nodos.
+(defvar *current-table* nil)
+(defvar *current-tbl-lmap* nil)
+(defvar *current-tbl-first-row* nil)
+(defvar *current-tbl-last-row* nil)
+(defvar *current-tbl-col-offset* 0)
+(defvar *current-region-tables* nil)
+(defvar *current-region-offsets* nil)
+(defvar *cf-comparison-idx* 0)
+
 ; =====================================================================
 ; COMPILE-EXCEL-FORMULA — expresión → string de fórmula Excel
 ; =====================================================================
@@ -109,6 +120,26 @@
 
 (defmethod compile-excel-formula ((e clase-xl-expr-different) col-map data-names row-num first-row last-row)
   (format nil "~a<>~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-gt) col-map data-names row-num first-row last-row)
+  (format nil "~a>~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-lt) col-map data-names row-num first-row last-row)
+  (format nil "~a<~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-gte) col-map data-names row-num first-row last-row)
+  (format nil "~a>=~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-lte) col-map data-names row-num first-row last-row)
+  (format nil "~a<=~a"
           (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
           (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
 
@@ -271,10 +302,101 @@
             key range-start-col first-row range-end-col range-end-row field-col)))
 
 ; =====================================================================
-; GENERATE-CODE — EXPRESIONES (JSON para compatibilidad)
+; CF COLOR PALETTE — colores para conditional_formats de comparación
+; Asignados por índice de regla (0, 1, 2 …). El backend garantiza que
+; nunca habrá más reglas que entradas disponibles en la paleta.
 ; =====================================================================
 
-(defmethod generate-code ((e clase-xl-expr-if) (lang xl-out) (stream t))
+(defparameter *cf-comparison-palette*
+  '("FF4444"   ;; rojo  — regla 0: asignadas > frec (exceso)
+    "44BB44"   ;; verde — regla 1: asignadas = frec (exacto)
+    "4488FF"   ;; azul  — regla 2: asignadas < frec (déficit)
+    "FF9900"   ;; naranja — regla 3
+    "AA44FF"   ;; violeta — regla 4
+    "FF44BB")) ;; rosa    — regla 5
+
+; =====================================================================
+; COMPILE-STYLE-RULE — xl-style-rule → entrada de estilo o CF
+; =====================================================================
+
+(defgeneric compile-style-rule (rule lang)
+  (:documentation
+   "Compila un nodo xl-style-rule a un plist de estilo o formato condicional.
+    Lee el contexto dinámico: *current-tbl-lmap*, *current-tbl-first-row*,
+    *current-tbl-last-row*, *current-tbl-col-offset*, *current-table*,
+    *table-col-maps*, *table-data-rows*, *cf-comparison-idx*.
+    Devuelve:
+      (:type :cf    :range str :formula str :style str)    para CF
+      (:type :static :entries ((range . color) ...))        para estilo estático
+    o nil si la regla no produce salida."))
+
+(defmethod compile-style-rule ((rule clase-xl-style-rule) (lang xl-out))
+  (let* ((cond-node   (rule-condition rule))
+         (targets     (target-columns rule))
+         (tbl-lmap    *current-tbl-lmap*)
+         (tbl-first   *current-tbl-first-row*)
+         (tbl-last    *current-tbl-last-row*)
+         (target-ltrs (remove nil
+                        (loop for col in targets
+                              collect (cdr (assoc col tbl-lmap :test #'string-equal)))))
+         (range-str   (when target-ltrs
+                        (format nil "~a~a:~a~a"
+                                (first target-ltrs) tbl-first
+                                (car (last target-ltrs)) tbl-last))))
+    (cond
+      ((typep cond-node 'clase-xl-expr-exists)
+       (let* ((domain-tid  (table-id (domain cond-node)))
+              (domain-lmap (when domain-tid
+                             (cdr (assoc domain-tid *table-col-maps*))))
+              (domain-rows (when domain-tid
+                             (cdr (assoc domain-tid *table-data-rows*))))
+              (formula     (compile-exists-to-cf-formula
+                             cond-node tbl-lmap tbl-first tbl-last
+                             :domain-letter-map domain-lmap
+                             :domain-first-row  (when domain-rows (car domain-rows))
+                             :domain-last-row   (when domain-rows (cdr domain-rows))
+                             :self-col-letter   (first target-ltrs))))
+         (when (and formula range-str)
+           (list :type :cf :range range-str :formula formula
+                 :style "\"font_color\": \"#FF0000\""))))
+      ((typep cond-node '(or clase-xl-expr-gt  clase-xl-expr-lt
+                             clase-xl-expr-gte clase-xl-expr-lte
+                             clase-xl-expr-equals clase-xl-expr-different))
+       (let* ((formula (compile-excel-formula
+                         cond-node tbl-lmap nil tbl-first tbl-first tbl-last))
+              (color   (nth *cf-comparison-idx* *cf-comparison-palette*)))
+         (incf *cf-comparison-idx*)
+         (when (and formula range-str)
+           (list :type :cf :range range-str :formula formula
+                 :style (format nil "\"bg_color\": \"~a\"" color)))))
+      (t
+       (let ((entries (collect-range-styles-from-rules
+                        *current-table* (list rule) tbl-first tbl-last)))
+         (when entries
+           (list :type :static
+                 :entries (mapcar (lambda (rs)
+                                    (cons (region/adjust-range-offset
+                                            (car rs) *current-tbl-col-offset*)
+                                          (cdr rs)))
+                                  entries))))))))
+
+; =====================================================================
+; COMPILE-NAV — xl-nav → (row col) absolutos
+; =====================================================================
+
+(defgeneric compile-nav (nav lang)
+  (:documentation
+   "Resuelve un nodo xl-nav a una lista (row col) de enteros absolutos.
+    Lee el contexto dinámico: *current-region-tables* y *current-region-offsets*."))
+
+(defmethod compile-nav ((nav clase-xl-nav) (lang xl-out))
+  (region/resolve-nav nav *current-region-tables* *current-region-offsets*))
+
+; =====================================================================
+; GENERATE-CODE — FLUJO DE CONTROL
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-expr-if) (lang xl-out) (stream t))           ; xl-expr-if
   (format stream "{\"type\": \"if\", \"condition\": ")
   (generate-code (test e) lang stream)
   (format stream ", \"then\": ")
@@ -283,15 +405,32 @@
   (generate-code (else e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-non-empty) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-non-empty) (lang xl-out) (stream t))    ; xl-expr-non-empty
   (format stream "{\"type\": \"non-empty\", \"expr\": ")
   (generate-code (expr e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-first-row) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-first-row) (lang xl-out) (stream t))    ; xl-expr-first-row
   (format stream "{\"type\": \"first-row\"}"))
 
-(defmethod generate-code ((e clase-xl-expr-column-ref) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-previous-row) (lang xl-out) (stream t)) ; xl-expr-previous-row
+  (format stream "{\"type\": \"previous-row\", \"expr\": ")
+  (generate-code (expr e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-next-row) (lang xl-out) (stream t))     ; xl-expr-next-row
+  (format stream "{\"type\": \"next-row\", \"expr\": ")
+  (generate-code (expr e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-show-nothing) (lang xl-out) (stream t)) ; xl-expr-show-nothing
+  (format stream "{\"type\": \"show-nothing\"}"))
+
+; =====================================================================
+; GENERATE-CODE — REFERENCIAS DE COLUMNA
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-expr-column-ref) (lang xl-out) (stream t))   ; xl-expr-column-ref
   (let ((ctx (context e)))
     (if ctx
         (progn
@@ -300,144 +439,261 @@
           (format stream "}"))
         (format stream "{\"type\": \"column-ref\", \"name\": \"~a\"}" (name e)))))
 
-(defmethod generate-code ((e clase-xl-expr-param-ref) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-table-col-ref) (lang xl-out) (stream t)) ; xl-expr-table-col-ref
+  (let ((ctx (context e)))
+    (if ctx
+        (progn
+          (format stream "{\"type\": \"table-col-ref\", \"table-id\": \"~a\", \"name\": \"~a\", \"context\": "
+                  (table-id e) (name e))
+          (generate-code ctx lang stream)
+          (format stream "}"))
+        (format stream "{\"type\": \"table-col-ref\", \"table-id\": \"~a\", \"name\": \"~a\"}"
+                (table-id e) (name e)))))
+
+(defmethod generate-code ((e clase-xl-expr-param-ref) (lang xl-out) (stream t))    ; xl-expr-param-ref
   (format stream "{\"type\": \"param-ref\", \"name\": \"~a\"}" (name e)))
 
-(defmethod generate-code ((e clase-xl-expr-previous-row) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"previous-row\", \"expr\": ")
-  (generate-code (expr e) lang stream)
-  (format stream "}"))
+; =====================================================================
+; GENERATE-CODE — COMPARACIONES
+; =====================================================================
 
-(defmethod generate-code ((e clase-xl-expr-time-add) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"time-add\", \"a\": ")
-  (generate-code (a e) lang stream)
-  (format stream ", \"b\": ")
-  (generate-code (b e) lang stream)
-  (format stream "}"))
-
-(defmethod generate-code ((e clase-xl-expr-show-nothing) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"show-nothing\"}"))
-
-(defmethod generate-code ((e clase-xl-expr-lookup) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"lookup\", \"field\": \"~a\", \"key\": " (value-field e))
-  (generate-code (key-expr e) lang stream)
-  (format stream "}"))
-
-(defmethod generate-code ((e clase-xl-expr-next-row) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"next-row\", \"expr\": ")
-  (generate-code (expr e) lang stream)
-  (format stream "}"))
-
-(defmethod generate-code ((e clase-xl-expr-equals) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-equals) (lang xl-out) (stream t))       ; xl-expr-equals
   (format stream "{\"type\": \"equals\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-different) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-different) (lang xl-out) (stream t))    ; xl-expr-different
   (format stream "{\"type\": \"different\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-and) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-gt) (lang xl-out) (stream t))           ; xl-expr-gt
+  (format stream "{\"type\": \"gt\", \"a\": ")
+  (generate-code (a e) lang stream)
+  (format stream ", \"b\": ")
+  (generate-code (b e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-lt) (lang xl-out) (stream t))           ; xl-expr-lt
+  (format stream "{\"type\": \"lt\", \"a\": ")
+  (generate-code (a e) lang stream)
+  (format stream ", \"b\": ")
+  (generate-code (b e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-gte) (lang xl-out) (stream t))          ; xl-expr-gte
+  (format stream "{\"type\": \"gte\", \"a\": ")
+  (generate-code (a e) lang stream)
+  (format stream ", \"b\": ")
+  (generate-code (b e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-lte) (lang xl-out) (stream t))          ; xl-expr-lte
+  (format stream "{\"type\": \"lte\", \"a\": ")
+  (generate-code (a e) lang stream)
+  (format stream ", \"b\": ")
+  (generate-code (b e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-and) (lang xl-out) (stream t))          ; xl-expr-and
   (format stream "{\"type\": \"and\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-or) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-or) (lang xl-out) (stream t))           ; xl-expr-or
   (format stream "{\"type\": \"or\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-;; =====================================================================
+; =====================================================================
 ; GENERATE-CODE — ARITMÉTICA
 ; =====================================================================
 
-(defmethod generate-code ((e clase-xl-expr-add) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-add) (lang xl-out) (stream t))          ; xl-expr-add
   (format stream "{\"type\": \"add\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-subtract) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-subtract) (lang xl-out) (stream t))     ; xl-expr-subtract
   (format stream "{\"type\": \"subtract\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-multiply) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-multiply) (lang xl-out) (stream t))     ; xl-expr-multiply
   (format stream "{\"type\": \"multiply\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-(defmethod generate-code ((e clase-xl-expr-divide) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-divide) (lang xl-out) (stream t))       ; xl-expr-divide
   (format stream "{\"type\": \"divide\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
-;; =====================================================================
-; GENERATE-CODE — AGREGADOS
+; =====================================================================
+; GENERATE-CODE — STRINGS Y TIEMPO
 ; =====================================================================
 
-(defmethod generate-code ((e clase-xl-expr-countif) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"countif\", \"range\": ")
-  (generate-code (count-range e) lang stream)
-  (format stream ", \"criteria\": ")
-  (generate-code (criteria e) lang stream)
-  (format stream "}"))
-
-(defmethod generate-code ((e clase-xl-expr-counta) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"counta\", \"range\": ")
-  (generate-code (count-range e) lang stream)
-  (format stream "}"))
-
-(defmethod generate-code ((e clase-xl-expr-sum) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"sum\", \"range\": ")
-  (generate-code (count-range e) lang stream)
-  (format stream "}"))
-
-(defmethod generate-code ((e clase-xl-range) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"range\", \"from\": ~s" (name (from-col e)))
-  (when (to-col e)
-    (format stream ", \"to\": ~s" (name (to-col e))))
-  (format stream "}"))
-
-;; =====================================================================
-; GENERATE-CODE — CROSS-SHEET, STRING, CONCAT
-; =====================================================================
-
-(defmethod generate-code ((e clase-xl-expr-cross-sheet-ref) (lang xl-out) (stream t))
-  (format stream "{\"type\": \"cross-sheet\", \"sheet\": ~s, \"cell\": ~s}"
-          (sheet e) (cell-template e)))
-
-(defmethod generate-code ((e clase-xl-expr-string) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-string) (lang xl-out) (stream t))       ; xl-expr-string
   (format stream "{\"type\": \"string\", \"value\": ~s}" (value e)))
 
-(defmethod generate-code ((e clase-xl-expr-concat) (lang xl-out) (stream t))
+(defmethod generate-code ((e clase-xl-expr-concat) (lang xl-out) (stream t))       ; xl-expr-concat
   (format stream "{\"type\": \"concat\", \"a\": ")
   (generate-code (a e) lang stream)
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
 
+(defmethod generate-code ((e clase-xl-expr-time-add) (lang xl-out) (stream t))     ; xl-expr-time-add
+  (format stream "{\"type\": \"time-add\", \"a\": ")
+  (generate-code (a e) lang stream)
+  (format stream ", \"b\": ")
+  (generate-code (b e) lang stream)
+  (format stream "}"))
+
+; =====================================================================
+; GENERATE-CODE — RANGOS Y AGREGADOS
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-range) (lang xl-out) (stream t))             ; xl-range
+  (format stream "{\"type\": \"range\", \"from\": ~s" (name (from-col e)))
+  (when (to-col e)
+    (format stream ", \"to\": ~s" (name (to-col e))))
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-table-range) (lang xl-out) (stream t))       ; xl-table-range
+  (format stream "{\"type\": \"table-range\", \"table-id\": \"~a\", \"from\": ~s"
+          (table-id e) (name (from-col e)))
+  (when (to-col e)
+    (format stream ", \"to\": ~s" (name (to-col e))))
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-countif) (lang xl-out) (stream t))      ; xl-expr-countif
+  (format stream "{\"type\": \"countif\", \"range\": ")
+  (generate-code (count-range e) lang stream)
+  (format stream ", \"criteria\": ")
+  (generate-code (criteria e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-counta) (lang xl-out) (stream t))       ; xl-expr-counta
+  (format stream "{\"type\": \"counta\", \"range\": ")
+  (generate-code (count-range e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-sum) (lang xl-out) (stream t))          ; xl-expr-sum
+  (format stream "{\"type\": \"sum\", \"range\": ")
+  (generate-code (count-range e) lang stream)
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-lookup) (lang xl-out) (stream t))       ; xl-expr-lookup
+  (format stream "{\"type\": \"lookup\", \"field\": \"~a\", \"key\": " (value-field e))
+  (generate-code (key-expr e) lang stream)
+  (format stream "}"))
+
+; =====================================================================
+; GENERATE-CODE — CROSS-SHEET ESTÁTICO
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-expr-cross-sheet-ref) (lang xl-out) (stream t)) ; xl-expr-cross-sheet-ref
+  (format stream "{\"type\": \"cross-sheet-ref\", \"sheet\": ~s, \"cell\": ~s}"
+          (sheet e) (cell-template e)))
+
+; =====================================================================
+; GENERATE-CODE — CROSS-SHEET DINÁMICO
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-expr-cross-cell) (lang xl-out) (stream t))   ; xl-expr-cross-cell
+  (format stream "{\"type\": \"cross-cell\", \"sheet\": \"~a\", \"xcol\": \"~a\", \"row\": "
+          (sheet e) (xcol e))
+  (let ((r (row e)))
+    (if (integerp r)
+        (format stream "~a" r)
+        (generate-code r lang stream)))
+  (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-source-row) (lang xl-out) (stream t))   ; xl-expr-source-row
+  (format stream "{\"type\": \"source-row\", \"table-id\": \"~a\", \"offset\": ~a}"
+          (table-id e) (offset e)))
+
+(defmethod generate-code ((e clase-xl-expr-sheet-id) (lang xl-out) (stream t))     ; xl-expr-sheet-id
+  (format stream "{\"type\": \"sheet-id\", \"sheet\": \"~a\"}" (sheet e)))
+
+(defmethod generate-code ((e clase-xl-expr-collect-over) (lang xl-out) (stream t)) ; xl-expr-collect-over
+  (format stream "{\"type\": \"collect-over\", \"groups\": ~s, \"sheet-var\": \"~a\", \"body\": "
+          (groups e) (sheet-var e))
+  (generate-code (body e) lang stream)
+  (format stream "}"))
+
+; =====================================================================
+; GENERATE-CODE — CUANTIFICACIÓN EXISTENCIAL
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-expr-exists) (lang xl-out) (stream t))       ; xl-expr-exists
+  (format stream "{\"type\": \"exists\", \"bind-var\": \"~a\", \"domain\": " (bind-var e))
+  (generate-code (domain e) lang stream)
+  (format stream ", \"match-keys\": ~s, \"overlap-cols\": ~s, \"self-in-cols\": ~s}"
+          (mapcar #'symbol-name (or (match-keys e) nil))
+          (mapcar #'symbol-name (or (overlap-cols e) nil))
+          (when (self-in-cols e) (mapcar #'symbol-name (self-in-cols e)))))
+
+(defmethod generate-code ((e clase-xl-domain-rows) (lang xl-out) (stream t))       ; xl-domain-rows
+  (format stream "{\"type\": \"domain-rows\", \"table-id\": ~s}"
+          (when (table-id e) (symbol-name (table-id e)))))
+
+; =====================================================================
+; GENERATE-CODE — ESTRUCTURA DE TABLA
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-col-def) (lang xl-out) (stream t))           ; xl-col-def
+  (format stream "{\"name\": \"~a\", \"display-name\": ~s}"
+          (name e) (display-name e)))
+
+(defmethod generate-code ((e clase-xl-style-rule) (lang xl-out) (stream t))        ; xl-style-rule
+  (format stream "{\"condition\": ")
+  (generate-code (rule-condition e) lang stream)
+  (format stream ", \"target-columns\": ~s}"
+          (mapcar #'symbol-name (or (target-columns e) nil))))
+
+; =====================================================================
+; GENERATE-CODE — POSICIONAMIENTO RELATIVO
+; =====================================================================
+
+(defmethod generate-code ((e clase-xl-anchor) (lang xl-out) (stream t))            ; xl-anchor
+  (format stream "{\"table-id\": \"~a\", \"col-name\": \"~a\", \"anchor-type\": \"~a\"}"
+          (table-id e) (col-name e) (anchor-type e)))
+
+(defmethod generate-code ((e clase-xl-nav) (lang xl-out) (stream t))               ; xl-nav
+  (format stream "{\"anchor\": ")
+  (generate-code (anchor e) lang stream)
+  (format stream ", \"steps\": ~s}" (steps e)))
+
+(defmethod generate-code ((e clase-xl-sheet-fixed-expr) (lang xl-out) (stream t))  ; xl-sheet-fixed-expr
+  (format stream "{\"pos\": ")
+  (generate-code (pos e) lang stream)
+  (format stream ", \"expr\": ")
+  (generate-code (expr e) lang stream)
+  (format stream "}"))
+
 ; =====================================================================
 ; GENERATE-CODE — TABLAS
 ; =====================================================================
 
-(defmethod generate-code ((tbl clase-xl-table) (lang xl-out) (stream t))
+(defmethod generate-code ((tbl clase-xl-table) (lang xl-out) (stream t))            ; xl-table
   (let* ((logical-con (contenido tbl))
          (con (expand-table-content tbl))
          (hdrs (headers tbl))
@@ -571,10 +827,16 @@
              (items ()))
         (when comp
           (setf items (nconc items (collect-range-styles-from-tipo tbl first-row last-row))))
-        (let ((static-rules (remove-if (lambda (r) (typep (rule-condition r) 'clase-xl-expr-exists))
-                                       (or (style-rules tbl) nil))))
-          (when static-rules
-            (setf items (nconc items (collect-range-styles-from-rules tbl static-rules first-row last-row)))))
+        (let ((*current-table*          tbl)
+              (*current-tbl-lmap*       col-map)
+              (*current-tbl-first-row*  first-row)
+              (*current-tbl-last-row*   last-row)
+              (*current-tbl-col-offset* 0)
+              (*cf-comparison-idx*      0))
+          (dolist (rule (or (style-rules tbl) nil))
+            (let ((compiled (compile-style-rule rule lang)))
+              (when (and compiled (eq (getf compiled :type) :static))
+                (setf items (nconc items (getf compiled :entries)))))))
         (when items
           (emit-sep)
           (format stream "        \"range_styles\": [")
@@ -678,7 +940,7 @@
 ; GENERATE-CODE — REGIONES
 ; =====================================================================
 
-(defmethod generate-code ((region clase-xl-region) (lang xl-out) (stream t))
+(defmethod generate-code ((region clase-xl-region) (lang xl-out) (stream t))        ; xl-region
   (let ((tables (tables region)))
     (unless tables (return-from generate-code (format stream "{}")))
 
@@ -761,12 +1023,14 @@
                                                        row first-row tbl-lr))
                                      do (push (list row abs-col formula) formulas))))
              ;; (b) nav-anchored fixed expressions
-             (let ((region-ids (mapcar #'id tables)))
+             (let ((region-ids        (mapcar #'id tables))
+                   (*current-region-tables*  tables)
+                   (*current-region-offsets* offsets))
                (dolist (fe *sheet-fixed-expressions*)
                  (let* ((nav-node (pos fe))
                         (atid     (table-id (anchor nav-node))))
                    (when (member atid region-ids)
-                     (let* ((cell-pos (region/resolve-nav nav-node tables offsets))
+                     (let* ((cell-pos (compile-nav nav-node lang))
                             (fe-rows  (cdr (assoc atid *table-data-rows*)))
                             (formula  (let ((*param-cells* nil))
                                         (compile-excel-formula
@@ -789,10 +1053,7 @@
                (format stream "],~%"))))
 
          (emit-styles ()
-           ;; Style rules split by the type of their condition node:
-           ;;   xl-expr-exists → FormulaRule SUMPRODUCT (recalculates inside Excel).
-           ;;   anything else  → static colors baked at generation time.
-           (let ((all-styles nil) (all-cf nil))
+           (let ((all-styles nil) (all-cf nil) (*cf-comparison-idx* 0))
              (loop for tbl    in tables
                    for offset in offsets
                    for tbl-first = (region/effective-first-row tbl)
@@ -800,44 +1061,18 @@
                    for tbl-lmap  = (loop for name in (col-names tbl)
                                          for idx from (1+ offset)
                                          collect (cons name (col->letter idx)))
-                   do (dolist (rule (or (style-rules tbl) nil))
-                        (if (typep (rule-condition rule) 'clase-xl-expr-exists)
-                            ;; CF path: resolve domain table then build SUMPRODUCT formula
-                            (let* ((exists-node (rule-condition rule))
-                                   (domain-tid  (table-id (domain exists-node)))
-                                   (targets     (target-columns rule))
-                                   (target-ltrs (remove nil
-                                                  (loop for col in targets
-                                                        collect (cdr (assoc col tbl-lmap
-                                                                            :test #'string-equal)))))
-                                   (domain-pair (when domain-tid
-                                                  (loop for t2 in tables for o2 in offsets
-                                                        when (eq (id t2) domain-tid)
-                                                        return (cons t2 o2))))
-                                   (domain-lmap (when domain-pair
-                                                  (loop for name in (col-names (car domain-pair))
-                                                        for idx from (1+ (cdr domain-pair))
-                                                        collect (cons name (col->letter idx)))))
-                                   (domain-rows (when domain-tid
-                                                  (cdr (assoc domain-tid *table-data-rows*))))
-                                   (formula     (compile-exists-to-cf-formula
-                                                  exists-node tbl-lmap tbl-first tbl-last
-                                                  :domain-letter-map domain-lmap
-                                                  :domain-first-row  (when domain-rows (car domain-rows))
-                                                  :domain-last-row   (when domain-rows (cdr domain-rows))
-                                                  :self-col-letter   (first target-ltrs)))
-                                   (range-str   (when target-ltrs
-                                                  (format nil "~a~a:~a~a"
-                                                          (first target-ltrs) tbl-first
-                                                          (car (last target-ltrs)) tbl-last))))
-                              (when (and formula range-str)
-                                (push (list range-str formula) all-cf)))
-                            ;; static path: relative column letters → absolute
-                            (dolist (rs (collect-range-styles-from-rules
-                                          tbl (list rule) tbl-first tbl-last))
-                              (push (cons (region/adjust-range-offset (car rs) offset)
-                                          (cdr rs))
-                                    all-styles)))))
+                   do (let ((*current-table*          tbl)
+                            (*current-tbl-lmap*       tbl-lmap)
+                            (*current-tbl-first-row*  tbl-first)
+                            (*current-tbl-last-row*   tbl-last)
+                            (*current-tbl-col-offset* offset))
+                        (dolist (rule (or (style-rules tbl) nil))
+                          (let ((compiled (compile-style-rule rule lang)))
+                            (when compiled
+                              (ecase (getf compiled :type)
+                                (:cf     (push compiled all-cf))
+                                (:static (dolist (e (getf compiled :entries))
+                                           (push e all-styles)))))))))
              (when all-styles
                (format stream "        \"range_styles\": [")
                (loop for (range . color) in (nreverse all-styles) for i from 0
@@ -847,10 +1082,10 @@
                (format stream "],~%"))
              (when all-cf
                (format stream "        \"conditional_formats\": [")
-               (loop for (range formula) in (nreverse all-cf) for i from 0
+               (loop for entry in (nreverse all-cf) for i from 0
                      do (when (> i 0) (format stream ", "))
-                        (format stream "{\"range\": ~s, \"formula\": ~s, \"style\": {\"font_color\": \"#FF0000\"}}"
-                                range formula))
+                        (format stream "{\"range\": ~s, \"formula\": ~s, \"style\": {~a}}"
+                                (getf entry :range) (getf entry :formula) (getf entry :style)))
                (format stream "],~%"))))
 
          (emit-layout ()
@@ -913,7 +1148,7 @@
 ; GENERATE-CODE — HOJAS
 ; =====================================================================
 
-(defmethod generate-code ((sh clase-xl-sheet) (lang xl-out) (stream t))
+(defmethod generate-code ((sh clase-xl-sheet) (lang xl-out) (stream t))             ; xl-sheet
   (let ((*sheet-fixed-expressions* (or (fixed-expressions sh) nil)))
     (format stream "        {~%")
     (format stream "            \"title\": ~s,~%" (name sh))
@@ -929,7 +1164,7 @@
 ; GENERATE-CODE — WORKBOOK
 ; =====================================================================
 
-(defmethod generate-code ((wb clase-xl-workbook) (lang xl-out) (stream t))
+(defmethod generate-code ((wb clase-xl-workbook) (lang xl-out) (stream t))          ; xl-workbook
   (format stream "#!/usr/bin/env python3~%")
   (format stream "from hoja_con_formulas import generar_excel_personalizado~2%")
   (format stream "config = {~%")

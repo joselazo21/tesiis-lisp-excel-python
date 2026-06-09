@@ -66,6 +66,10 @@
 
 (defclass* xl-expr-equals () (a b))
 (defclass* xl-expr-different () (a b))
+(defclass* xl-expr-gt  () (a b))
+(defclass* xl-expr-lt  () (a b))
+(defclass* xl-expr-gte () (a b))
+(defclass* xl-expr-lte () (a b))
 (defclass* xl-expr-and () (a b))
 (defclass* xl-expr-or () (a b))
 

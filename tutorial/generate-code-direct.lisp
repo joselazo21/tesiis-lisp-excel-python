@@ -112,6 +112,26 @@
           (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
           (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
 
+(defmethod compile-excel-formula ((e clase-xl-expr-gt) col-map data-names row-num first-row last-row)
+  (format nil "~a>~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-lt) col-map data-names row-num first-row last-row)
+  (format nil "~a<~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-gte) col-map data-names row-num first-row last-row)
+  (format nil "~a>=~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
+(defmethod compile-excel-formula ((e clase-xl-expr-lte) col-map data-names row-num first-row last-row)
+  (format nil "~a<=~a"
+          (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
+          (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
+
 (defmethod compile-excel-formula ((e clase-xl-expr-and) col-map data-names row-num first-row last-row)
   (format nil "AND(~a,~a)"
           (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
@@ -269,6 +289,20 @@
          (range-end-col (col->letter (length data-names))))
     (format nil "IFERROR(VLOOKUP(~a,$~a~a:$~a~a,~a,FALSE),0)"
             key range-start-col first-row range-end-col range-end-row field-col)))
+
+; =====================================================================
+; CF COLOR PALETTE — colores para conditional_formats de comparación
+; Asignados por índice de regla (0, 1, 2 …). El backend garantiza que
+; nunca habrá más reglas que entradas disponibles en la paleta.
+; =====================================================================
+
+(defparameter *cf-comparison-palette*
+  '("FF4444"   ;; rojo  — regla 0: asignadas > frec (exceso)
+    "44BB44"   ;; verde — regla 1: asignadas = frec (exacto)
+    "4488FF"   ;; azul  — regla 2: asignadas < frec (déficit)
+    "FF9900"   ;; naranja — regla 3
+    "AA44FF"   ;; violeta — regla 4
+    "FF44BB")) ;; rosa    — regla 5
 
 ; =====================================================================
 ; GENERATE-CODE — EXPRESIONES (JSON para compatibilidad)
@@ -571,7 +605,11 @@
              (items ()))
         (when comp
           (setf items (nconc items (collect-range-styles-from-tipo tbl first-row last-row))))
-        (let ((static-rules (remove-if (lambda (r) (typep (rule-condition r) 'clase-xl-expr-exists))
+        (let ((static-rules (remove-if (lambda (r)
+                                          (typep (rule-condition r)
+                                                 '(or clase-xl-expr-exists
+                                                      clase-xl-expr-gt  clase-xl-expr-lt
+                                                      clase-xl-expr-gte clase-xl-expr-lte)))
                                        (or (style-rules tbl) nil))))
           (when static-rules
             (setf items (nconc items (collect-range-styles-from-rules tbl static-rules first-row last-row)))))
@@ -745,10 +783,12 @@
             (format stream "],~%")))
         ;; ── range_styles / conditional_formats ──
         ;; El backend decide el mecanismo según el tipo del nodo condición:
-        ;;   xl-expr-exists → FormulaRule SUMPRODUCT (recalcula en Excel)
-        ;;   cualquier otro → colores estáticos baked en tiempo de generación
+        ;;   xl-expr-exists     → FormulaRule SUMPRODUCT (recalcula en Excel)
+        ;;   xl-expr-gt/lt/etc. → FormulaRule row-relative; color from *cf-comparison-palette*
+        ;;   cualquier otro     → colores estáticos baked en tiempo de generación
         (let ((all-styles nil)
-              (all-cf nil))
+              (all-cf nil)
+              (cf-cmp-idx 0))
           (loop for tbl in tables
                 for offset in offsets
                 for tbl-first = (effective-first-row tbl)
@@ -757,60 +797,85 @@
                                            for idx from (1+ offset)
                                            collect (cons name (col->letter idx)))
                 do (dolist (rule (or (style-rules tbl) nil))
-                     (if (typep (rule-condition rule) 'clase-xl-expr-exists)
-                         ;; CF path — SUMPRODUCT FormulaRule
-                         (let* ((exists-node  (rule-condition rule))
-                                (domain-tid   (table-id (domain exists-node)))
-                                (targets      (target-columns rule))
-                                (target-ltrs  (remove nil
-                                               (loop for col in targets
-                                                     collect (cdr (assoc col tbl-letter-map
-                                                                         :test #'string-equal)))))
-                                ;; Resolución de tabla dominio (cross-table)
-                                (domain-pair  (when domain-tid
-                                               (loop for t2 in tables for o2 in offsets
-                                                     when (eq (id t2) domain-tid)
-                                                     return (cons t2 o2))))
-                                (domain-lmap  (when domain-pair
-                                               (loop for name in (col-names (car domain-pair))
-                                                     for idx from (1+ (cdr domain-pair))
-                                                     collect (cons name (col->letter idx)))))
-                                (domain-rows  (when domain-tid
-                                               (cdr (assoc domain-tid *table-data-rows*))))
-                                (formula      (compile-exists-to-cf-formula
-                                               exists-node tbl-letter-map tbl-first tbl-last
-                                               :domain-letter-map domain-lmap
-                                               :domain-first-row  (when domain-rows (car domain-rows))
-                                               :domain-last-row   (when domain-rows (cdr domain-rows))
-                                               :self-col-letter   (first target-ltrs)))
-                                (range-str    (when target-ltrs
-                                               (format nil "~a~a:~a~a"
-                                                       (first target-ltrs) tbl-first
-                                                       (car (last target-ltrs)) tbl-last))))
-                           (when (and formula range-str)
-                             (push (list range-str formula) all-cf)))
-                         ;; static path — colores generados row a row
-                         (let ((raw-styles (collect-range-styles-from-rules
-                                             tbl (list rule) tbl-first tbl-last)))
-                           (dolist (rs raw-styles)
-                             (let* ((range (car rs))
-                                    (color (cdr rs))
-                                    (col-end (position-if (lambda (c) (digit-char-p c)) range))
-                                    (tbl-letter (subseq range 0 col-end))
-                                    (rest-str  (subseq range col-end))
-                                    (tbl-col-num (loop for i from 0 below (length tbl-letter)
-                                                       sum (* (- (char-code (char tbl-letter i)) 64)
-                                                              (expt 26 (- (length tbl-letter) i 1)))))
-                                    (abs-col-num (+ tbl-col-num offset))
-                                    (abs-letter (col->letter abs-col-num))
-                                    (adjusted (let* ((colon (position #\: rest-str))
-                                                     (row1  (subseq rest-str 0 colon))
-                                                     (tail  (subseq rest-str (1+ colon)))
-                                                     (col2-end (position-if #'digit-char-p tail))
-                                                     (row2 (subseq tail col2-end)))
+                     (let ((cond-node (rule-condition rule)))
+                       (cond
+                         ((typep cond-node 'clase-xl-expr-exists)
+                          ;; CF path — SUMPRODUCT FormulaRule
+                          (let* ((exists-node  cond-node)
+                                 (domain-tid   (table-id (domain exists-node)))
+                                 (targets      (target-columns rule))
+                                 (target-ltrs  (remove nil
+                                                (loop for col in targets
+                                                      collect (cdr (assoc col tbl-letter-map
+                                                                          :test #'string-equal)))))
+                                 (domain-pair  (when domain-tid
+                                                (loop for t2 in tables for o2 in offsets
+                                                      when (eq (id t2) domain-tid)
+                                                      return (cons t2 o2))))
+                                 (domain-lmap  (when domain-pair
+                                                (loop for name in (col-names (car domain-pair))
+                                                      for idx from (1+ (cdr domain-pair))
+                                                      collect (cons name (col->letter idx)))))
+                                 (domain-rows  (when domain-tid
+                                                (cdr (assoc domain-tid *table-data-rows*))))
+                                 (formula      (compile-exists-to-cf-formula
+                                                exists-node tbl-letter-map tbl-first tbl-last
+                                                :domain-letter-map domain-lmap
+                                                :domain-first-row  (when domain-rows (car domain-rows))
+                                                :domain-last-row   (when domain-rows (cdr domain-rows))
+                                                :self-col-letter   (first target-ltrs)))
+                                 (range-str    (when target-ltrs
                                                 (format nil "~a~a:~a~a"
-                                                        abs-letter row1 abs-letter row2))))
-                               (push (cons adjusted color) all-styles)))))))
+                                                        (first target-ltrs) tbl-first
+                                                        (car (last target-ltrs)) tbl-last))))
+                            (when (and formula range-str)
+                              (push (list :range range-str :formula formula
+                                          :style "\"font_color\": \"#FF0000\"")
+                                    all-cf))))
+                         ((typep cond-node '(or clase-xl-expr-gt  clase-xl-expr-lt
+                                                 clase-xl-expr-gte clase-xl-expr-lte
+                                                 clase-xl-expr-equals clase-xl-expr-different))
+                          ;; CF path — row-relative FormulaRule; color from palette
+                          (let* ((targets      (target-columns rule))
+                                 (target-ltrs  (remove nil
+                                                (loop for col in targets
+                                                      collect (cdr (assoc col tbl-letter-map
+                                                                          :test #'string-equal)))))
+                                 (formula      (compile-excel-formula
+                                                cond-node tbl-letter-map nil tbl-first tbl-first tbl-last))
+                                 (range-str    (when target-ltrs
+                                                (format nil "~a~a:~a~a"
+                                                        (first target-ltrs) tbl-first
+                                                        (car (last target-ltrs)) tbl-last)))
+                                 (color        (nth cf-cmp-idx *cf-comparison-palette*)))
+                            (when (and formula range-str)
+                              (push (list :range range-str :formula formula
+                                          :style (format nil "\"bg_color\": \"~a\"" color))
+                                    all-cf)
+                              (incf cf-cmp-idx))))
+                         (t
+                          ;; static path — colores generados row a row
+                          (let ((raw-styles (collect-range-styles-from-rules
+                                              tbl (list rule) tbl-first tbl-last)))
+                            (dolist (rs raw-styles)
+                              (let* ((range (car rs))
+                                     (color (cdr rs))
+                                     (col-end (position-if (lambda (c) (digit-char-p c)) range))
+                                     (tbl-letter (subseq range 0 col-end))
+                                     (rest-str  (subseq range col-end))
+                                     (tbl-col-num (loop for i from 0 below (length tbl-letter)
+                                                        sum (* (- (char-code (char tbl-letter i)) 64)
+                                                               (expt 26 (- (length tbl-letter) i 1)))))
+                                     (abs-col-num (+ tbl-col-num offset))
+                                     (abs-letter (col->letter abs-col-num))
+                                     (adjusted (let* ((colon (position #\: rest-str))
+                                                      (row1  (subseq rest-str 0 colon))
+                                                      (tail  (subseq rest-str (1+ colon)))
+                                                      (col2-end (position-if #'digit-char-p tail))
+                                                      (row2 (subseq tail col2-end)))
+                                                 (format nil "~a~a:~a~a"
+                                                         abs-letter row1 abs-letter row2))))
+                                (push (cons adjusted color) all-styles)))))))))
           (when all-styles
             (format stream "        \"range_styles\": [")
             (loop for (range . color) in (nreverse all-styles) for i from 0
@@ -820,10 +885,10 @@
             (format stream "],~%"))
           (when all-cf
             (format stream "        \"conditional_formats\": [")
-            (loop for (range formula) in (nreverse all-cf) for i from 0
+            (loop for entry in (nreverse all-cf) for i from 0
                   do (when (> i 0) (format stream ", "))
-                     (format stream "{\"range\": ~s, \"formula\": ~s, \"style\": {\"font_color\": \"#FF0000\"}}"
-                             range formula))
+                     (format stream "{\"range\": ~s, \"formula\": ~s, \"style\": {~a}}"
+                             (getf entry :range) (getf entry :formula) (getf entry :style)))
             (format stream "],~%")))
         ;; ── table_ranges ──
         (let ((global-last-row (loop for tbl in tables maximize (tbl-last-row tbl))))

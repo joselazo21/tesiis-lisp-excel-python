@@ -27,7 +27,10 @@
   :cell-height 1
   :cell-width 1
   :computed ((asignadas (countif (trange turno-table lun vie) (col abrev)))
-             (faltan (subtract (col frec) (col asignadas)))))
+             (faltan (subtract (col frec) (col asignadas))))
+  :renders ((conditional-rendering :condition (gt (col asignadas) (col frec)) :target-columns (asig))
+            (conditional-rendering :condition (equals (col asignadas) (col frec)) :target-columns (asig))
+            (conditional-rendering :condition (lt (col asignadas) (col frec)) :target-columns (asig))))
 
 ;; =====================================================================
 ;; TABLA 3 — aulas por grupo (solo contenido)

@@ -63,6 +63,12 @@
 (defmacro _and (a b)      `(xl-expr-and :a ,a :b ,b))
 (defmacro _or (a b)       `(xl-expr-or :a ,a :b ,b))
 
+;; Comparaciones aritméticas: (gt a b) (lt a b) (gte a b) (lte a b)
+(defmacro gt  (a b) `(xl-expr-gt  :a ,a :b ,b))
+(defmacro lt  (a b) `(xl-expr-lt  :a ,a :b ,b))
+(defmacro gte (a b) `(xl-expr-gte :a ,a :b ,b))
+(defmacro lte (a b) `(xl-expr-lte :a ,a :b ,b))
+
 ;; =============================================================================
 ;; ARITMÉTICA
 ;; =============================================================================
@@ -341,6 +347,7 @@
         (headers     (mapcar #'second columns))
         (computed    (getf body :computed))
         (render      (getf body :render))
+        (renders     (getf body :renders))
         (cell-height (or (getf body :cell-height) 1))
         (cell-width  (or (getf body :cell-width) 1))
         (first-row   (or (getf body :first-row) 4))
@@ -352,7 +359,7 @@
                  :col-names ',col-names
                  :computed (list ,@(loop for (col expr) in computed
                                          collect `(cons ',col ,expr)))
-                 :style-rules (list ,@(when render (list render)))
+                 :style-rules (list ,@(when render (list render)) ,@(or renders nil))
                  :cell-height ,cell-height
                  :cell-width ,cell-width
                  :first-row ,first-row

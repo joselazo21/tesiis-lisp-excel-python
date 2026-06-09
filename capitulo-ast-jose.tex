@@ -86,15 +86,21 @@
 \label{sec:vision-general}
 % ---------------------------------------------------------------------------
 
-La generaci\'on de libros de c\'alculo de planificaci\'on implica,
-habitualmente, escribir c\'odigo imperativo que mezcla la l\'ogica del
-problema con los detalles de la API de hojas de c\'alculo: letras de
-columna, \'{\i}ndices de fila, cadenas de f\'ormula Excel y llamadas a una
-biblioteca de bajo nivel.  El objetivo del lenguaje de dominio espec\'{\i}fico
-(DSL) desarrollado en este trabajo es eliminar esa mezcla, permitiendo al
-programador declarar \emph{qu\'e} debe contener el libro---tablas, columnas
-calculadas, reglas de coloreado condicional---sin ocuparse de \emph{c\'omo}
-se produce el archivo.
+Numerosos problemas cotidianos producen informaci\'on que se organiza
+naturalmente en forma de tabla: filas que representan entidades y columnas
+que describen sus atributos, relaciones o restricciones.  Los horarios son
+un ejemplo paradigm\'atico de esta clase de datos---franjas horarias,
+participantes, recursos y conflictos pueden expresarse como tablas
+relacionadas---pero la misma estructura aparece en inventarios, resultados
+acad\'emicos, planificaci\'on de proyectos y cualquier dominio donde la
+informaci\'on admita una organizaci\'on tabular.
+
+El objetivo del lenguaje de dominio espec\'{\i}fico (DSL) desarrollado en
+este trabajo es ofrecer un recurso de descripci\'on para esa clase de datos:
+un vocabulario declarativo con el que el programador expresa \emph{qu\'e}
+contiene cada tabla---columnas, f\'ormulas derivadas, relaciones entre
+tablas, reglas de presentaci\'on---sin ocuparse de \emph{c\'omo} se
+materializa esa descripci\'on en un formato concreto.
 
 El DSL est\'a implementado como un conjunto de funciones y macros de
 Common~Lisp que construyen, en tiempo de carga, un \emph{\'arbol de sintaxis
@@ -103,29 +109,29 @@ de compilaci\'on comprende tres etapas claramente separadas:
 
 \begin{enumerate}
   \item \textbf{Expansi\'on de macros.}  Cada forma del DSL
-    (p.\,ej.\ \texttt{def-table}, \texttt{exists},
-    \texttt{conditional-rendering}) se expande en una llamada al constructor
-    CLOS del nodo AST correspondiente.  El resultado es un \'arbol de objetos
-    en memoria.
+    (p.\,ej.\ \texttt{def-table}, \texttt{exists})se expande en una llamada al constructor
+    CLOS del nodo AST correspondiente.  El resultado es un \'arbol cuyos
+    nodos representan las entidades a partir de las cuales el sistema es
+    capaz de generar las representaciones visuales de los datos.
 
   \item \textbf{Generaci\'on de c\'odigo.}  El \'arbol se recorre por el
-    backend, que traduce cada nodo a cadenas de f\'ormula Excel (expresiones
-    de celda y reglas de formato condicional) y a instrucciones de
-    construcci\'on del libro.  El backend es el \'unico punto que conoce los
-    nombres de columna reales, los \'{\i}ndices de fila y las cadenas de la
-    API de destino.
+    backend, que traduce cada nodo a las instrucciones propias del formato de
+    salida: expresiones de celda, reglas de presentaci\'on y directivas de
+    construcci\'on del documento.  El backend es el \'unico punto que conoce
+    los nombres de columna reales, los \'{\i}ndices de fila y los detalles
+    de la API de destino.
 
   \item \textbf{Ejecuci\'on.}  El programa generado se ejecuta, produciendo
-    el archivo \texttt{.xlsx} con los datos, f\'ormulas y reglas de formato
-    condicional incrustadas.
+    el archivo de salida con los datos, las f\'ormulas derivadas y las reglas
+    de presentaci\'on incrustadas.
 \end{enumerate}
 
 Un principio central de dise\~no es la \emph{separaci\'on entre intenci\'on
 e implementaci\'on}: el DSL expresa la sem\'antica del problema
-(``colorear los profesores que tienen un conflicto de horario'') y el backend
-decide el mecanismo concreto (``generar una \texttt{FormulaRule} SUMPRODUCT
-que persiste y recalcula en Excel'').  El programador del DSL no escribe
-ninguna f\'ormula Excel.
+(``resaltar los profesores que tienen un conflicto de horario'') y el backend
+decide el mecanismo concreto seg\'un el formato de destino elegido.  El
+programador del DSL no escribe ninguna instrucci\'on espec\'{\i}fica del
+formato de salida.
 
 % ---------------------------------------------------------------------------
 \section{\'Arbol de sintaxis abstracta}
@@ -159,8 +165,10 @@ construye de la siguiente manera:
                 :self-in-cols  nil)
 \end{lstlisting}
 
-Los nodos del AST se agrupan en cuatro categor\'{\i}as seg\'un su papel en
-el \'arbol.
+Los nodos del AST se agrupan en seis categor\'{\i}as seg\'un su papel en
+el \'arbol: estructura del workbook, expresiones de celda, navegaci\'on de
+fila, cuantificaci\'on existencial, expresiones cross-sheet din\'amicas y
+formato condicional con posicionamiento relativo.
 
 % ............................................................................
 \subsection{Estructura del workbook}
@@ -285,6 +293,92 @@ en lugar de componer manualmente la cadena
   & \texttt{a}, \texttt{b}
   & Concatenaci\'on de texto (\texttt{\&}). \\
 \hline
+\texttt{xl-expr-table-col-ref}
+  & \texttt{table-id}, \texttt{name},\newline\texttt{context}
+  & Referencia a una columna de una tabla espec\'{\i}fica de la regi\'on.
+    Evita la ambig\"uedad cuando dos tablas comparten el mismo nombre de
+    columna. \\
+\hline
+\texttt{xl-expr-param-ref}
+  & \texttt{name}
+  & Referencia a un par\'ametro de instancia almacenado en celda auxiliar. \\
+\hline
+\texttt{xl-expr-different}
+  & \texttt{a}, \texttt{b}
+  & Desigualdad: produce \texttt{a <> b} en la f\'ormula Excel. \\
+\hline
+\texttt{xl-expr-gt}, \texttt{xl-expr-lt}
+  & \texttt{a}, \texttt{b}
+  & Comparaci\'on estricta: mayor que y menor que. \\
+\hline
+\texttt{xl-expr-gte}, \texttt{xl-expr-lte}
+  & \texttt{a}, \texttt{b}
+  & Comparaci\'on no estricta: mayor o igual y menor o igual. \\
+\hline
+\texttt{xl-expr-add}, \texttt{xl-expr-subtract}
+  & \texttt{a}, \texttt{b}
+  & Suma y resta aritm\'etica. \\
+\hline
+\texttt{xl-expr-multiply}, \texttt{xl-expr-divide}
+  & \texttt{a}, \texttt{b}
+  & Multiplicaci\'on y divisi\'on aritm\'etica. \\
+\hline
+\texttt{xl-expr-time-add}
+  & \texttt{a}, \texttt{b}
+  & Suma de tiempos como texto:
+    \texttt{TEXT(TIMEVALUE(a)+(b/1440),"hh:mm")}. \\
+\hline
+\texttt{xl-expr-lookup}
+  & \texttt{value-field},\newline\texttt{key-expr}
+  & \texttt{VLOOKUP} en la tabla actual: busca \texttt{key-expr} y devuelve
+    la columna \texttt{value-field}. \\
+\hline
+\end{tabular}
+\end{table}
+
+% ............................................................................
+\subsection{Navegaci\'on de fila y control de visibilidad}
+\label{sec:ast-navegacion-fila}
+% ............................................................................
+
+Ciertos c\'alculos necesitan referenciar la fila anterior o siguiente de la
+misma tabla---por ejemplo, acumular un valor incremental o mostrar una
+transici\'on---o bien producir una celda visualmente vac\'{\i}a bajo alguna
+condici\'on.  Estos nodos encapsulan esa l\'ogica sin exponer \'{\i}ndices de
+fila al programador del DSL.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de navegaci\'on de fila y control de visibilidad.}
+\label{tab:ast-navegacion}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.8cm} p{3.8cm} p{6.2cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{xl-expr-previous-row}
+  & \texttt{expr}
+  & Eval\'ua \texttt{expr} referenciando la columna correspondiente en la
+    fila anterior de la tabla. \\
+\hline
+\texttt{xl-expr-next-row}
+  & \texttt{expr}
+  & Eval\'ua \texttt{expr} referenciando la columna correspondiente en la
+    fila siguiente de la tabla. \\
+\hline
+\texttt{xl-expr-first-row}
+  & ---
+  & Produce \texttt{TRUE} cuando la fila en evaluaci\'on es la primera fila
+    de datos (\texttt{ROW()=first-row}). \\
+\hline
+\texttt{xl-expr-non-empty}
+  & \texttt{expr}
+  & Produce \texttt{TRUE} cuando \texttt{expr} no es vac\'{\i}a ni cero. \\
+\hline
+\texttt{xl-expr-show-nothing}
+  & ---
+  & Produce \texttt{""}: la celda queda visualmente vac\'{\i}a. \\
+\hline
 \end{tabular}
 \end{table}
 
@@ -324,6 +418,59 @@ Excel, u otra implementaci\'on para un backend diferente.
   & Dominio de filas.  \texttt{table-id = nil} indica la
     tabla actual; un s\'{\i}mbolo identifica una tabla
     espec\'{\i}fica de la regi\'on (dominio cross-table). \\
+\hline
+\end{tabular}
+\end{table}
+
+% ............................................................................
+\subsection{Expresiones cross-sheet din\'amicas}
+\label{sec:ast-cross-sheet}
+% ............................................................................
+
+Cuando un libro contiene m\'ultiples hojas con estructura homog\'enea---por
+ejemplo, una hoja por grupo o aula---es necesario agregar valores a trav\'es
+de ellas.  A diferencia de \texttt{xl-expr-cross-sheet-ref}, que referencia
+una hoja con nombre fijo, los nodos de esta secci\'on trabajan con una
+\emph{variable de hoja} resuelta en tiempo de compilaci\'on mediante el
+entorno din\'amico \texttt{*sheet-env*}, declarado por \texttt{collect-over}.
+
+\begin{table}[h!]
+\centering
+\caption{Nodos de expresi\'on cross-sheet din\'amica.}
+\label{tab:ast-cross-sheet}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{p{3.8cm} p{4.4cm} p{5.6cm}}
+\hline
+\textbf{Nodo} & \textbf{Atributos} & \textbf{Papel} \\
+\hline
+\texttt{xl-expr-cross-sheet-ref}
+  & \texttt{sheet},\newline\texttt{cell-template}
+  & Referencia a una celda en otra hoja con nombre fijo.
+    \texttt{cell-template} puede incluir \texttt{\$\{row-num\}} para fila
+    din\'amica. \\
+\hline
+\texttt{xl-expr-cross-cell}
+  & \texttt{sheet}, \texttt{xcol},\newline\texttt{row}
+  & Referencia a una celda en la hoja ligada a \texttt{sheet} en
+    \texttt{*sheet-env*}.  \texttt{xcol} se resuelve a letra Excel;
+    \texttt{row} puede ser un entero fijo o una expresi\'on. \\
+\hline
+\texttt{xl-expr-source-row}
+  & \texttt{table-id},\newline\texttt{offset}
+  & Fila de una tabla origen mapeada desde la fila l\'ogica actual.
+    \texttt{offset} selecciona la subcelda dentro de una fila compuesta
+    (0 = primera, 1 = segunda, \ldots). \\
+\hline
+\texttt{xl-expr-sheet-id}
+  & \texttt{sheet}
+  & Identificador can\'onico de la hoja ligada a \texttt{sheet} en
+    \texttt{*sheet-env*}.  Cada backend decide c\'omo recuperarlo. \\
+\hline
+\texttt{xl-expr-collect-over}
+  & \texttt{groups},\newline\texttt{sheet-var},\newline\texttt{body}
+  & Itera \texttt{body} sobre cada hoja de \texttt{groups}, ligando
+    \texttt{sheet-var}, y concatena los resultados como lista separada por
+    comas mediante \texttt{SUBSTITUTE(TRIM(\ldots)," ",",")}. \\
 \hline
 \end{tabular}
 \end{table}
