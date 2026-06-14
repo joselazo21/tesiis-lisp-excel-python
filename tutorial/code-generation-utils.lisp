@@ -12,7 +12,16 @@
 ;;   - Helpers de estilos por tipo y por reglas condicionales
 ;;   - Funciones de generación y ejecución (xl-generate, xl-run-generated)
 ;; =============================================================================
-(load "ast-def.lisp")
+(load (merge-pathnames "ast-def.lisp" *load-truename*))
+
+; =====================================================================
+; CONSTANTES DEL DSL
+; =====================================================================
+
+;; Vacío semántico: valor por defecto para celdas sin contenido fijo.
+;; El backend decide la representación concreta (en Python es la cadena vacía "").
+(defparameter *empty* ""
+  "Valor centinela para celdas vacías o que serán rellenadas por una fórmula.")
 
 ; =====================================================================
 ; UTILITIES

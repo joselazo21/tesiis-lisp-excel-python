@@ -320,8 +320,13 @@ en lugar de componer manualmente la cadena
   & Suma y resta aritm\'etica. \\
 \hline
 \texttt{xl-expr-multiply}, \texttt{xl-expr-divide}
-  & \texttt{a}, \texttt{b}
-  & Multiplicaci\'on y divisi\'on aritm\'etica. \\
+   & \texttt{a}, \texttt{b}
+   & Multiplicaci\'on y divisi\'on aritm\'etica. \\
+\hline
+\texttt{xl-expr-promedio}
+   & \texttt{cols}
+   & Promedio de los valores de las columnas indicadas:
+     suma todos los valores y divide entre el n\'umero de columnas. \\
 \hline
 \texttt{xl-expr-time-add}
   & \texttt{a}, \texttt{b}
@@ -376,13 +381,18 @@ fila al programador del DSL.
   & Produce \texttt{TRUE} cuando \texttt{expr} no es vac\'{\i}a ni cero. \\
 \hline
 \texttt{xl-expr-show-nothing}
-  & ---
-  & Produce \texttt{""}: la celda queda visualmente vac\'{\i}a. \\
+   & ---
+   & Produce \texttt{""}: la celda queda visualmente vac\'{\i}a. \\
+\hline
+\texttt{xl-expr-empty}
+   & ---
+   & Vac\'{\i}o sem\'antico.  El backend decide la representaci\'on:
+     \texttt{""} en Excel, \texttt{null} en otros formatos. \\
 \hline
 \end{tabular}
 \end{table}
 
-% ............................................................................
+% ...............................................
 \subsection{Cuantificaci\'on existencial}
 \label{sec:ast-cuantificacion}
 % ............................................................................

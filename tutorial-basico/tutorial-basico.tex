@@ -1,0 +1,383 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{booktabs}
+\usepackage{tcolorbox}
+\usepackage{amsmath}
+\usepackage{array}
+
+\geometry{margin=2.5cm}
+
+\definecolor{lisp-bg}{RGB}{248,248,252}
+\definecolor{lisp-kw}{RGB}{0,0,180}
+\definecolor{lisp-str}{RGB}{160,0,0}
+\definecolor{box-blue}{RGB}{240,248,255}
+\definecolor{box-blue-border}{RGB}{100,149,237}
+\definecolor{box-green}{RGB}{240,255,240}
+\definecolor{box-green-border}{RGB}{60,150,60}
+\definecolor{box-yellow}{RGB}{255,253,230}
+\definecolor{box-yellow-border}{RGB}{180,150,0}
+
+\lstdefinelanguage{DSL}{
+  keywords={def-table, libro, hoja, tabla, load, defparameter,
+            conditional-rendering, exists, nav, ultima-fila, primera-fila,
+            xl-generate, xl-run-generated},
+  morekeywords=[2]{countif, counta, sum-range, str, col, trange, param,
+                   add, divide, promedio, gt, _if},
+  keywordstyle=\color{lisp-kw}\bfseries,
+  keywordstyle=[2]\color{box-green-border},
+  stringstyle=\color{lisp-str},
+  sensitive=false,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{lisp-bg},
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{gray!40},
+  breaklines=true,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  xleftmargin=20pt,
+  aboveskip=6pt,
+  belowskip=6pt,
+  showstringspaces=false,
+  tabsize=2,
+}
+
+\lstset{language=DSL}
+
+\tcbuselibrary{skins,breakable}
+
+\newtcolorbox{infobox}[1]{
+  colback=box-blue, colframe=box-blue-border,
+  fonttitle=\bfseries, title=#1,
+  breakable, sharp corners, left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\newtcolorbox{advertencia}[1]{
+  colback=box-yellow, colframe=box-yellow-border,
+  fonttitle=\bfseries, title=#1,
+  breakable, sharp corners, left=6pt, right=6pt, top=4pt, bottom=4pt
+}
+
+\titleformat{\chapter}[hang]{\large\bfseries}{\thechapter.}{0.5em}{}[\vspace{2pt}\hrule]
+\titleformat{\section}[hang]{\normalsize\bfseries}{\thesection}{0.5em}{}
+\titleformat{\subsection}[hang]{\normalsize\itshape\bfseries}{\thesubsection}{0.5em}{}
+
+\hypersetup{hidelinks}
+\setlength{\parskip}{6pt}
+
+\begin{document}
+
+\chapter{Tutorial básico: tablas, fórmulas y resaltado}
+\label{cap:tutorial-basico}
+
+Este capítulo presenta los elementos fundamentales del DSL mediante un
+ejemplo mínimo.  Al terminar sabrá definir una tabla con columnas, añadir
+una columna calculada, condicionar el resaltado de celdas y generar el
+archivo de salida.
+
+\section{Qué vamos a construir}
+
+Queremos una tabla con cuatro columnas:
+
+\begin{center}
+\begin{tabular}{lccr}
+\toprule
+\textbf{Nombre} & \textbf{Nota 1} & \textbf{Nota 2} & \textbf{Promedio} \\
+\midrule
+Ana    & 85 & 90 & 87.5 \\
+Luis   & 70 & 75 & 72.5 \\
+Elena  & 92 & 88 & 90.0 \\
+Carlos & 60 & 65 & 62.5 \\
+Sofía  & 78 & 82 & 80.0 \\
+Pedro  & 95 & 91 & 93.0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Además:
+\begin{itemize}
+  \item La columna \textbf{Promedio} no se escribe a mano: se calcula
+    automáticamente como el promedio de las dos notas.
+  \item Hay un \textbf{número fijo} (80, por ejemplo) almacenado en el
+    libro.
+  \item Los nombres de las personas cuyo promedio supera ese número
+    aparecen \textbf{resaltados en rojo}.
+\end{itemize}
+
+\section{Estructura del programa}
+
+El programa completo consta de tres partes, que escribiremos en un solo
+archivo \texttt{tutorial-basico.lisp}:
+
+\begin{enumerate}
+  \item Los \textbf{datos} de entrada (nombres y notas).
+  \item La \textbf{definición de la tabla} con su columna calculada y su
+    regla de resaltado.
+  \item El \textbf{libro} que reúne todo y las instrucciones para generar
+    la salida.
+\end{enumerate}
+
+\section{Los datos}
+
+Los datos se guardan en una variable de Lisp con \texttt{defparameter}.
+Cada fila es una lista con cuatro celdas (una por columna).
+Las primeras tres filas son de prefijo: dos filas en blanco y una fila
+de encabezados.  Las filas siguientes son los datos propiamente dichos.
+
+\begin{lstlisting}[caption={tutorial-basico.lisp --- datos de entrada.}]
+(defparameter *DATOS*
+  '(("" "" "" "")
+    ("" "" "" "")
+    ("Nombre" "Nota 1" "Nota 2" "Promedio")
+    ("Ana"     "85" "90" "")
+    ("Luis"    "70" "75" "")
+    ("Elena"   "92" "88" "")
+    ("Carlos"  "60" "65" "")
+    ("Sofia"   "78" "82" "")
+    ("Pedro"   "95" "91" "")))
+\end{lstlisting}
+
+Observe que la columna \texttt{Promedio} se deja vacía (\texttt{""}) en
+los datos, porque su valor lo calculará el DSL automáticamente.
+
+\begin{advertencia}{Formato de las celdas vacías}
+  Las celdas que corresponden a columnas calculadas se marcan con
+  \texttt{""} (cadena vacía).  El generador las sobreescribe con la
+  fórmula correspondiente.
+\end{advertencia}
+
+\section{Definir la tabla}
+
+La macro \texttt{def-table} declara una plantilla de tabla.  Le damos un
+nombre y la lista de columnas.  Cada columna se escribe como un par
+\texttt{(nombre "Etiqueta")}, donde \texttt{nombre} es el identificador
+interno (un símbolo del DSL) y \texttt{"Etiqueta"} es el texto que se
+mostrará como encabezado.
+
+\begin{lstlisting}[caption={Definición de la tabla.}]
+(def-table tabla-notas
+  ((nombre "") (nota1 "") (nota2 "") (promedio ""))
+  :cell-height 1
+  :cell-width  1)
+\end{lstlisting}
+
+Por ahora la tabla solo declara las columnas, sin fórmulas ni resaltados.
+A continuación añadiremos esas características.
+
+\section{Columna calculada}
+
+Queremos que \texttt{promedio} se calcule solo: \[
+\text{promedio} = \frac{\text{nota1} + \text{nota2}}{2}
+\]
+
+En lenguaje natural diríamos: ``para cada fila, promedia nota1 y nota2''.
+El DSL ofrece la forma \texttt{promedio} que hace exactamente eso:
+recibe una lista de columnas, genera la suma y la divide entre la
+cantidad de columnas automáticamente.
+
+\begin{lstlisting}[caption={Tabla con columna calculada.}]
+(def-table tabla-notas
+  ((nombre "") (nota1 "") (nota2 "") (promedio ""))
+  :cell-height 1
+  :cell-width  1
+  :computed
+    ((promedio (promedio (col nota1) (col nota2)))))
+\end{lstlisting}
+
+\noindent Cada pieza significa:
+
+\begin{itemize}
+  \item \texttt{(col nota1)} --- toma el valor de la columna
+    \texttt{nota1} en la fila actual.
+  \item \texttt{(promedio (col nota1) (col nota2))} --- suma nota1 y
+    nota2, y divide entre 2 (porque recibe dos argumentos).
+\end{itemize}
+
+\begin{infobox}{¿Cómo sabe \texttt{promedio} entre cuánto dividir?}
+  \texttt{promedio} cuenta automáticamente los argumentos que recibe.
+  Con \texttt{(promedio (col n1) (col n2))} genera
+  \texttt{((n1+n2)/2)}; si recibe tres columnas genera
+  \texttt{((n1+n2+n3)/3)}.  No hace falta indicar el divisor.
+\end{infobox}
+
+\section{Resaltado condicional}
+
+Ahora queremos que los nombres de las personas cuyo promedio supere el
+mínimo aparezcan en rojo.  En lenguaje natural: ``si el promedio de
+esta fila es mayor que nota-minima, colorea el nombre''.
+
+La opción \texttt{:render} de \texttt{def-table} acepta una forma
+\texttt{conditional-rendering} que especifica la condición y las
+columnas a colorear.
+
+\begin{lstlisting}[caption={Tabla con columna calculada y resaltado.}]
+(def-table tabla-notas
+  ((nombre "") (nota1 "") (nota2 "") (promedio ""))
+  :cell-height 1
+  :cell-width  1
+  :computed
+    ((promedio (promedio (col nota1) (col nota2))))
+  :render
+    (conditional-rendering
+      :condition (gt (col promedio) (param nota-minima))
+      :target-columns (nombre)))
+\end{lstlisting}
+
+\noindent Al leer la condición en voz alta:
+
+\begin{itemize}
+  \item \texttt{gt} significa ``mayor que'' (\emph{greater than}).
+  \item \texttt{(col promedio)} es el promedio de la fila actual.
+  \item \texttt{(param nota-minima)} es el valor fijo que definiremos.
+  \item \texttt{:target-columns (nombre)} indica qué columna se colorea
+    cuando la condición se cumple.
+\end{itemize}
+
+\section{El parámetro y la generación}
+
+Con la tabla definida, solo falta ensamblar el libro, proporcionar los
+parámetros y lanzar la generación.
+
+Los parámetros se pasan al instanciar la tabla con \texttt{tabla}
+mediante la clave \texttt{:params}.  Cada parámetro es un par
+\texttt{(nombre valor)}.
+
+\begin{lstlisting}[caption={Libro completo con parámetros.}]
+(libro tutorial-basico
+  :filename "Tutorial_Basico.xlsx"
+  :hojas (list
+    (hoja "Notas"
+      (tabla tabla-notas
+        :data *DATOS*
+        :params ((nota-minima 80))))))
+
+(xl-generate tutorial-basico "tutorial-basico.py")
+(xl-run-generated "tutorial-basico.py")
+\end{lstlisting}
+
+\begin{infobox}{El concepto de parámetro}
+  Un \texttt{param} es un valor fijo con nombre que se escribe una sola
+  vez y se referencia desde cualquier expresión con \texttt{(param
+  nombre)}.  Es la manera que tiene el DSL de representar constantes
+  que puedan cambiar entre ejecuciones sin tocar las fórmulas.  En este
+  ejemplo \texttt{(param nota-minima)} vale 80.
+
+  En la implementación concreta del generador a Excel, los parámetros se
+  traducen a celdas fijas de la hoja (por ejemplo \texttt{\$F\$1}) para
+  que las fórmulas puedan referenciarlos con referencias absolutas.
+  El backend de Python los escribe directamente en esas celdas, sin
+  mezclarlos con las filas de datos de la tabla.
+\end{infobox}
+
+\section{El programa completo}
+
+A continuación se muestra el contenido íntegro del archivo
+\texttt{tutorial-basico.lisp}:
+
+\begin{lstlisting}[caption={tutorial-basico.lisp --- programa completo.}]
+(load (merge-pathnames "dsl-directo.lisp" *load-truename*))
+
+(defparameter *DATOS*
+  '(("" "" "" "")
+    ("" "" "" "")
+    ("Nombre" "Nota 1" "Nota 2" "Promedio")
+    ("Ana"     "85" "90" "")
+    ("Luis"    "70" "75" "")
+    ("Elena"   "92" "88" "")
+    ("Carlos"  "60" "65" "")
+    ("Sofia"   "78" "82" "")
+    ("Pedro"   "95" "91" "")))
+
+(def-table tabla-notas
+  ((nombre "") (nota1 "") (nota2 "") (promedio ""))
+  :cell-height 1
+  :cell-width  1
+  :computed
+    ((promedio (promedio (col nota1) (col nota2))))
+  :render
+    (conditional-rendering
+      :condition (gt (col promedio) (param nota-minima))
+      :target-columns (nombre)))
+
+(libro tutorial-basico
+  :filename "Tutorial_Basico.xlsx"
+  :hojas (list
+    (hoja "Notas"
+      (tabla tabla-notas
+        :data *DATOS*
+        :params ((nota-minima 80))))))
+
+(xl-generate tutorial-basico "tutorial-basico.py")
+(xl-run-generated "tutorial-basico.py")
+\end{lstlisting}
+
+\section{Ejecución}
+
+Para ejecutar el tutorial:
+
+\begin{lstlisting}[language=bash, numbers=none, backgroundcolor=\color{gray!10},
+                   basicstyle=\ttfamily\small]
+cd tutorial/
+sbcl --script tutorial-basico.lisp
+\end{lstlisting}
+
+Esto cargará el DSL, construirá el AST, generará
+\texttt{tutorial-basico.py} y lo ejecutará para crear
+\texttt{Tutorial\_Basico.xlsx}.
+
+\section{Resultado esperado}
+
+El archivo \texttt{Tutorial\_Basico.xlsx} contiene una hoja llamada
+``Notas'' con la siguiente estructura:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Rango} & \textbf{Contenido} \\
+\midrule
+Filas 3--9, columnas A--D & Tabla con 6 personas (fila 3: encabezados) \\
+Columna D, filas 4--9     & Promedio calculado con fórmula \\
+Columna A, filas 4--9     & Nombres en rojo si promedio $> 80$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Con los datos de ejemplo, los nombres de Ana, Elena, Sofía y Pedro
+aparecen resaltados en rojo porque su promedio supera 80.  Luis y Carlos
+quedan con formato normal.
+
+\section{Resumen de formas utilizadas}
+
+\begin{center}
+\begin{tabular}{>{\ttfamily}p{5cm}p{8cm}}
+\toprule
+\textbf{Forma} & \textbf{Para qué sirve} \\
+\midrule
+(def-table nombre (cols...) opts...) & Define una plantilla de tabla \\
+:computed ((col expr)) & Columna calculada con una expresión \\
+(conditional-rendering :condition :target-columns) & Regla de resaltado condicional \\
+(promedio col1 col2 ...) & Promedia las columnas indicadas \\
+(gt a b) & Verdadero si a es mayor que b \\
+(col nombre) & Valor de la columna en la fila actual \\
+(param nombre) & Valor de un parámetro fijo \\
+:params ((nombre valor)...) & Define parámetros al instanciar la tabla \\
+(libro nombre ...) & Define el libro completo \\
+(hoja nombre tablas ...) & Define una hoja \\
+(tabla plantilla :data :params) & Instancia una tabla con datos y parámetros \\
+(xl-generate wb archivo) & Genera el script Python \\
+(xl-run-generated archivo) & Ejecuta el script y produce el .xlsx \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\end{document}

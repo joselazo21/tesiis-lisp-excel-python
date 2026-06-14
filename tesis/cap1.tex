@@ -4,284 +4,221 @@
 \chapter{Preliminares te\'oricos}
 \label{cap:teoria}
 
-En este cap\'{\i}tulo se presentan los conceptos y herramientas que fundamentan
-el trabajo.  La secci\'on~\ref{sec:hoja-calculo} define los t\'erminos clave
-del dominio de las hojas de c\'alculo.  La secci\'on~\ref{sec:planificacion}
-sit\'ua ese dominio en el contexto acad\'emico.  Las secciones~\ref{sec:dsl}
-y~\ref{sec:ast} introducen los lenguajes de dominio espec\'{\i}fico y los
-\'arboles de sintaxis abstracta.  Finalmente, la secci\'on~\ref{sec:lisp}
-describe las caracter\'{\i}sticas de Common Lisp que lo convierten en la
-plataforma de implementaci\'on elegida.
-
-% ---------------------------------------------------------------------------
-\section{Hojas de c\'alculo}
-\label{sec:hoja-calculo}
-% ---------------------------------------------------------------------------
-
-Una \textbf{hoja de c\'alculo} (\textit{spreadsheet}) es una aplicaci\'on
-para organizar, calcular y visualizar datos en una cuadr\'{\i}cula
-bidimensional de celdas.  Cada celda puede contener un valor literal
----un n\'umero, una fecha o una cadena de texto--- o una
-\textbf{f\'ormula}: una expresi\'on cuyo resultado se recalcula
-autom\'aticamente cuando cambia cualquier celda de la que depende~\cite{microsoft-excel}.
-
-\begin{description}
-  \item[Workbook (libro de trabajo).] Un archivo \xlsx{} que agrupa una
-    o m\'as hojas de trabajo.  Es la unidad de intercambio del formato
-    Office Open XML~\cite{ooxml}.
-
-  \item[Hoja de trabajo.] Una cuadr\'{\i}cula de celdas dentro del workbook,
-    identificada por un nombre (p.~ej., \texttt{Defensas}).
-
-  \item[Celda.] La unidad m\'{\i}nima de almacenamiento, referenciada por
-    una direcci\'on del tipo \texttt{B4} (columna B, fila 4) o
-    \texttt{\$B\$4} (referencia absoluta).
-
-  \item[F\'ormula.] Una expresi\'on que comienza con \texttt{=} y puede
-    contener referencias a otras celdas, rangos y funciones predefinidas
-    como \texttt{COUNTIF}, \texttt{COUNTA}, \texttt{SUM}, \texttt{IF} o
-    \texttt{SUMPRODUCT}.
-
-  \item[Rango.] Un bloque rectangular de celdas contiguas, expresado como
-    \texttt{\$B\$4:\$F\$6} (columnas B--F, filas 4--6).
-
-  \item[Formato condicional.] Un mecanismo que aplica estilos visuales
-    ---color de relleno, color de texto, borde--- a las celdas de un rango
-    cuando se cumple una condici\'on evaluada en tiempo de apertura o
-    edici\'on del archivo.  Una \textbf{FormulaRule} es el tipo m\'as general
-    de regla de formato condicional: la condici\'on es una f\'ormula
-    arbitraria, lo que permite expresar condiciones que involucran otras
-    hojas, otras celdas o funciones de agregaci\'on~\cite{openpyxl}.
-\end{description}
-
-La biblioteca \textbf{openpyxl} es la herramienta Python elegida para
-producir archivos \xlsx{} en este trabajo.  Permite crear workbooks,
-escribir valores y f\'ormulas en celdas, y definir \texttt{FormulaRule}
-que quedan incrustadas en el archivo y se eval\'uan en Excel o LibreOffice
-Calc sin necesidad de c\'odigo adicional~\cite{openpyxl}.
-
-% ---------------------------------------------------------------------------
-\section{Planificaci\'on tabular en el \'ambito acad\'emico}
-\label{sec:planificacion}
-% ---------------------------------------------------------------------------
-
-La planificaci\'on tabular agrupa los problemas de organizaci\'on cuya
-soluci\'on se representa de forma natural como una o m\'as tablas
-relacionadas.  En el contexto acad\'emico, los ejemplos m\'as frecuentes son:
-
-\begin{itemize}
-  \item \textbf{Horarios de docencia.} Distribuci\'on de grupos, asignaturas,
-    profesores y aulas en slots de d\'{\i}a y hora a lo largo de la semana.
-    Cada columna calcula la ocupaci\'on de un aula a partir de las asignaciones
-    de los distintos grupos.
-
-  \item \textbf{Planificaci\'on de defensas de tesis.} Asignaci\'on de
-    estudiantes, fechas, horarios y miembros de tribunal (tutor, oponente,
-    presidente, vocal, secretario) a defensas individuales.  El requisito
-    cr\'{\i}tico es detectar conflictos: un mismo profesor en dos defensas
-    del mismo slot horario.
-
-  \item \textbf{Asignaci\'on de docencia.} Relaci\'on entre profesores,
-    asignaturas y grupos, con conteos de horas acumuladas y alertas cuando
-    se supera un umbral.
-\end{itemize}
-
-Estos documentos comparten una estructura t\'{\i}pica~\cite{ldmag2025}:
-\begin{enumerate}
-  \item Dos o m\'as tablas relacionadas que comparten columnas de clave
-    (p.~ej., nombre de profesor, slot horario).
-  \item Columnas calculadas en una tabla que agregan datos de otra
-    (conteos, sumas, b\'usquedas).
-  \item Reglas de formato condicional que colorean filas cuando se detecta
-    una condici\'on problem\'atica (conflicto de horario, desequilibrio
-    de carga).
-  \item Totales y etiquetas fuera de las tablas, cuya posici\'on depende del
-    n\'umero de filas de datos, que cambia en cada ejecuci\'on.
-\end{enumerate}
-
-Estos cuatro patrones son los que el DSL debe capturar de forma declarativa.
+Este capítulo presenta los fundamentos teóricos necesarios para el desarrollo
+del DSL descrito en este trabajo.  La sección~\ref{sec:dsl} introduce los
+lenguajes de dominio específico y su clasificación.
+La sección~\ref{sec:ast} describe los árboles de sintaxis abstracta y el
+proceso de generación de código.
+La sección~\ref{sec:lisp} detalla las características de Common Lisp que lo
+convierten en la plataforma de implementación elegida.
+La sección~\ref{sec:hoja-calculo} define los términos necesarios para
+comprender el backend de demostración implementado, que produce
+archivos \xlsx{}.
 
 % ---------------------------------------------------------------------------
 \section{Lenguajes de dominio espec\'{\i}fico}
 \label{sec:dsl}
 % ---------------------------------------------------------------------------
 
-Un \textbf{lenguaje de dominio espec\'{\i}fico} (\textit{Domain-Specific
-Language}, DSL) es un lenguaje de programaci\'on o especificaci\'on dise\~nado
-para expresar soluciones dentro de un dominio de problemas concreto, en
-contraposici\'on a los lenguajes de prop\'osito general que aspiran a cubrir
-cualquier problema~\cite{fowler2010}.
+Los lenguajes de programación de propósito general (GPL, del inglés
+\textit{General-Purpose Language}) como C, Java o Python ofrecen flexibilidad
+máxima, pero a costa de mayor verbosidad y menor expresividad dentro de
+dominios concretos.  Un \textbf{lenguaje de dominio específico}
+(\textit{Domain-Specific Language}, DSL) es un lenguaje diseñado para
+expresar soluciones dentro de un dominio particular de problemas, ofreciendo
+abstracciones que reflejan directamente los conceptos y patrones propios de
+ese dominio~\cite{fowler2010}.
 
 \begin{definition}[DSL, \cite{van-deursen2000}]
 Un lenguaje de dominio espec\'{\i}fico es un lenguaje de programaci\'on o
 especificaci\'on ejecutable que ofrece, mediante abstracciones apropiadas,
-poder expresivo centrado en y normalmente restringido a un dominio de
+poder expresivo centrado en ---y normalmente restringido a--- un dominio de
 problemas particular.
 \end{definition}
 
-Los DSL se clasifican en dos grandes tipos seg\'un su relaci\'on con el
-lenguaje anfitri\'on~\cite{fowler2010}:
+Los DSL se clasifican según su relación con el lenguaje anfitrión en dos
+grandes tipos~\cite{fowler2010,mernik2005}:
 
 \begin{description}
-  \item[DSL externo.] Tiene su propia sintaxis independiente, requiere un
-    lexer y un parser propios, y suele estar embebido como datos en otro
-    programa (p.~ej., SQL, HTML, \LaTeX).
+  \item[DSL interno (embebido).] Se construye usando la sintaxis y las
+    capacidades del lenguaje anfitrión.  No requiere herramientas de análisis
+    léxico ni sintáctico propias: el programador usa el lenguaje anfitrión
+    como plataforma y el DSL actúa como una biblioteca con vocabulario de
+    dominio.  Common Lisp es especialmente adecuado para este enfoque gracias
+    a su sistema de macros, que permite extender la sintaxis del lenguaje sin
+    necesidad de un compilador externo.
 
-  \item[DSL interno (embebido).] Se expresa directamente en el lenguaje
-    anfitri\'on mediante una API o un sistema de macros que produce c\'odigo
-    v\'alido del anfitri\'on~\cite{mernik2005}.  El programador usa el
-    lenguaje anfitri\'on como plataforma; el DSL es una biblioteca con
-    vocabulario de dominio.
+  \item[DSL externo.] Define su propia sintaxis y requiere un lexer y un
+    parser propios.  El DSL es un lenguaje independiente del anfitrión;
+    ejemplos conocidos son SQL, \LaTeX{} y Matlab.  Este enfoque ofrece
+    mayor libertad sintáctica pero implica un esfuerzo de implementación
+    significativamente mayor.
 \end{description}
 
-El DSL desarrollado en este trabajo es \textbf{interno}: est\'a escrito en
-Common Lisp, sus formas son expresiones Lisp v\'alidas y no requiere ning\'un
-parser externo.  Los macros de Lisp operan como el compilador del DSL,
+El DSL desarrollado en este trabajo es \textbf{interno}: está escrito en
+Common Lisp, sus formas son expresiones Lisp válidas y no requiere ningún
+parser externo.  Los macros de Lisp actúan como el compilador del DSL,
 expandiendo las formas del dominio en constructores de nodos del AST.
 
-La ventaja principal de los DSL internos en Lisp es que el lenguaje anfitri\'on
-es homoic\'onico: el c\'odigo tiene la misma estructura que los datos
-(listas anidadas), lo que hace que escribir transformaciones de c\'odigo
----es decir, macros--- sea tan natural como escribir funciones ordinarias~\cite{graham1993}.
-
 % ---------------------------------------------------------------------------
-\section{\'Arboles de sintaxis abstracta}
+\section{\'Arboles de sintaxis abstracta y generaci\'on de c\'odigo}
 \label{sec:ast}
 % ---------------------------------------------------------------------------
 
-Un \textbf{\'arbol de sintaxis abstracta} (AST, del ingl\'es
-\textit{Abstract Syntax Tree}) es la representaci\'on intermedia est\'andar
-en los compiladores e int\'erpretes.  Representa la estructura sint\'actica
-de un programa mediante un \'arbol cuyos nodos corresponden a los constructores
-del lenguaje y cuyos hijos representan los subcomponentes de cada
-constructor~\cite{aho2006}.
+% ............................................................................
+\subsection{\'Arbol de sintaxis abstracta}
+\label{ssec:ast-def}
+% ............................................................................
 
-El AST es \emph{abstracto} en el sentido de que omite los detalles de la
-sintaxis concreta ---par\'entesis, palabras clave, signos de puntuaci\'on---
-y conserva \'unicamente la estructura l\'ogica del programa~\cite{scott2015}.
+Un \textbf{árbol de sintaxis abstracta} (AST, del inglés \textit{Abstract
+Syntax Tree}) es una representación estructurada en forma de árbol del código
+fuente de un programa~\cite{aho2006}.  A diferencia del árbol sintáctico
+concreto (CST), el AST abstrae los detalles de la sintaxis concreta
+---paréntesis, palabras clave, signos de puntuación--- y retiene únicamente
+la información semántica relevante: la estructura lógica del programa~\cite{scott2015}.
 
-En el dise\~no del DSL presentado en este trabajo, el AST cumple el papel
-de \textbf{representaci\'on intermedia independiente del backend}: el
-programador construye el AST mediante las formas del DSL, y el backend
-lo recorre para producir el c\'odigo Python de generaci\'on del \xlsx{}.
-Gracias a esta separaci\'on, el mismo AST podr\'{\i}a en principio alimentar
-backends alternativos (LibreOffice Calc, CSV, HTML) sin modificar la capa
-del DSL.
+Cada nodo del árbol corresponde a un constructo del lenguaje y sus hijos
+representan los subcomponentes de ese constructo.  Por ejemplo, la expresión
+\texttt{a + b} se representa como un nodo de suma con dos hijos: el nodo
+del identificador \texttt{a} y el nodo del identificador \texttt{b}.
 
-Cada nodo del AST es una instancia de una clase CLOS definida con la macro
-\dsl{defclass*}.  Los nodos se dividen en cuatro familias:
+En el diseño del DSL presentado en este trabajo, el AST cumple el papel
+central de \textbf{representación intermedia independiente del backend}.
+El programador construye el AST mediante las formas del DSL; un backend
+lo recorre y produce la salida deseada.  La elección del backend ---hojas
+de cálculo, bases de datos, una API web, un documento HTML--- es ortogonal
+al programa DSL: el mismo AST alimenta cualquier backend que implemente la
+interfaz de compilación.
+
+% ............................................................................
+\subsection{Generaci\'on de c\'odigo}
+\label{ssec:codegen}
+% ............................................................................
+
+La \textbf{generación de código} es el proceso que transforma el AST en
+código ejecutable o en código fuente de otro lenguaje, preservando el
+comportamiento descrito en el programa original~\cite{aho2006}.  El generador
+recorre el árbol nodo a nodo, produciendo para cada nodo la representación
+correspondiente en el lenguaje de destino.
+
+Este proceso puede producir código en cualquier lenguaje destino, lo que hace
+al AST una representación intermedia que desacopla el lenguaje de descripción
+del lenguaje de ejecución.  En este trabajo, el backend implementado genera
+programas Python para la biblioteca openpyxl; sin embargo, la misma
+representación AST podría alimentar un generador alternativo que produzca,
+por ejemplo, sentencias SQL o documentos HTML.
+
+Cada nodo del AST en este trabajo es una instancia de una clase CLOS definida
+con la macro \dsl{defclass*}.  Los nodos se dividen en seis familias:
 \begin{enumerate}
   \item Nodos de estructura del workbook (\dsl{xl-workbook}, \dsl{xl-sheet},
     \dsl{xl-region}, \dsl{xl-table}).
-  \item Nodos de expresi\'on de celda (\dsl{xl-expr-column-ref},
+  \item Nodos de expresión de celda (\dsl{xl-expr-column-ref},
     \dsl{xl-table-range}, \dsl{xl-expr-countif}, \dsl{xl-expr-if}, etc.).
-  \item Nodos de cuantificaci\'on existencial (\dsl{xl-expr-exists},
+  \item Nodos de navegación por filas (\dsl{xl-expr-previous-row},
+    \dsl{xl-expr-next-row}, \dsl{xl-expr-first-row}, etc.).
+  \item Nodos de cuantificación existencial (\dsl{xl-expr-exists},
     \dsl{xl-domain-rows}).
+  \item Nodos de referencia cruzada entre hojas (\dsl{xl-expr-cross-sheet-ref},
+    \dsl{xl-expr-cross-cell}, \dsl{xl-expr-collect-over}).
   \item Nodos de formato condicional y posicionamiento (\dsl{xl-style-rule},
     \dsl{xl-anchor}, \dsl{xl-nav}, \dsl{xl-sheet-fixed-expr}).
 \end{enumerate}
 
-Esta organizaci\'on se describe en detalle en el
-cap\'{\i}tulo~\ref{cap:dsl}.
+Esta organización se describe en detalle en el capítulo~\ref{cap:dsl}.
 
 % ---------------------------------------------------------------------------
 \section{El lenguaje de programaci\'on Common Lisp}
 \label{sec:lisp}
 % ---------------------------------------------------------------------------
 
-Common Lisp es un lenguaje de programaci\'on de prop\'osito general creado
-originalmente por John McCarthy en 1958~\cite{mccarthy1960} y estandarizado
-como Common Lisp en 1994~\cite{steele1990}.  Su elecci\'on como plataforma
-de implementaci\'on del DSL se justifica por cuatro caracter\'{\i}sticas
-decisivas.
+Common Lisp es un lenguaje de programación multiparadigma que combina los
+estilos funcional, imperativo y orientado a objetos~\cite{steele1990}.  Fue
+diseñado originalmente por John McCarthy en 1958~\cite{mccarthy1960} y
+estandarizado como Common Lisp en 1994.  Su elección como plataforma de
+implementación del DSL se justifica por su homoiconicidad y por dos
+mecanismos fundamentales: los macros y las funciones genéricas.
 
-% ............................................................................
-\subsection{Notaci\'on prefija y homoiconicidad}
-\label{ssec:prefija}
-% ............................................................................
-
-En Common Lisp, todas las expresiones son listas anidadas con notaci\'on
-prefija: el primer elemento es el operador y los siguientes son los
-argumentos.  Una llamada a funci\'on, la definici\'on de una clase, una
-iteraci\'on y una expresi\'on del DSL tienen exactamente la misma forma
-sint\'actica.
-
-Esta propiedad, llamada \textbf{homoiconicidad}, hace que el c\'odigo Lisp
-sea indistinguible de los datos Lisp~\cite{graham1993}.  El compilador puede
-inspeccionar y transformar el c\'odigo del mismo modo que inspecciona y
-transforma listas de datos.  Los DSL internos se benefician directamente
+\textbf{Homoiconicidad}: el código comparte la misma estructura que los
+datos.  En Common Lisp, todas las expresiones son listas anidadas con
+notación prefija: el primer elemento es el operador y los siguientes son
+los argumentos.  Una llamada a función, la definición de una clase, una
+iteración y una forma del DSL tienen exactamente la misma estructura
+sintáctica.  Esta propiedad hace que el compilador pueda inspeccionar y
+transformar el código del mismo modo que manipula listas de datos
+ordinarias~\cite{graham1993}.  Los DSL internos se benefician directamente
 de esto: las formas del DSL son listas ordinarias que los macros transforman
-en c\'odigo v\'alido.
+en código válido sin necesidad de ningún parser externo.
 
 % ............................................................................
 \subsection{Macros}
 \label{ssec:macros}
 % ............................................................................
 
-Un \textbf{macro} de Lisp es una funci\'on que opera sobre el c\'odigo fuente
-del programa ---representado como listas--- y devuelve c\'odigo nuevo que
-sustituye a la forma original antes de la compilaci\'on o evaluaci\'on~\cite{seibel2005}.
+Los \textbf{macros} de Common Lisp implementan metaprogramación: operan
+sobre representaciones simbólicas del código fuente antes de su evaluación,
+extendiendo el lenguaje sintácticamente~\cite{seibel2005}.  Un macro recibe
+como argumento el código fuente ---representado como una lista--- y devuelve
+código nuevo que sustituye a la forma original antes de la compilación.
 
-La diferencia con una funci\'on ordinaria es temporal: una funci\'on se
-eval\'ua en tiempo de ejecuci\'on; un macro se expande en tiempo de
-compilaci\'on.  Esta distinci\'on permite a los macros introducir nueva
-sintaxis y nuevas abstracciones sin coste en tiempo de ejecuci\'on.
+La diferencia con una función ordinaria es temporal: una función se evalúa
+en tiempo de ejecución; un macro se expande en tiempo de compilación.  Esta
+distinción permite introducir nueva sintaxis y nuevas abstracciones sin coste
+adicional en tiempo de ejecución.  Es esencial para implementar DSL internos
+que se leen como vocabulario del dominio pero se compilan a estructuras de
+datos eficientes.
 
 En este trabajo, cada constructo del DSL ---\dsl{def-table},
 \dsl{conditional-rendering}, \dsl{exists}, \dsl{nav}--- se implementa como
-un macro que construye uno o m\'as nodos del AST.  El programador escribe en
-vocabulario del dominio; el macro transforma esa escritura en llamadas a los
-constructores CLOS.
+un macro que construye uno o más nodos del AST.  El programador escribe en
+vocabulario del dominio; el macro transforma esa escritura en llamadas a
+los constructores CLOS.
 
 % ............................................................................
-\subsection{El Sistema de Objetos de Common Lisp (CLOS)}
+\subsection{Funciones gen\'ericas y CLOS}
 \label{ssec:clos}
 % ............................................................................
 
-El \textbf{Sistema de Objetos de Common Lisp} (CLOS, del ingl\'es
-\textit{Common Lisp Object System}) es el sistema de orientaci\'on a objetos
-integrado en el est\'andar del lenguaje~\cite{clos1988}.  Sus caracter\'{\i}sticas
-principales son:
+El \textbf{Sistema de Objetos de Common Lisp} (CLOS, del inglés
+\textit{Common Lisp Object System}) introduce las \textbf{funciones
+genéricas}: una interfaz común con múltiples métodos especializados según
+las características de los argumentos~\cite{clos1988}.  El despacho dinámico
+se realiza en función del tipo de los argumentos en tiempo de ejecución,
+lo que separa la definición de la interfaz de sus implementaciones concretas.
 
-\begin{description}
-  \item[Herencia m\'ultiple.] Una clase puede heredar de varias superclases
-    simult\'aneamente.  Los conflictos de herencia se resuelven mediante el
-    \textit{Class Precedence List} (CPL), un orden lineal determinista~\cite{keene1989}.
-
-  \item[Despacho m\'ultiple.] Los m\'etodos no pertenecen a una clase
-    espec\'{\i}fica.  Una funci\'on gen\'erica puede despachar sobre los tipos
-    de varios argumentos simult\'aneamente~\cite{kiczales1991}.  Esto significa
-    que el c\'omportamiento de \dsl{(compile-excel-formula nodo ...)} depende
-    del tipo de \dsl{nodo}, no de un m\'etodo ligado a una clase particular.
-
-  \item[Funciones gen\'ericas.] Las funciones polim\'orficas se declaran con
-    \dsl{defgeneric} y se especializan con \dsl{defmethod}.  A\~nadir soporte
-    para un nuevo tipo de nodo AST s\'olo requiere a\~nadir un nuevo
-    \dsl{defmethod}; el resto del sistema no se modifica.
-\end{description}
+Las funciones polimórficas se declaran con \dsl{defgeneric} y se especializan
+con \dsl{defmethod}.  A diferencia de los sistemas de objetos convencionales,
+CLOS soporta \textbf{despacho múltiple}: el método seleccionado puede
+depender del tipo de varios argumentos simultáneamente, no solo del
+``receptor''~\cite{kiczales1991}.
 
 En este trabajo, CLOS cumple dos funciones.  Primero, las clases CLOS
-representan los nodos del AST: cada tipo de nodo es una clase con slots
-que almacenan sus atributos.  Segundo, la funci\'on gen\'erica
-\dsl{compile-excel-formula} usa el despacho m\'ultiple para compilar
-cada tipo de nodo a su cadena de f\'ormula Excel correspondiente, sin
-ninguna estructura \dsl{cond} o \dsl{case} centralizada.
+representan los nodos del AST: cada tipo de nodo es una clase con slots que
+almacenan sus atributos.  Segundo, la función genérica del backend
+---\dsl{compile-excel-formula} en la implementación de demostración--- usa
+el despacho múltiple para compilar cada tipo de nodo a la representación de
+salida correspondiente, sin ninguna estructura \dsl{cond} o \dsl{case}
+centralizada.  Añadir soporte para un nuevo tipo de nodo solo requiere
+definir un nuevo \dsl{defmethod}; el resto del sistema no se modifica.
 
 % ............................................................................
 \subsection{La macro \texttt{defclass*}}
 \label{ssec:defclass-star}
 % ............................................................................
 
-Para reducir el c\'odigo repetitivo de definir clases CLOS y sus
-constructores, el sistema define la macro \dsl{defclass*}, que genera
-simult\'aneamente:
+La notación prefija de Lisp y la ausencia de la distinción entre código y
+datos hacen innecesario un lexer externo para construir el AST del DSL: cada
+forma del DSL es directamente una lista anidada que un macro puede transformar
+en un nodo del AST.  Para reducir el código repetitivo de definir clases CLOS
+y sus constructores, el sistema define la macro \dsl{defclass*}, que genera
+simultáneamente:
 
 \begin{itemize}
   \item Una clase CLOS con nombre \dsl{clase-xl-\textit{nombre}}, donde
     cada slot tiene un accessor y un \texttt{initarg} del mismo nombre.
-  \item Una funci\'on constructora \dsl{xl-\textit{nombre}} con
-    argumentos por clave (\dsl{\&key}), que crea una instancia de la clase
-    con los valores proporcionados.
+  \item Una función constructora \dsl{xl-\textit{nombre}} con argumentos
+    por clave (\dsl{\&key}), que crea una instancia de la clase con los
+    valores proporcionados.
 \end{itemize}
 
 \begin{lstlisting}[language=CommonLisp,
@@ -296,19 +233,73 @@ simult\'aneamente:
                         :argument-type ctr-args-type)))
 \end{lstlisting}
 
-Por ejemplo, la definici\'on del nodo \dsl{xl-expr-if}:
+Por ejemplo, la definición del nodo \dsl{xl-expr-if}:
 
 \begin{lstlisting}[language=CommonLisp,
   caption={Ejemplo de uso de defclass*.}]
 (defclass* xl-expr-if () (test then else))
 ;; genera:
-;;   (defclass clase-xl-expr-if () (test :accessor test :initarg :test)
-;;                                  (then :accessor then :initarg :then)
-;;                                  (else :accessor else :initarg :else))
+;;   (defclass clase-xl-expr-if ()
+;;     ((test :accessor test :initarg :test)
+;;      (then :accessor then :initarg :then)
+;;      (else :accessor else :initarg :else)))
 ;;   (defun xl-expr-if (&key test then else)
-;;     (make-instance 'clase-xl-expr-if :test test :then then :else else))
+;;     (make-instance 'clase-xl-expr-if
+;;       :test test :then then :else else))
 \end{lstlisting}
 
-Este patr\'on elimina el c\'odigo repetitivo de definici\'on de nodos y
-garantiza que cada clase tiene una funci\'on constructora consistente con
-su interfaz de inicializaci\'on.
+Este patrón elimina el código repetitivo de definición de nodos y garantiza
+que cada clase tiene una función constructora consistente con su interfaz
+de inicialización.
+
+% ---------------------------------------------------------------------------
+\section{Hojas de c\'alculo y el formato \xlsx{}}
+\label{sec:hoja-calculo}
+% ---------------------------------------------------------------------------
+
+El backend implementado en este trabajo produce archivos \xlsx{}, el formato
+de Microsoft Excel basado en Office Open XML~\cite{ooxml}.  Los conceptos
+siguientes son necesarios para comprender ese backend; no son centrales al
+diseño del DSL, que es independiente de cualquier formato de salida.
+
+Una \textbf{hoja de cálculo} (\textit{spreadsheet}) es una aplicación para
+organizar, calcular y visualizar datos en una cuadrícula bidimensional de
+celdas.  Cada celda puede contener un valor literal ---un número, una fecha
+o una cadena de texto--- o una \textbf{fórmula}: una expresión cuyo
+resultado se recalcula automáticamente cuando cambia cualquier celda de la
+que depende~\cite{microsoft-excel}.
+
+\begin{description}
+  \item[Workbook (libro de trabajo).] Un archivo \xlsx{} que agrupa una
+    o más hojas de trabajo.  Es la unidad de intercambio del formato
+    Office Open XML~\cite{ooxml}.
+
+  \item[Hoja de trabajo.] Una cuadrícula de celdas dentro del workbook,
+    identificada por un nombre (p.~ej., \texttt{Defensas}).
+
+  \item[Celda.] La unidad mínima de almacenamiento, referenciada por
+    una dirección del tipo \texttt{B4} (columna~B, fila~4) o
+    \texttt{\$B\$4} (referencia absoluta).
+
+  \item[F\'ormula.] Una expresión que comienza con \texttt{=} y puede
+    contener referencias a otras celdas, rangos y funciones predefinidas
+    como \texttt{COUNTIF}, \texttt{COUNTA}, \texttt{SUM}, \texttt{IF} o
+    \texttt{SUMPRODUCT}.
+
+  \item[Rango.] Un bloque rectangular de celdas contiguas, expresado como
+    \texttt{\$B\$4:\$F\$6} (columnas B--F, filas 4--6).
+
+  \item[Formato condicional.] Un mecanismo que aplica estilos visuales
+    ---color de relleno, color de texto, borde--- a las celdas de un rango
+    cuando se cumple una condición evaluada en tiempo de apertura o edición
+    del archivo.  Una \textbf{FormulaRule} es el tipo más general de regla
+    de formato condicional: la condición es una fórmula arbitraria, lo que
+    permite expresar condiciones que involucran otras hojas, otras celdas
+    o funciones de agregación~\cite{openpyxl}.
+\end{description}
+
+La biblioteca \textbf{openpyxl} es la herramienta Python elegida para
+producir archivos \xlsx{} en este trabajo.  Permite crear workbooks, escribir
+valores y fórmulas en celdas, y definir \texttt{FormulaRule} que quedan
+incrustadas en el archivo y se evalúan en Excel o LibreOffice Calc sin
+necesidad de código adicional~\cite{openpyxl}.

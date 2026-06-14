@@ -1,15 +1,16 @@
 % ===========================================================================
-%  Capítulo 4 — Generación de código
+%  Capítulo 4 — El backend Excel: generación de archivos .xlsx
 % ===========================================================================
-\chapter{Generaci\'on de c\'odigo}
+\chapter{El backend Excel: generaci\'on de archivos \xlsx{}}
 \label{cap:generacion}
 
-La generaci\'on de c\'odigo es la etapa del sistema que traduce el AST
-construido por las formas del DSL a un programa Python que produce el archivo
-\xlsx{}.  Este cap\'{\i}tulo describe c\'omo el backend resuelve las
-coordenadas Excel, c\'omo compila cada tipo de nodo de expresi\'on a una
-cadena de f\'ormula, y c\'omo genera las f\'ormulas SUMPRODUCT que
-implementan el formato condicional persistente.
+El DSL produce un \'arbol de sintaxis abstracta independiente de cualquier
+sistema de salida.  Este cap\'{\i}tulo describe el backend implementado como
+demostraci\'on: la traducci\'on de ese AST a un programa Python que, mediante
+la biblioteca openpyxl, construye un archivo \xlsx{} con f\'ormulas y formato
+condicional persistente.  La misma arquitectura ---funci\'on gen\'erica CLOS
+que despacha sobre el tipo de nodo--- puede emplearse para implementar
+backends alternativos sin modificar el DSL ni el AST.
 
 % ---------------------------------------------------------------------------
 \section{Arquitectura del backend}
@@ -32,10 +33,12 @@ El backend est\'a organizado en dos archivos con responsabilidades separadas:
     f\'ormula y llamadas a openpyxl.
 \end{description}
 
-El principio de separaci\'on de responsabilidades queda codificado en la
-propia arquitectura: \file{ast-def.lisp} declara \emph{qu\'e existe},
-\file{dsl-directo.lisp} declara \emph{c\'omo se escribe} y
-\file{generate-code-direct.lisp} declara \emph{a qu\'e se traduce}.
+El principio de separaci\'on queda codificado en la arquitectura:
+\file{ast-def.lisp} declara \emph{qu\'e existe},
+\file{dsl-directo.lisp} declara \emph{c\'omo se escribe},
+y \file{generate-code-direct.lisp} declara \emph{a qu\'e se traduce en
+este backend}.  Un backend alternativo reemplazar\'{\i}a \'unicamente los
+dos \'ultimos archivos sin tocar el AST ni el DSL.
 
 % ---------------------------------------------------------------------------
 \section{Resoluci\'on de coordenadas}

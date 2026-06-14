@@ -6,21 +6,23 @@
 \markboth{Conclusiones}{Conclusiones}
 
 El trabajo alcanz\'o los objetivos propuestos.  Se dise\~n\'o e implement\'o
-un lenguaje de dominio espec\'{\i}fico en Common Lisp para la generaci\'on
-declarativa de hojas de c\'alculo de planificaci\'on, y se valid\'o sobre
+un lenguaje de dominio espec\'{\i}fico en Common Lisp para la descripci\'on
+declarativa de estructuras tabulares de planificaci\'on, y se valid\'o sobre
 tres casos reales de la Facultad de Matem\'atica y Computaci\'on de la
-Universidad de La Habana.
+Universidad de La Habana mediante un backend que produce archivos \xlsx{}.
 
 Las conclusiones principales son las siguientes.
 
 \begin{enumerate}
 
-  \item \textbf{La separaci\'on entre intenci\'on e implementaci\'on es
-    alcanzable con un DSL interno en Lisp.}  El sistema permite declarar
-    tablas relacionadas, columnas calculadas, cuantificadores existenciales
-    y reglas de coloreado condicional sin escribir ninguna letra de columna
-    Excel, ninguna cadena de f\'ormula ni ninguna llamada a la API de destino.
-    El backend es el \'unico punto del c\'odigo donde viven esos detalles.
+  \item \textbf{La separaci\'on entre descripci\'on sem\'antica y backend de
+    generaci\'on es alcanzable con un DSL interno en Lisp.}  El sistema
+    permite declarar tablas relacionadas, columnas calculadas, cuantificadores
+    existenciales y reglas de coloreado condicional sin hacer referencia a
+    ning\'un detalle concreto del sistema de salida: ning\'un \'{\i}ndice de
+    columna, ninguna cadena de f\'ormula, ninguna llamada a API alguna.  El
+    backend es el \'unico punto del sistema donde viven esos detalles, y es
+    intercambiable sin modificar el programa DSL.
 
   \item \textbf{Las macros de Common Lisp son el mecanismo adecuado para
     implementar el DSL.}  La homoiconicidad del lenguaje hace que los macros
@@ -48,11 +50,13 @@ Las conclusiones principales son las siguientes.
     independientemente del n\'umero de filas de datos, lo que hace al
     programa resiliente ante cambios en el tama\~no de los conjuntos.
 
-  \item \textbf{El sistema genera archivos \xlsx{} con formato condicional
-    activo.}  La decisi\'on de usar \texttt{FormulaRule} en lugar de coloreado
-    est\'atico significa que la hoja de c\'alculo sigue siendo funcional cuando
-    el usuario la edita directamente en Excel, sin necesidad de volver a
-    ejecutar el DSL.
+  \item \textbf{El backend implementado genera archivos \xlsx{} con formato
+    condicional activo.}  La decisi\'on de usar \texttt{FormulaRule} en lugar
+    de coloreado est\'atico demuestra que la arquitectura es capaz de producir
+    salidas con comportamiento din\'amico: la hoja de c\'alculo sigue siendo
+    funcional cuando el usuario la edita directamente, sin necesidad de volver
+    a ejecutar el DSL.  Un backend alternativo podr\'{\i}a reproducir esta
+    propiedad en su propio formato de salida.
 
 \end{enumerate}
 

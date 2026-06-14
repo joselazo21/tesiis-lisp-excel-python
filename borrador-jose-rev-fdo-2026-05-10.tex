@@ -1,0 +1,140 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+\title{Fundamentos y estado del arte de la asignación de horarios \\
+        \large Fundamentos de Lenguajes y Representación}
+\author{José Ernesto Morales Lazo}
+\date{}
+
+\titleformat{\paragraph}
+    [hang] % formato
+    {\normalfont\normalsize\bfseries} % fuente (negrita, tamaño normal)
+    {\theparagraph} % cómo se muestra el número (ej. 1.1.1.1)
+    {1em} % espacio entre el número y el título
+    {} % código antes del título (vacío)
+\titlespacing*{\paragraph}
+    {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex} % márgenes y saltos de línea
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage[lmargin=2.5cm, rmargin=5cm]{geometry}
+\input{../../../../word-comments.tex}
+
+    
+\begin{document}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\maketitle
+
+\section{Fundamentos y Estado del Arte}
+\label{fundamentos}
+
+La programación automatizada de horarios es un \comadreja{reto} que combina la optimización matemática con el diseño de software. \agregaesto{¿POR QUÉ?} \comment{\evidencIA{Para abordar este desafío y proponer una solución efectiva, es necesario comprender primero la naturaleza del problema y, posteriormente, analizar cómo la industria tecnológica lo está resolviendo en la actualidad.}}{Probablemente se puda quitar} 
+
+En este sentido, la presente sección establece las bases teóricas y \evidencIA{el contexto tecnológico de la investigación}. En primer lugar, la sección~\ref{tipos} define los conceptos fundamentales de \comment{la asignación de recursos}{Esto puede confundir, sobre todo porque existe otro tipo de problema que se llama problema de asignación, propong escribir directo problemas de horarios o de planificación... o no, planificación tampoco porque también existe el problema de planificación :paf:.}, explicando las restricciones típicas y contrastando cómo cambia el problema dependiendo de si se aplica en un entorno académico o en uno televisivo. Luego la sección~\ref{arte} explora el estado del arte, analizando las aplicaciones comerciales líderes \comment{en ambos sectores}{¿en qué sectores?} y detallando la arquitectura y las tecnologías modernas sobre las que están construidas.
+
+\subsection{Tipos de problemas de horarios}
+\label{tipos}
+
+La asignación de horarios es un problema de planificación \comadreja{muy común} en diversos contextos \cite{babaei2015}. \quitaesto{Basicamente}, consiste en organizar un conjunto de actividades en intervalos de tiempo determinados, respetando una serie de restricciones que limitan las posibles combinaciones.
+
+\agregaesto{MENCIONA AQUÍ UN PAR DE EJEMPLOS, ANTES DE EMPEZAR A HABLAR DE LOS TIPOS DE RESTRICCIONES. PON UN PAR DE EJEMPLITOS SENCILLOS, CON RESTRICCIONES INCLUIDAS. DESPUÉS DI QUE LAS RESTRICCIONES SE DIVIDEN EN DOS TIPOS... Y SIGUE CON EL PÁRRAFO DE ABAJO.}
+
+Estas restricciones se dividen en dos tipos: duras y blandas. Las restricciones duras son obligatorias; si no se cumplen, el horario simplemente no es válido. Por otro lado, las restricciones blandas \comment{representan preferencias}{no solo preferencias y no siempre son preferencias. Aunque la idea está bien, cambia la forma de escribirlo}; no cumplir con ellas no invalida el horario, pero sí disminuye su calidad general.
+
+Entre las restricciones más habituales se encuentran los conflictos y los solapamientos. Un conflicto ocurre cuando dos o más actividades intentan usar un mismo recurso limitado al mismo tiempo (como dos clases queriendo usar la misma aula). Un solapamiento, en cambio, se da cuando a una misma persona o grupo se le asignan actividades que coinciden en el mismo horario, haciendo imposible que asistan a ambas.
+
+\agregaesto{PON EJEMPLOS AQUÍ.}
+
+Además de estas reglas, es necesario tener en cuenta la \queesesto{disponibilidad real} de los espacios, los materiales y el personal. Si estos factores \queesesto{no se gestionan de forma adecuada}, la logística y el funcionamiento normal de la institución pueden verse \comadreja{gravemente afectados}.
+
+\quitaesto{Sin embargo,} este problema cambia dependiendo \comment{del área en la que se aplique}{sería bueno mencionar cuáles son las posibles áreas}, ya que cada entorno tiene sus propias reglas y objetivos. A continuación, se describen dos ejemplos representativos: los horarios de facultad (Sección~\ref{facultad}) y los horarios de televisión (Sección~\ref{tv}).
+
+\subsubsection{Horario de facultad}
+\label{facultad}
+
+En el entorno universitario, el problema \agregaesto{de planificación del horario docente} consiste en asignar clases, profesores y aulas a distintos bloques de tiempo, cumpliendo con varias condiciones \cite{abdennadher2000, muller2005, babaei2015}. Las más importantes incluyen respetar la capacidad máxima de las aulas, la disponibilidad de los profesores y garantizar que un grupo de estudiantes no tenga dos materias al mismo tiempo. El objetivo principal es lograr un horario funcional que aproveche bien los recursos y \comment{evite problemas}{¿qué son problemas en este contexto?}. Por ejemplo, si se programa la clase de ``Análisis Matemático'' para el grupo ``C111'' los miércoles a las 9:15 a.m. en el aula ``5'', el sistema debe asegurar estrictamente que el profesor asignado no tenga otra clase a esa misma hora.
+
+\notaparaelautor{Aquí sería bueno mencionar que las restricciones de una horario universitario puede cambiar de una institución a otra. Quizás en uno hay una restricción fuerte con las aulas (como pasa en MATCOM), pero eso no tiene que ser necesariamente así. Por ejemplo, recuerdo que en algún momento estuve revisando un documento de planificación de horarios en la univesrsidad de pinar del río y ellos no tienen absolutamente ningún problema con las aulas. Por ejemplo, creo que en Química no hay problemas con las aulas... de hecho, más o menos le sobran... el lío ahí son los laboratorios... Aunque los laboratorios son un tipo de aula... Bueno... en fin, sería bueno buscar ejemplos de otros escenarios en lo que haya otro tipo de restricciones complicadas. Ah, mira, en la planificación de defensas de tesis, ahí casi siempre el problema son las colisiones de profesores.}
+
+Aunque la planificación universitaria se centra en organizar recursos educativos que son limitados, existen otros sectores con problemas de horarios similares, pero con un enfoque más comercial, como es el caso de la televisión.
+
+\subsubsection{Horario de televisión}
+\label{tv}
+
+\comment{En la televisión}{No es \textit{en la televisión} en general, sino en la confección de la parrilla televisiva}, el reto es organizar los programas en distintas franjas horarias para conseguir la mayor audiencia posible \cite{bollapragada2002}. Para lograrlo, se toman en cuenta factores como el tipo de público que ve la televisión en cada horario, la competencia con otros canales y la duración exacta de los programas \cite{fernandez2008}. Por ejemplo, el encargado de la programación debe asegurarse de \comment{que la novela se transmita durante las mañanas}{:-o ¿eso dónde pasa tú? :-o} de los fines de semana \agregaesto{[REF]}, o evitar que un noticiero importante coincida con la transmisión en vivo de un evento deportivo que pueda alargarse más de lo previsto \agregaesto{[REF]}. A diferencia del entorno escolar, aquí el enfoque es estratégico y comercial \agregaesto{[REF]}.
+
+\notaparaelautor{Igual menciona aquí algunos tipos de restricciones duras y blandas.}
+
+\vspace{0.5cm}
+
+Debido a la gran cantidad de variables y a lo estrictas que son las restricciones en ambos casos, \cambio{armar}{confeccionar} estos horarios de forma manual en herramientas básicas resulta un proceso \comadreja{muy lento} y propenso a errores humanos \agregaesto{[REF]}. Esta dificultad \comment{hace necesario}{Yo no diría que es estrictamente necesario, sino conveniente.} el uso de software especializado. En la siguiente sección, se detallará el estado del arte de las aplicaciones y tecnologías actuales que existen para automatizar y facilitar la confección de horarios.
+
+\notaparaelautor{Incorpora por aquí la descripción de la planificación de los horarios de las tesis, que es el otro tipo de horario que debemos poner de ejemplo en la tesis \texttt{:-D}.}
+
+\subsection{Aplicaciones existentes para la gestión de horarios}
+\label{arte}
+
+En el ámbito académico, la gestión de horarios se centra en la resolución del \textit{Educational Timetabling Problem} (ETP) \agregaesto{[REF, REF, REF, REF]}. Entre las aplicaciones más destacadas se encuentran \agregaesto{TAL, TAL Y TAL. A continuación se describen sus características más importantes.}\quitaesto{:}
+
+\begin{itemize}
+    \item \textbf{Coursedog y TimeEdit:} Representan el estado del arte en educación superior \agregaesto{[REF]}. Estas plataformas \comment{SaaS (Software as a Service)}{No... si lo usas así lleva un ¿qué es esto?. Antes de usarlo deberías mencionarlo. Quizás lo ideal sería que en el parrafito introductorio de la sección menciones que existe varios \textit{tipos} de aplicaciones algunas de escritorio, otras de software como servicio, y ahí describes en qué consiste.} permiten a los decanos y coordinadores \queesesto{gestionar recursos en tiempo real}, ofreciendo interfaces de validación que alertan sobre conflictos de aulas o solapamientos de profesores de manera visual \cite{bass2021}.
+  
+  \agregaesto{PON UNA IMAGEN AQUÍ. Uffff... creo que se vienen pila de solicitud de imágenes de cada una de las aplicaciones.}
+  
+    \item \textbf{aSc Horarios:} Es una de las herramientas más extendidas globalmente para la educación primaria y secundaria \agregaesto{[REF]}. Destaca por su capacidad de generar horarios automáticos basados en heurísticas y por su interfaz interactiva de arrastrar y soltar que facilita la edición manual asistida \cite{pillay2016}.
+
+  \agregaesto{En efecto... pila de solicitud de imágenes de cada una de las aplicaciones :-D. PON UNA IMAGEN AQUÍ.}
+  
+    \item \textbf{Syllabus Plus:} Utilizada por grandes universidades \agregaesto{como TAL [REF] y MÁSCUÁL [REF]},  se enfoca en la \queesesto{optimización de rutas de aprendizaje de los estudiantes}, garantizando que el horario no solo cumpla con la disponibilidad docente, sino que sea viable para el cuerpo estudiantil \agregaesto{[REF]}.
+
+   \agregaesto{IMAGEN AQUÍ DE LA INTERFAZ.}
+   
+\end{itemize}
+
+En el sector de la televisión y radiodifusión, las aplicaciones deben gestionar \cambio{la}{¿con?} precisión milimétrica de la emisión y las restricciones comerciales \agregaesto{[REF].}\quitaesto{:} \agregaesto{ALGO COMO: PARA ESTO TAMBIÉN EXISTEN APLICACIONES COMO TAL, TAL Y TAL QUE SE DESCRIBEN A CONTINUACIÓN.}
+
+\begin{itemize}
+    \item \textbf{MEDIAGENIX (WHATS'On):} Es el estándar europeo para la gestión de canales de televisión y plataformas VOD. Permite la planificación de parrillas a largo plazo, \queesesto{validando automáticamente los derechos de emisión} y las \queesesto{reglas de pauta publicitaria} \cite{mediagenix2024}.
+
+  \notaparaelautor{Para resolver esos dos \textit{quéjeso} puedes mencionar que a la planificación de programación en estaciones de radio y televisión se le suma tal y tal complejidad, y ahí las describes.}
+
+  \agregaesto{IMAGEN AQUÍ DE LA INTERFAZ DE USUARIO.}
+  
+    \item \textbf{BroadView y Amagi:} Soluciones que integran la \comment{\queesesto{planificación del tráfico}}{¿qué tiene que ver el tráfico con los horario de nosotros?} con la \queesesto{automatización del \textit{playout}} \agregaesto{[REF]}. Estas aplicaciones aseguran que \comment{el horario generado (playlist)}{Ahhh... esto debes decirlo por allá arriba.} se ejecute \queesesto{sin errores técnicos} \queesesto{ni huecos de emisión (blackouts)}, utilizando \queesesto{validaciones de tiempos en tiempo real} \cite{matthews2018}.
+\end{itemize}
+
+\agregaesto{TRANSICIÓN A LO QUE SIGUE.}
+
+\subsubsection{Tecnologías empleadas en el desarrollo de estas aplicaciones}
+
+\queesesto{La arquitectura tecnológica} de estas herramientas ha migrado hacia \queesesto{ecosistemas escalables} que garantizan la integridad de los datos y la rapidez de respuesta: \notaparaelautor{menciona aquí los elementos del itemize antes de poner las descripciones en el itemize.}
+
+\begin{itemize}
+    \item \textbf{Tecnologías de Frontend:} \comadreja{La mayoría} de las aplicaciones modernas utilizan frameworks de JavaScript como \textbf{React.js} \agregaesto{[REF]}, \textbf{Vue.js} \agregaesto{[REF]} o \textbf{Angular} \agregaesto{[REF]}. Estas tecnologías permiten crear interfaces reactivas donde el usuario recibe retroalimentación inmediata (cambios de color o alertas) ante el incumplimiento de una restricción, similar a \comment{la lógica de validación visual mediante formatos condicionales}{¿qué es esto? Es la primera vez que aparece. Para poderlo usar aquí tienes que haberlo explicado antes.} \cite{garcia2024}.
+
+  \notaparaelautor{Las referencias que te estoy solicitando ahí es donde se justifique que esas aplicaciones de horarios usan esas tecnologías.}
+
+  
+    \item \textbf{Backend y Motores de Optimización:} \queesesto{El procesamiento \comadreja{pesado}} se delega a microservicios escritos en lenguajes de alto rendimiento como \textbf{Java}, \textbf{Go} o \textbf{Python} \comment{\agregaesto{[REF]}}{Esta referencia es la que dice que esos lenguajes se usan en esas aplicaciones de horario.}. Estos entornos ejecutan motores de satisfacción de restricciones (Constraint Solvers) como \textit{OptaPlanner} \agregaesto{[REF]} o \textit{Google OR-Tools} \agregaesto{[REF]}, que operan de forma independiente a la interfaz de usuario.
+    \item \textbf{Persistencia y Bases de Datos:} \comment{A diferencia de los archivos planos, estas aplicaciones utilizan}{Si pones esta oración estás comparando las aplicaciones de horario con los archivos planos. Creo que lo que quieres hacer es comparar la forma de almacenar la información} bases de datos relacionales como \textbf{PostgreSQL} o \textbf{SQL Server} \comment{\agregaesto{[REF]}}{A la justificación de que esto es lo que se usa en esas aplicaciones.}, lo que permite gestionar la concurrencia (múltiples usuarios editando el horario a la vez) y mantener un historial de auditoría de todos los cambios realizados \agregaesto{[REF]}.
+    \item \textbf{Formatos de Intercambio e Interoperabilidad:} Para la exportación de datos, los sistemas académicos emplean estándares como \textbf{JSON} e \comment{\textbf{iCal} (.ics)}{De esto deberías hablar en algún momento, en los preliminares, evidentemnete antes de llegar hasta aquí. Porque en tus preliminares debemos hablar no solo de las interfases visuales, sino también de la forma en l que se almacena la información.}. En el ámbito televisivo, \comment{el estándar predominante es el \textbf{BXF} (Broadcast eXchange Format)}{Decididamente sí, falta una sección de formatos para almacenar información de horarios, que va antes de las bibliotecas existentes. En esa sección también debes incluir ficheros de excel, porque en algunos lugares, como en la facultad, así es como se almacena la información de los horarios.}, un esquema basado en XML que permite la comunicación entre el software de programación y los equipos de emisión física \cite{smpte2021}.
+\end{itemize}
+
+
+\bibliographystyle{plain}
+\bibliography{referencias}
+
+\end{document}

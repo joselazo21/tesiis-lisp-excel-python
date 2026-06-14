@@ -95,24 +95,41 @@
 % ──────────────────────────────────────────────────────────────────────────────
 \begin{document}
 
-\chapter{Tutorial: construcción de un libro de cálculo con el DSL}
+\chapter{Tutorial: definición de una visualización de horarios con el DSL}
 \label{cap:tutorial}
 
 Este capítulo narra, paso a paso, el proceso de construir un programa completo
 en el DSL a partir de la descripción de un problema de horario.
-El ejemplo es un \textbf{horario de defensas de tesis}: dado un conjunto de
-profesores, estudiantes y locales, se necesita un libro de cálculo que liste
-las defensas programadas, compute automáticamente cuántas defensas acumula
+
+La filosofía del DSL es \textbf{separar la descripción del problema de su
+generación}: el programador declara qué información mostrar (tablas, fórmulas,
+coloreado condicional) y el generador produce el programa que materializa esa
+visualización en el formato de salida deseado.
+
+El ejemplo será un \textbf{horario de defensas de tesis}: dado un conjunto de
+profesores, estudiantes y locales, se necesita una aplicación que liste
+las defensas programadas, calcule automáticamente cuántas defensas acumula
 cada profesor y resalte en rojo a los profesores con conflicto de horario.
 
-La filosofía del sistema es \textbf{separar la descripción del problema de su
-generación}: el programador declara la estructura del libro (tablas, fórmulas,
-coloreado condicional) y el generador produce el archivo \texttt{.xlsx}
-de forma automática.
+La generación a un libro Excel es solo una de las opciones que ofrece el DSL;
+el mismo programa podría producir, sin cambios, una hoja LibreOffice, un
+informe PDF o una tabla HTML.
+
+\paragraph{Estructura del capítulo.}
+En la Secci\'on~1 se enumeran las herramientas necesarias.
+La Secci\'on~2 presenta los conceptos fundamentales del DSL.
+En la Secci\'on~3 se analiza el problema y se deciden las
+tablas.  Las secciones~4 y~5 muestran c\'omo definir cada tabla
+con el DSL.  La Secci\'on~6 explica el formato de los datos de entrada.
+La Secci\'on~7 ensambla el programa completo y
+la Secci\'on~8 detalla c\'omo generar y ejecutar la aplicaci\'on.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Requisitos}
 \label{sec:requisitos}
+
+Antes de comenzar conviene tener claro qué programas hay que instalar y cómo
+se organizan los archivos del proyecto.
 
 \subsection{Software necesario}
 
@@ -151,32 +168,7 @@ Los archivos de la raíz son la \textbf{biblioteca del generador} y no
 deben modificarse.  El usuario únicamente crea su propio programa DSL
 y su archivo de datos.
 
-\subsection{Ejecución}
-
-Hay dos formas equivalentes de ejecutar el flujo completo.
-
-\textbf{Opción A — script incluido} (recomendada para comenzar):
-
-\begin{lstlisting}[language=bash, numbers=none, backgroundcolor=\color{gray!10},
-                   basicstyle=\ttfamily\small, keywordstyle={}]
-cd tutorial/
-chmod +x generar.sh   # solo la primera vez
-./generar.sh
-\end{lstlisting}
-
-\textbf{Opción B — carga directa con SBCL}:
-
-\begin{lstlisting}[language=bash, numbers=none, backgroundcolor=\color{gray!10},
-                   basicstyle=\ttfamily\small, keywordstyle={}]
-cd tutorial/
-sbcl --script tutorial-horario.lisp
-\end{lstlisting}
-
-Ambas opciones cargan el DSL, construyen el árbol AST, generan el programa
-de construcción del libro y lo ejecutan para crear el archivo \texttt{.xlsx}.
-La diferencia es que el script imprime mensajes de progreso y verifica que
-el archivo fue creado correctamente.  La sección~\ref{sec:generar} explica
-el flujo con más detalle.
+Con el entorno listo, pasemos ahora a los conceptos que dan forma al DSL.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Conceptos fundamentales}
@@ -185,24 +177,37 @@ el flujo con más detalle.
 \subsection{El árbol de sintaxis abstracta (AST)}
 
 Cuando el usuario escribe definiciones en Common Lisp usando las macros del
-sistema, estas construyen automáticamente objetos en memoria que forman un
+DSL, estas construyen automáticamente objetos en memoria que forman un
 \textbf{árbol de sintaxis abstracta (AST)}.  Cada nodo del árbol representa
 un concepto del problema: una tabla, una expresión de celda, un cuantificador
 existencial, una regla de coloreado.
 
-El usuario \textbf{nunca manipula el árbol directamente}: trabaja con las
-macros de alto nivel descritas en este documento.
+El usuario trabaja únicamente con las macros de alto nivel descritas en este
+documento; nunca necesita manipular el AST a mano.  Esto es relevante porque
+libera al programador de tener que conocer la estructura interna del árbol:
+puede concentrarse en declarar qué quiere modelar y dejar que las macros
+construyan la representación intermedia automáticamente.
+
+El AST es el puente entre el programa del usuario y el generador: una vez
+construido, puede alimentar cualquier backend.  Esto nos lleva a una
+propiedad fundamental del DSL.
 
 \subsection{El DSL es independiente del generador de código}
 
-El AST no contiene ninguna referencia a Excel, a Python ni a ninguna otra
-tecnología concreta.  Es una representación \textbf{neutral del problema}.
-Cualquier componente que sepa recorrer el árbol e interpretar sus nodos
-puede actuar como generador de código para el destino que desee.
+El AST no contiene ninguna referencia a Excel, a Python ni a ningún otro
+formato de salida concreto.  Es una representación \textbf{neutral del problema}.
+
+Un \emph{generador de código} es cualquier programa que tome el AST como
+entrada, \emph{recorra} sus nodos (es decir, los visite uno por uno en orden)
+y, para cada nodo, \emph{interprete} su significado (decida qué instrucción
+o construcción emitir en el lenguaje de salida).  El \emph{destino} es el
+formato o plataforma para el que se genera código: Excel, LibreOffice, PDF,
+HTML, entre otros.  Así, cambiando solo el generador, el mismo AST produce
+resultados en destinos distintos.
 
 En este trabajo el generador implementado toma el AST y produce un
 \textbf{script Python} que usa la biblioteca \texttt{openpyxl} para
-construir el archivo \texttt{.xlsx}.  Pero el mismo DSL podría alimentar,
+construir un archivo \texttt{.xlsx}.  Pero el mismo DSL podría alimentar,
 sin cambio alguno en el programa del usuario, un generador diferente que
 produjera, por ejemplo, una hoja LibreOffice, un informe PDF o una tabla
 HTML.
@@ -217,38 +222,63 @@ LibreOffice Calc sin necesidad de tener instalado Python ni SBCL.
 
 \subsection{Etapas de la canalización}
 
-El proceso de generación tiene tres etapas claramente separadas:
+Una \emph{canalización} (o \emph{pipeline}) es una secuencia de etapas por las
+que pasa el programa desde que se escribe en el DSL hasta que se obtiene el
+resultado final.  El proceso tiene tres etapas separadas:
 
 \begin{enumerate}
-  \item \textbf{Expansión de macros.}  Cada forma del DSL
-    (\texttt{def-table}, \texttt{exists}, \texttt{conditional-rendering})
-    se expande en un nodo del AST.
+  \item \textbf{Construcción del AST.}  Cada \emph{forma} del DSL
+    (cada instrucción como \texttt{def-table}, \texttt{exists},
+    \texttt{conditional-rendering}) se traduce a un nodo del árbol de
+    sintaxis abstracta.  Esta traducción la hacen las \emph{macros} de
+    Lisp: toman la forma escrita por el programador y la convierten en
+    una instancia de una clase del AST con sus campos correspondientes.
+    A esto se le llama ``expandir'' la forma.
 
-  \item \textbf{Generación de código.}  El árbol se pasa al generador,
-    que recorre cada nodo y produce el programa de construcción del libro.
-    En el backend incluido, ese programa es un script Python.
+  \item \textbf{Generación de código.}  El AST se pasa al generador,
+    que recorre cada nodo y produce el programa de la aplicación en el
+    formato de salida deseado.  En el backend Excel que acompaña al DSL,
+    ese programa es un script Python.
 
   \item \textbf{Ejecución.}  El programa generado se ejecuta y crea el
     archivo de salida con datos, fórmulas y reglas de formato condicional
     incrustadas.
 \end{enumerate}
 
+Visto cómo funciona el DSL por dentro, pasemos ahora a modelar el problema
+concreto de las defensas de tesis.
+
 \subsection{Principio central: intención vs.\ implementación}
 
 El DSL declara \emph{qué} debe ocurrir (``colorear los profesores con
 conflicto de horario''); el generador decide \emph{cómo} implementarlo
-según el destino (para el backend Excel, genera una \texttt{FormulaRule}
-\texttt{SUMPRODUCT} que persiste y recalcula en la hoja).  El programador
-del DSL no escribe ninguna fórmula ni ningún código del destino.
+según el destino.  Por ejemplo, para el backend Excel se genera una
+regla de formato condicional con la fórmula \texttt{SUMPRODUCT}.
+\texttt{SUMPRODUCT} es una función de Excel que multiplica matrices
+elemento a elemento y suma los resultados; aquí se usa para detectar
+fácilmente si dos defensas comparten profesor y horario.  La regla
+\emph{persiste} en el archivo \texttt{.xslx} (queda incrustada, no se
+pierde al cerrar el libro) y \emph{recalcula} automáticamente cada vez
+que se modifican los datos, sin necesidad de regenerar nada.
+
+El programador del DSL se abstrae por completo de estos detalles: no
+escribe la fórmula \texttt{SUMPRODUCT}, no usa la sintaxis de Excel,
+no sabe si el backend genera fórmulas, colores fijos o algún otro
+mecanismo.  Solo declara la condición con \texttt{exists} y el DSL se
+encarga del resto.
+
+Con estos fundamentos claros, apliquémoslos al problema concreto.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Del problema a las tablas}
 \label{sec:modelado}
 
 El primer paso es decidir cómo representar el dominio del problema en filas
-y columnas.
+y columnas.  Esta decisión es la más importante del modelado: de ella depende
+qué tablas hacen falta, qué columnas tiene cada una y cómo se relacionan
+entre sí.
 
-\subsection{El problema}
+\subsection{El problema del horario de defensas}
 
 Se necesita planificar las defensas de tesis de una facultad.  Cada defensa
 tiene un estudiante, un tribunal de cinco profesores (tutor, oponente,
@@ -256,27 +286,33 @@ presidente, vocal y secretario), un día, una hora y un local.  Además, se
 quiere saber cuántas defensas acumula cada profesor y detectar si algún
 profesor tiene dos defensas programadas a la vez.
 
+A partir de esta descripción, el primer paso de diseño es decidir cómo
+organizar la información en tablas.
+
 \subsection{Decidir cuántas tablas hacen falta}
 
 \begin{decisionbox}{Decisión de diseño}
 La pregunta clave es: \emph{¿qué es una fila?}
 
 Si una fila es \textbf{una defensa}, la tabla tiene tantas filas como
-defensas y sus columnas son: estudiante, los cinco roles del tribunal,
+defensas se deben planificar y sus columnas son: estudiante, los cinco roles del tribunal,
 día, hora y local.
 
 Si una fila es \textbf{un profesor}, la tabla tiene tantas filas como
-profesores y necesita una columna calculada que cuente en cuántas
-defensas participa.
+profesores existen y necesita una columna calculada que cuente en cuántas
+defensas participa.  En esta tabla habrá que agregar además columnas
+para el nombre y el grado académico de cada profesor.
 
-El libro necesita \emph{ambas} perspectivas: se usan dos tablas en la
-misma hoja que se referencian entre sí.
+La aplicación necesita \emph{ambas} perspectivas.  Por ese motivo se usan
+dos tablas en la misma hoja: la tabla de defensas y la tabla de profesores
+se referencian mutuamente (la segunda cuenta cuántas veces aparece cada
+profesor en la primera).
 \end{decisionbox}
 
 \subsection{Tabla de defensas}
 
-La \textbf{tabla de defensas} (\texttt{defensas-table}) tiene una fila
-por defensa:
+La respuesta ``una fila es una defensa'' da lugar a la \textbf{tabla de
+defensas} (\texttt{defensas-table}):
 
 \begin{center}
 \begin{tabular}{ll}
@@ -299,16 +335,20 @@ por defensa:
 \begin{infobox}{Por qué los cinco roles van juntos y en ese orden}
 Los roles \texttt{tutor}, \texttt{oponente}, \texttt{presidente},
 \texttt{vocal} y \texttt{secretario} son columnas consecutivas.
-Esta disposición permite referenciarlos como un rango continuo
-\texttt{(trange defensas-table tutor secretario)} al calcular cuántas
-veces aparece un profesor en cualquier rol, sin necesidad de sumar
-cinco búsquedas separadas.
+Esta disposición permite referenciar las cinco columnas como un solo
+rango ---una secuencia continua de celdas--- mediante la expresión
+\texttt{(trange defensas-table tutor secretario)}.  Así se cuenta
+cuántas veces aparece un profesor en cualquier rol con una sola
+llamada, sin tener que hacer cinco búsquedas independientes y sumarlas.
 \end{infobox}
+
+Ya tenemos la estructura conceptual.  En la
+Sección~\ref{sec:defensas-table} veremos cómo traducirla a código del DSL.
 
 \subsection{Tabla de profesores}
 
-La \textbf{tabla de profesores} (\texttt{profesores-table}) tiene una fila
-por profesor:
+La respuesta ``una fila es un profesor'' da lugar a la \textbf{tabla de
+profesores} (\texttt{profesores-table}):
 
 \begin{center}
 \begin{tabular}{ll}
@@ -322,9 +362,28 @@ por profesor:
 \end{tabular}
 \end{center}
 
+Esta tabla es más interesante que la anterior porque introduce tres
+características nuevas del DSL:
+\begin{itemize}
+  \item \textbf{Columna calculada}: \texttt{defensas} no se introduce a mano
+    sino que se obtiene mediante una fórmula que cuenta apariciones.
+  \item \textbf{Referencia cruzada}: la fórmula busca en la tabla de defensas,
+    no dentro de la propia tabla.
+  \item \textbf{Formato condicional}: los profesores con conflicto de horario
+    se colorean automáticamente.
+\end{itemize}
+Veremos cómo implementar cada una en la
+Sección~\ref{sec:profesores-table}.
+
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Definir la tabla de defensas}
 \label{sec:defensas-table}
+
+Vamos a escribir el código DSL de las dos tablas.  Todo este código se coloca
+en el archivo \texttt{tutorial-horario.lisp} que crea el usuario.
+Empecemos por la tabla de defensas, que es la más sencilla.
+
+La macro principal para definir una tabla es \texttt{def-table}:
 
 \begin{sintaxisbox}{def-table}
 \begin{lstlisting}
@@ -335,11 +394,24 @@ por profesor:
 \end{lstlisting}
 \end{sintaxisbox}
 
-Cada par \texttt{(columna "Cabecera")} declara el nombre interno (símbolo
-DSL) y el texto del encabezado visual de la columna.
+Cada par {\shorthandoff{"}\texttt{(columna "Cabecera")}} declara dos cosas:
+\begin{itemize}
+  \item \textbf{columna} es el \emph{nombre interno} (un símbolo del DSL)
+    que se usa para referirse a esa columna en expresiones como
+    \texttt{(col nombre)}, \texttt{(trange ... nombre)} o
+    \texttt{(param nombre)}.
+  \item {\shorthandoff{"}\texttt{"Cabecera"}} es el \emph{texto del encabezado visual}, es
+    decir, la etiqueta que se muestra en la fila de encabezados de la tabla
+    en el archivo de salida.  El {\shorthandoff{"}\texttt{""}} en el código indica que el
+    encabezado se rellenará más adelante desde los datos de entrada.
+\end{itemize}
 Las opciones \texttt{:cell-height} y \texttt{:cell-width} controlan cuántas
-filas y columnas físicas de Excel ocupa cada fila o columna lógica
-(el valor 1 es el caso habitual).
+unidades físicas (filas o columnas de la cuadrícula de la aplicación) ocupa
+cada fila o columna lógica del modelo (el valor 1 es el caso habitual;
+valores mayores sirven para tablas con celdas que abarcan varias filas o
+columnas en la representación visual).
+
+Apliquemos esta sintaxis a la tabla de defensas.
 
 \begin{lstlisting}[caption={Definicion de defensas-table.}]
 (def-table defensas-table
@@ -349,9 +421,14 @@ filas y columnas físicas de Excel ocupa cada fila o columna lógica
   :cell-width 1)
 \end{lstlisting}
 
-El valor \texttt{""} en cada par indica que la columna se rellena con datos
-externos; no es un encabezado visible sino el valor por defecto de la celda
-antes de que el generador coloque las fórmulas.
+El valor \texttt{""} en cada par es un marcador que indica que esa columna
+no tiene un valor fijo: se rellenará con datos externos o con el resultado
+de una fórmula.  El DSL ofrece también una alternativa más expresiva:
+la constante \texttt{*empty*} y el macro \texttt{empty} (que veremos en la
+Sección~\ref{sec:profesores-table}) representan el vacío semántico de
+forma explícita, y cada backend decide cómo traducirlo (en Excel/Python
+produce \texttt{""}, pero en otros formatos podría ser \texttt{null},
+\texttt{nil} o simplemente omitir la celda).
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Definir la tabla de profesores}
@@ -359,12 +436,26 @@ antes de que el generador coloque las fórmulas.
 
 La tabla de profesores introduce tres características nuevas: columnas
 calculadas, referencias cruzadas y formato condicional.
+Veamos cada una por separado, empezando por la columna calculada.
 
 \subsection{Columna calculada con \texttt{:computed}}
 
-La opción \texttt{:computed} asocia columnas a expresiones DSL que el
-generador traduce a fórmulas Excel.  El valor de esa celda en los datos
-de entrada se ignora: la celda mostrará siempre el resultado de la fórmula.
+La columna \texttt{defensas} de la tabla de profesores no se introduce a
+mano: queremos que se calcule automáticamente contando en cuántas defensas
+participa cada profesor.  En lenguaje natural sería: ``para cada profesor,
+cuenta cuántas filas de la tabla de defensas contienen su nombre en
+cualquiera de los cinco roles''.  El DSL expresa esto con una columna
+\emph{calculada}.
+
+La opción \texttt{:computed} asocia columnas a \textbf{expresiones DSL},
+que son las formas que proporciona el lenguaje para describir cálculos
+(\texttt{countif}, \texttt{trange}, \texttt{col}, \texttt{str}, entre
+otras).  El generador traduce cada expresión al mecanismo apropiado
+según el destino (una fórmula de celda en Excel, una expresión en otros
+formatos).  El valor de esa celda en los datos de entrada se ignora:
+la celda mostrará siempre el resultado de la expresión.
+
+El código siguiente aplica esta opción a la tabla de profesores:
 
 \begin{lstlisting}[caption={Columna defensas calculada con COUNTIF.}]
 (def-table profesores-table
@@ -376,25 +467,47 @@ de entrada se ignora: la celda mostrará siempre el resultado de la fórmula.
                         (col nombre)))))
 \end{lstlisting}
 
-La expresión \texttt{(countif rango criterio)} genera la fórmula Excel
-\texttt{COUNTIF(rango, criterio)}.
+\texttt{countif} es una expresión DSL que cuenta cuántas celdas de un rango
+cumplen un criterio.  El primer argumento es el rango donde buscar
+(\texttt{trange}); el segundo es el valor que se compara
+(\texttt{(col nombre)}, que toma el nombre del profesor de la fila actual).
+
+Para entender el rango sobre el que se aplica \texttt{countif},
+es necesario explicar primero el mecanismo de referencias entre tablas.
 
 \begin{infobox}{Cómo funciona \texttt{trange}}
-\texttt{(trange defensas-table tutor secretario)} genera un rango que
-abarca desde la columna \texttt{tutor} hasta la columna \texttt{secretario}
-de \texttt{defensas-table}, para todas las filas de datos.
-En Excel se traduce a algo como \texttt{\$B\$4:\$F\$6}.
+Un \emph{rango} es un bloque rectangular de celdas de una hoja de cálculo.
+\texttt{trange} (\emph{table range}) crea un rango que abarca todas las
+filas de datos de \emph{otra} tabla, desde una columna de inicio hasta una
+columna de fin.  En concreto,
+\texttt{(trange defensas-table tutor secretario)} se refiere a todas las
+filas de \texttt{defensas-table} desde la columna \texttt{tutor} hasta la
+columna \texttt{secretario}.  Como las cinco columnas de tribunal son
+consecutivas, una sola expresión alcanza para cubrirlas a todas (de no
+ser consecutivas, harían falta varias expresiones \texttt{countif}
+sumadas).
 
-La expresión completa cuenta cuántas veces aparece el nombre del profesor
-actual (tomado de su propia columna \texttt{nombre} con \texttt{(col nombre)})
-en cualquiera de los cinco roles de cualquier defensa.
-
-Se usa \texttt{trange} en lugar de \texttt{range} porque ambas tablas
-tienen una columna llamada \texttt{nombre}: \texttt{trange} especifica
-explícitamente la tabla de origen y evita la ambigüedad.
+Se distingue de \texttt{range} en que \texttt{range} se usa dentro de la
+\emph{misma} tabla (abrevia la tabla actual), mientras que
+\texttt{trange} nombra explícitamente la tabla de origen.  Esto evita
+ambigüedades cuando dos tablas en la misma hoja comparten nombres de
+columna (como \texttt{nombre}, que existe en ambas tablas) y, sobre
+todo, deja claro que la referencia cruza los límites de la tabla.
 \end{infobox}
 
+Además de calcular valores automáticamente, el DSL permite
+definir reglas de formato condicional.  Veamos cómo.
+
 \subsection{Formato condicional con \texttt{:render}}
+
+El \textbf{formato condicional} (o \emph{conditional rendering}) es un
+mecanismo que cambia la apariencia de una celda (color de fondo, fuente,
+bordes, etc.) cuando se cumple una condición determinada.  Permite que
+ciertos valores destaquen visualmente sin necesidad de revisar fila por
+fila.  En el horario de defensas, queremos que los profesores con
+conflicto de horario aparezcan resaltados.  En lenguaje natural: ``si
+existe alguna defensa en la que este profesor participa y que comparte
+el mismo día y hora con otra defensa, colorea su nombre''.
 
 La opción \texttt{:render} acepta una forma \texttt{conditional-rendering}
 que especifica bajo qué condición se colorean determinadas columnas.
@@ -417,8 +530,15 @@ La condición se expresa con el cuantificador \texttt{exists}.
       :target-columns (nombre)))
 \end{lstlisting}
 
-La variable \texttt{r} es un alias documental de la fila que se comprueba,
-análogo a un alias de tabla en SQL.
+La variable \texttt{r} es un \textbf{alias} (un nombre corto y temporal)
+que representa cada fila de \texttt{defensas-table} a medida que
+\texttt{exists} las va examinando una por una.  Es análogo a un alias de
+tabla en SQL: permite referirse a las columnas de la fila que se está
+comprobando en cada iteración, aunque en este ejemplo no se usa
+\texttt{r} explícitamente porque el DSL ya sabe qué tabla está en
+contexto.  El cuantificador \texttt{exists} recorre todas las filas de
+\texttt{defensas-table} y se cumple si encuentra al menos una que
+satisfaga la condición.
 
 \begin{sintaxisbox}{exists :rows-of}
 \begin{lstlisting}
@@ -443,39 +563,54 @@ análogo a un alias de tabla en SQL.
 \end{tabular}
 \end{center}
 
-La semántica de la condición del ejemplo es: ``existe alguna fila de
-\texttt{defensas-table} en la que el nombre de este profesor aparece en
-alguno de los cinco roles, y cuyo par (\texttt{dia}, \texttt{hora}) tiene
-más de una defensa programada''.
+Veamos un ejemplo concreto.  Supongamos que el profesor \texttt{Piad}
+aparece como tutor de la primera defensa y como presidente de la segunda.
+El cuantificador \texttt{exists} hace lo siguiente:
 
-\begin{infobox}{El coloreado persiste en Excel}
-El generador no colorea celdas directamente: incrusta una
-\texttt{FormulaRule} en el archivo \texttt{.xlsx}.
-Esta regla se reevalúa automáticamente cada vez que el usuario edita los
-datos en Excel, sin necesidad de volver a ejecutar el DSL.
+\begin{enumerate}
+  \item Toma la fila actual de \texttt{profesores-table} (``Piad'').
+  \item Recorre cada fila de \texttt{defensas-table} buscando una donde
+        \texttt{Piad} aparezca en alguno de los roles listados en
+        \texttt{:self-in} (tutor, oponente, presidente, vocal, secretario).
+  \item Para cada fila donde aparece, comprueba si \emph{otra} fila
+        distinta tiene el mismo par (\texttt{dia}, \texttt{hora})
+        (\texttt{:matching}), es decir, si hay dos defensas simultáneas
+        en las que participa el mismo profesor.
+  \item Si existe al menos una fila así, la condición se cumple y el
+        nombre \texttt{Piad} se colorea.
+\end{enumerate}
 
-La fórmula generada para este ejemplo es del tipo:
-\begin{lstlisting}[numbers=none, backgroundcolor=\color{gray!10},
-                   basicstyle=\ttfamily\footnotesize, language={}]
-=SUMPRODUCT(
-    (($B$4:$B$6=$K4)+...+($F$4:$F$6=$K4)) *
-    (COUNTIFS($G$4:$G$6,$G$4:$G$6,$H$4:$H$6,$H$4:$H$6)>1)
-) > 0
-\end{lstlisting}
+En este caso, \texttt{Piad} aparece en dos defensas (una como tutor el
+lunes a las 10:00 y otra como presidente el lunes a las 14:00).  Como
+los horarios son distintos, no hay conflicto y \texttt{Piad} no se
+colorea.  Si ambas defensas hubieran sido el mismo día y hora, la
+condición se habría activado.
+
+\begin{infobox}{El formateo condicional es una regla (no una instantánea)}
+El generador no aplica el color en el momento de generar: incrusta una
+regla en el archivo de salida que se reevalúa automáticamente cada vez que
+los datos cambian.  Así, si se añade o modifica una defensa, los colores
+se actualizan sin necesidad de volver a ejecutar el DSL.
 \end{infobox}
+
+Con las tablas definidas, el siguiente paso es preparar los datos que
+alimentarán la aplicación.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Preparar los datos}
 \label{sec:datos}
 
-Los datos se guardan en un archivo separado como parámetros globales de Lisp.
-Cada parámetro es una lista de listas: una sublista por fila.
+Los datos se guardan en un archivo separado (\texttt{data-tutorial.lisp})
+como parámetros globales de Lisp.  Cada parámetro es una lista de listas:
+una sublista por fila.
 
 \subsection{Formato de los datos}
 
-Cada bloque en la hoja de cálculo tiene \textbf{tres filas de prefijo}
-seguidas de las filas de datos.  Las filas de prefijo se escriben tal cual
-(no generan fórmulas): la primera puede llevar un identificador opcional,
+Cada tabla espera \textbf{tres filas de prefijo} (llamadas así porque
+se colocan delante de los datos) seguidas de las filas de datos.
+Las filas de prefijo se escriben tal cual en el archivo \texttt{data-tutorial.lisp}
+(no generan fórmulas): la primera puede llevar un identificador opcional
+(para etiquetar el bloque de datos, aunque en este tutorial se deja vacío),
 la segunda está vacía y la tercera contiene los encabezados de columna.
 
 \begin{lstlisting}[caption={Datos de defensas-table.}]
@@ -492,9 +627,12 @@ la segunda está vacía y la tercera contiene los encabezados de columna.
                                          "Martes" "10:00" "Aula 1")))
 \end{lstlisting}
 
-Las celdas con fórmulas calculadas se dejan vacías \texttt{""} en el
-archivo de datos: el generador las sobreescribe con la fórmula
-correspondiente.
+Las celdas que corresponden a columnas calculadas se marcan con
+\texttt{*empty*} (o simplemente se dejan como \texttt{""}) en el archivo
+de datos: el generador las sobreescribe con la fórmula correspondiente.
+La ventaja de usar \texttt{*empty*} es que hace explícita la intención:
+``esta celda no está vacía por accidente, sino porque su valor lo
+determinará una fórmula''.
 
 \begin{lstlisting}[caption={Datos de profesores-table.}]
 (defparameter *DATOS-PROFESORES*
@@ -509,17 +647,20 @@ correspondiente.
     ("Soto"   "Msc"   "")))
 \end{lstlisting}
 
+Una vez que tenemos las tablas definidas y los datos listos, el siguiente
+paso es ensamblar el programa completo.
+
 % ══════════════════════════════════════════════════════════════════════════════
-\section{Construir el libro}
+\section{Construir la aplicación}
 \label{sec:libro}
 
-Con las tablas declaradas y los datos preparados, se ensambla el workbook
+Con las tablas declaradas y los datos preparados, se ensambla la aplicación
 con tres macros: \texttt{libro}, \texttt{hoja} y \texttt{tabla}.
 
 \begin{sintaxisbox}{libro / hoja / tabla}
 \begin{lstlisting}
-(libro nombre-workbook
-  :filename "nombre.xlsx"
+(libro nombre-app
+  :filename "salida.xlsx"
   :hojas (list
     (hoja "Nombre hoja"
       (tabla plantilla1 :data *DATOS-1*)
@@ -530,17 +671,32 @@ con tres macros: \texttt{libro}, \texttt{hoja} y \texttt{tabla}.
 \end{lstlisting}
 \end{sintaxisbox}
 
-La macro \texttt{tabla} instancia una plantilla (\texttt{def-table}) con
-datos concretos.  Cuando una \texttt{hoja} recibe más de una \texttt{tabla},
-el generador las coloca lado a lado dentro de la misma \emph{región
-horizontal}, separadas por una columna en blanco.
+La clave \texttt{:filename} indica el nombre del archivo de salida y es
+propia de los backends que exportan a un fichero (como el backend Excel
+que acompaña al DSL); un generador diferente para, por ejemplo, HTML
+o PDF, usaría otros mecanismos para producir la salida.
+
+La macro \texttt{def-table} define una \textbf{plantilla} reutilizable
+(el equivalente a declarar una clase sin instanciarla): describe la
+estructura de la tabla (columnas, fórmulas, formato) pero no contiene
+datos propios.  La macro \texttt{tabla} instancia esa plantilla con
+datos concretos.  De esta forma, una misma plantilla puede usarse varias
+veces con distintos conjuntos de datos, igual que una clase da lugar a
+múltiples objetos.
+
+Cuando una \texttt{hoja} recibe más de una \texttt{tabla}, el DSL las
+agrupa en una misma \textbf{región} (un conjunto de tablas que se
+presentan juntas).  Cómo se coloca esa región en la interfaz generada
+es decisión de cada backend: el backend Excel de este trabajo las sitúa
+una al lado de otra separadas por un espacio en blanco; otro backend
+podría apilarlas verticalmente, mostrarlas en pestañas independientes,
+o distribuirlas según las dimensiones de cada tabla.
 
 La clave \texttt{:fixed-expressions} coloca expresiones o etiquetas fuera
-de las tablas.  La posición se especifica con \texttt{nav}, que calcula la
-celda a partir de la última fila de una tabla más una serie de pasos
-direccionales.
+de las tablas.  La posición se especifica con \texttt{nav}, que indica una
+posición relativa a la última o primera fila de una tabla.
 
-\begin{lstlisting}[caption={Workbook completo con totales de pie de tabla.}]
+\begin{lstlisting}[caption={Aplicación completa con totales de pie de tabla.}]
 (libro horario-tesis
   :filename "Horario_Tesis.xlsx"
   :hojas (list
@@ -558,6 +714,9 @@ direccionales.
           (sum-range (trange profesores-table defensas)))))))
 \end{lstlisting}
 
+La posición de cada expresión respecto a las tablas se especifica
+con la forma \texttt{nav}, que se describe a continuación.
+
 \begin{sintaxisbox}{nav / ultima-fila}
 \begin{lstlisting}
 ;; Posicion relativa a la ultima fila de una columna:
@@ -568,12 +727,14 @@ direccionales.
 \end{sintaxisbox}
 
 \begin{infobox}{Por qué usar \texttt{nav} en lugar de coordenadas fijas}
-Las coordenadas absolutas de la celda ``una fila debajo de la última
-defensa'' dependen de cuántas defensas haya en los datos.
-\texttt{nav} las calcula automáticamente en tiempo de generación, de modo
-que si se añaden más filas de datos los totales se desplazan solos sin
-modificar el programa DSL.
+La posición de una expresión como ``una fila debajo de la última defensa''
+depende de cuántas filas de datos haya.  \texttt{nav} la calcula
+automáticamente en tiempo de generación, de modo que si se añaden más filas
+los totales se desplazan solos sin modificar el código escrito en el DSL.
 \end{infobox}
+
+Con la aplicación armada, solo falta generar y ejecutar el programa de
+construcción para obtener el archivo de salida.
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Generar y ejecutar}
@@ -586,14 +747,14 @@ Las dos últimas líneas del programa desencadenan la generación del archivo:
 (xl-run-generated "horario-tesis.py")
 \end{lstlisting}
 
-\texttt{xl-generate} recorre el AST del workbook y produce el programa de
-construcción del libro.
+\texttt{xl-generate} recorre el AST de la aplicación y produce el programa de
+construcción para el formato elegido.
 \texttt{xl-run-generated} ejecuta ese programa con \texttt{python3};
 el resultado es el archivo \texttt{Horario\_Tesis.xlsx} en disco.
 
 El archivo \texttt{.xlsx} contiene tanto las fórmulas de celda como las
-\texttt{FormulaRule} de formato condicional; estas últimas permanecen
-activas cuando el usuario abre y edita el libro directamente en Excel.
+reglas de formato condicional; estas últimas permanecen activas cuando el
+usuario abre y edita el archivo directamente en Excel.
 
 \subsection{Ejecución desde la terminal con el script \texttt{generar.sh}}
 
@@ -654,15 +815,15 @@ conforman el programa.
                                    "Martes" "10:00" "Aula 1")))
 
 (defparameter *DATOS-PROFESORES*
-  '(("" "" "")
-    ("" "" "")
+  `(("" "" ,*empty*)
+    ("" "" ,*empty*)
     ("Nombre" "Grado" "Defensas")
-    ("Piad"   "Dr"    "")
-    ("Garcia" "Dr"    "")
-    ("Lopez"  "Msc"   "")
-    ("Torres" "Msc"   "")
-    ("Ruiz"   "Lic"   "")
-    ("Soto"   "Msc"   "")))
+    ("Piad"   "Dr"    ,*empty*)     ;; "Defensas" se calcula con COUNTIF
+    ("Garcia" "Dr"    ,*empty*)
+    ("Lopez"  "Msc"   ,*empty*)
+    ("Torres" "Msc"   ,*empty*)
+    ("Ruiz"   "Lic"   ,*empty*)
+    ("Soto"   "Msc"   ,*empty*)))
 \end{lstlisting}
 
 \subsection{\texttt{tutorial-horario.lisp}}
@@ -772,7 +933,7 @@ Contar defensas por profesor
   & \texttt{countif} sobre el rango de roles de \texttt{defensas-table} \\
 Detectar profesores con conflicto
   & \texttt{:render} con \texttt{exists :rows-of}
-  & El backend genera una \texttt{FormulaRule} que persiste en Excel \\
+  & El backend genera una regla de formateo condicional que persiste \\
 Totales dinámicos al pie de tabla
   & \texttt{:fixed-expressions} con \texttt{nav}
   & Las coordenadas se recalculan si cambia el número de filas \\
@@ -791,26 +952,27 @@ Totales dinámicos al pie de tabla
 \textbf{Forma} & \textbf{Descripción} \\
 \midrule
 (def-table nom cols opts...)     & Define una plantilla de tabla \\
-:computed ((col expr))           & Columna calculada con fórmula Excel \\
-:render (conditional-rendering)  & Regla de coloreado condicional \\
+:computed ((col expr))           & Columna calculada (el backend la traduce al mecanismo adecuado) \\
+:render (conditional-rendering)  & Regla de formateo condicional \\
 (conditional-rendering :condition :target-columns)
-                                 & Asocia condición con columnas a colorear \\
-(exists (r :rows-of tabla) ...)  & Existencia en otra tabla (cross-table) \\
+                                 & Asocia condición con columnas a formatear \\
+(exists (r :rows-of tabla) ...)  & Existencia en otra tabla (tabla cruzada) \\
 (exists (r :all-rows) ...)       & Existencia en la misma tabla \\
 (col nombre)                     & Valor de la columna en la fila actual \\
 (trange tabla desde hasta)       & Rango en otra tabla \\
-(countif rango criterio)         & Fórmula COUNTIF \\
-(counta rango)                   & Fórmula COUNTA \\
-(sum-range rango)                & Fórmula SUM \\
-(str "texto")                    & Literal de texto en celda \\
+(countif rango criterio)         & Cuenta celdas que cumplen un criterio \\
+(counta rango)                   & Cuenta celdas no vacías \\
+(sum-range rango)                & Suma los valores de un rango \\
+(str "texto")                    & Literal de texto \\
 (nav (ultima-fila t c) dir N)    & Posición relativa a última fila \\
 (nav (primera-fila t c) dir N)   & Posición relativa a primera fila \\
-(libro nom :filename :hojas)     & Crea el workbook \\
+(libro nom :filename :hojas)     & Define la aplicación completa \\
 (hoja nom tablas :fixed-expressions)
-                                 & Define una hoja del libro \\
+                                 & Define una hoja de la aplicación \\
 (tabla plantilla :data datos)    & Instancia una plantilla con datos \\
+(empty)                          & Vacío semántico: el backend decide cómo representarlo \\
 (xl-generate wb archivo)         & Genera el programa de construcción \\
-(xl-run-generated archivo)       & Ejecuta el programa y crea el .xlsx \\
+(xl-run-generated archivo)       & Ejecuta el programa y produce la salida \\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -822,6 +984,28 @@ Totales dinámicos al pie de tabla
 El tutorial cubre un subconjunto del DSL suficiente para construir el horario
 de defensas. Las formas que se describen a continuación están disponibles y
 resultan útiles en escenarios más complejos.
+
+% ─────────────────────────────────────────────────────────────────
+\subsection*{Vacío semántico: \texttt{empty} y \texttt{*empty*}}
+
+El DSL distingue entre ``una celda que está vacía porque no tiene datos''
+y ``una celda que se deja vacía porque su valor lo determinará una
+fórmula''.  Para este segundo caso existen dos formas:
+
+\begin{center}
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{Forma} & \textbf{Para qué sirve} \\
+\midrule
+\texttt{(empty)} & Macro para usar dentro de expresiones DSL
+  (\texttt{:computed}, \texttt{\_if}, etc.).  El backend decide
+  la representación concreta. \\
+\texttt{*empty*} & Constante para usar en datos y cabeceras:
+  \texttt{(columna *empty*)} o \texttt{("Piad" "Dr" *empty*)}.
+  Hace explícito que la celda se rellenará con una fórmula. \\
+\bottomrule
+\end{tabular}
+\end{center}
 
 % ─────────────────────────────────────────────────────────────────
 \subsection*{Condicionales en celdas}

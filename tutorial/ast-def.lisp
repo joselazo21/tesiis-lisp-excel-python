@@ -15,7 +15,7 @@
 ;;   - xl-<name>        como función constructora (&key slots...)
 ;; =============================================================================
 
-(load "codigo-tesis.lisp")
+(load (merge-pathnames "codigo-tesis.lisp" *load-truename*))
 
 ;; =============================================================================
 ;; EXPRESIONES — nodos que representan valores computados celda a celda.
@@ -39,6 +39,9 @@
 
 ;; Produce "" (celda visualmente vacía)
 (defclass* xl-expr-show-nothing () ())
+
+;; Vacío semántico: celda sin valor, el backend decide cómo representarlo
+(defclass* xl-expr-empty () ())
 
 ;; --- Referencia a columnas de la tabla actual ---
 
@@ -79,6 +82,10 @@
 (defclass* xl-expr-subtract () (a b))
 (defclass* xl-expr-multiply () (a b))
 (defclass* xl-expr-divide () (a b))
+
+;; Promedio: suma de valores / cantidad de columnas
+;; cols: lista de expresiones (normalmente column-refs) a promediar
+(defclass* xl-expr-promedio () (cols))
 
 ;; --- Strings ---
 

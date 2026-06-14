@@ -26,7 +26,7 @@
 ;;   first-row  : primera fila de datos de la tabla
 ;;   last-row   : última fila de datos de la tabla
 ;; =============================================================================
-(load "code-generation-utils.lisp")
+(load (merge-pathnames "code-generation-utils.lisp" *load-truename*))
 
 ;; xl-sheet-fixed-expr nodes from the parent sheet; consumed by xl-region generator.
 (defvar *sheet-fixed-expressions* nil)
@@ -166,6 +166,14 @@
           (compile-excel-formula (a e) col-map data-names row-num first-row last-row)
           (compile-excel-formula (b e) col-map data-names row-num first-row last-row)))
 
+(defmethod compile-excel-formula ((e clase-xl-expr-promedio) col-map data-names row-num first-row last-row)
+  (let* ((vals (cols e))
+         (n (length vals))
+         (sum-str (format nil "(~{~a~^+~})"
+                         (loop for v in vals
+                               collect (compile-excel-formula v col-map data-names row-num first-row last-row)))))
+    (format nil "(~a/~a)" sum-str n)))
+
 ;; =====================================================================
 ; COMPILE-EXCEL-FORMULA — AGREGADOS
 ; =====================================================================
@@ -280,6 +288,10 @@
   (declare (ignore col-map data-names row-num first-row last-row))
   "\"\"")
 
+(defmethod compile-excel-formula ((e clase-xl-expr-empty) col-map data-names row-num first-row last-row)
+  (declare (ignore col-map data-names row-num first-row last-row))
+  "\"\"")
+
 (defmethod compile-excel-formula ((e clase-xl-expr-lookup) col-map data-names row-num first-row last-row)
   (let* ((key (compile-excel-formula (key-expr e) col-map data-names row-num first-row last-row))
          (field-name (value-field e))
@@ -352,6 +364,9 @@
 (defmethod generate-code ((e clase-xl-expr-show-nothing) (lang xl-out) (stream t))
   (format stream "{\"type\": \"show-nothing\"}"))
 
+(defmethod generate-code ((e clase-xl-expr-empty) (lang xl-out) (stream t))
+  (format stream "{\"type\": \"empty\"}"))
+
 (defmethod generate-code ((e clase-xl-expr-lookup) (lang xl-out) (stream t))
   (format stream "{\"type\": \"lookup\", \"field\": \"~a\", \"key\": " (value-field e))
   (generate-code (key-expr e) lang stream)
@@ -421,6 +436,13 @@
   (format stream ", \"b\": ")
   (generate-code (b e) lang stream)
   (format stream "}"))
+
+(defmethod generate-code ((e clase-xl-expr-promedio) (lang xl-out) (stream t))
+  (format stream "{\"type\": \"promedio\", \"values\": [")
+  (loop for v in (cols e) for i from 0
+        do (when (> i 0) (format stream ", "))
+           (generate-code v lang stream))
+  (format stream "]}"))
 
 ;; =====================================================================
 ; GENERATE-CODE — AGREGADOS
@@ -493,15 +515,19 @@
       (when con
         (emit-sep)
         (format stream "        \"data\": ")
-        (if prms
-            (let ((padded
-                   (append
-                     (list (append (make-list num-cols :initial-element "")
-                                   (loop for (n . v) in prms collect v)))
-                     (loop for row in con
-                           collect (append row (make-list num-params :initial-element ""))))))
-              (xl-write padded stream))
-            (xl-write con stream))
+        (xl-write con stream)
+        (incf key-count))
+      ;; ── params ──
+      (when prms
+        (emit-sep)
+        (format stream "        \"params\": {")
+        (loop for (n . v) in prms for idx from 1
+              for col-num = (+ num-cols idx)
+              for cell = (format nil "~a1" (col->letter col-num))
+              for i from 0
+              do (when (> i 0) (format stream ", "))
+                 (format stream "~s: ~s" cell v))
+        (format stream "}")
         (incf key-count))
       ;; ── headers ──
       (when hdrs
@@ -521,7 +547,7 @@
                 (when prms
                   (loop for (n . v) in prms for idx from 1
                         for col-num = (+ num-cols idx)
-                        collect (cons n (format nil "$~a~a" (col->letter col-num) 2))))))
+                        collect (cons n (format nil "$~a$1" (col->letter col-num))))))
         (when (or comp ffs)
           (emit-sep)
           (format stream "        \"formulas\": [")
@@ -530,8 +556,8 @@
                   (loop for (col . expr) in comp
                    for col-index = (1+ (position col cn :test #'string-equal))
                    do
-                     (loop for i from 0 below logical-data-rows
-                           for row = (+ first-row (* i cell-height))
+                      (loop for i from 0 below logical-data-rows
+                             for row = (+ first-row (* i cell-height))
                              for formula = (let ((*param-cells* param-cells))
                                              (compile-excel-formula expr col-map dnames row first-row last-row))
                             do
@@ -621,7 +647,7 @@
                    (format stream "{\"range\": ~s, \"style\": {\"bg_color\": ~s}}"
                            range style))
           (format stream "]")
-          (incf key-count))))))
+           (incf key-count)))))))
 
 ; =====================================================================
 ; GENERATE-CODE — REGIONES
@@ -651,18 +677,18 @@
                      (push (cons name (col->letter cur)) map)
                      (incf cur))
                    (incf cur)))))  ;; skip gap column
-     (let* ((offsets (loop with cur = 0
-                            for tbl in tables
-                            for start = cur
-                            do (incf cur (1+ (col-count tbl)))
-                            collect start))
+      (let* ((offsets (loop with cur = 0
+                             for tbl in tables
+                             for start = cur
+                             do (incf cur (+ 1 (col-count tbl) (length (params tbl))))
+                             collect start))
              (main-tbl (first tables))
              (ref-first-row (effective-first-row main-tbl))
              (ref-physical-rows (physical-rows main-tbl))
              (last-row (if (> ref-physical-rows 0)
                            (1- (+ ref-first-row ref-physical-rows))
                            (1- ref-first-row)))
-             (total-cols (loop for tbl in tables sum (1+ (col-count tbl))))
+              (total-cols (loop for tbl in tables sum (+ 1 (col-count tbl) (length (params tbl)))))
              (last-col-letter (col->letter total-cols))
              (global-col-map (build-global-col-map tables))
              (*table-col-maps* (build-table-col-maps tables offsets))
@@ -705,30 +731,38 @@
         ;; For tables with params: prepend a param row so $G2 (param cell) has
         ;; the initial value. The separator column doubles as the param column,
         ;; so r=0 writes the param value there instead of the usual "".
-        (let* ((any-params (some (lambda (tbl) (params tbl)) tables))
-               (padded-max (if any-params (1+ max-rows) max-rows)))
-          (format stream "        \"data\": ")
-          (xl-write
-            (loop for r from 0 below padded-max
-                  collect (loop for tbl in tables for exp in all-expanded
-                                for prms = (params tbl)
-                                for nc = (col-count tbl)
-                                for data-r = (if prms (1- r) r)
-                                for row = (if (and prms (zerop r))
-                                              (make-list nc :initial-element "")
-                                              (if (< data-r (length exp))
-                                                  (nth data-r exp)
-                                                  (make-list nc :initial-element "")))
-                                append (subseq row 0 (min (length row) nc))
-                                collect (if (and prms (zerop r))
-                                            (cdar prms)
-                                            "")))
-            stream))
+        (format stream "        \"data\": ")
+        (xl-write
+          (loop for r from 0 below max-rows
+                collect (loop for tbl in tables for exp in all-expanded
+                              for nc = (col-count tbl)
+                              for nprms = (length (params tbl))
+                              for row = (if (< r (length exp))
+                                            (nth r exp)
+                                            (make-list nc :initial-element ""))
+                 append (subseq row 0 (min (length row) nc))
+                 append (make-list (1+ nprms) :initial-element "")))
+          stream)
         (format stream ",~%")
         ;; ── headers ──
         (format stream "        \"headers\": ")
         (xl-write (loop for tbl in tables append (append (headers tbl) (list ""))) stream)
         (format stream ",~%")
+        ;; ── params ──
+        (let ((param-entries nil))
+          (loop for tbl in tables
+                for offset in offsets
+                for nc = (col-count tbl)
+                for prms = (params tbl)
+                do (loop for (n . v) in prms for idx from 1
+                         for col-num = (+ offset nc 1 idx)
+                         do (push (cons (format nil "~a1" (col->letter col-num)) v) param-entries)))
+          (when param-entries
+            (format stream "        \"params\": {")
+            (loop for (cell . value) in (nreverse param-entries) for i from 0
+                  do (when (> i 0) (format stream ", "))
+                     (format stream "~s: ~s" cell value))
+            (format stream "},~%")))
         ;; ── formulas ──
         (let ((formulas nil))
           (loop for tbl in tables
@@ -740,16 +774,16 @@
                 for prms = (params tbl)
                 for param-cells = (when prms
                                     (loop for (n . v) in prms for idx from 1
-                                          for col-num = (+ (col-count tbl) idx)
-                                          collect (cons n (format nil "$~a~a" (col->letter (+ offset col-num)) 2))))
+                                          for col-num = (+ (col-count tbl) 1 idx)
+                                          collect (cons n (format nil "$~a$1" (col->letter (+ offset col-num))))))
                 do
                 ;; computed formulas (per-row)
                 (loop for (col . expr) in (computed tbl)
                       for tbl-col-idx = (position col (col-names tbl) :test #'string-equal)
                       for abs-col = (+ offset (or tbl-col-idx -1) 1)
                       do
-                      (loop for i from 0 below ldr
-                            for row = (+ first-row (* i cell-h))
+                (loop for i from 0 below ldr
+                      for row = (+ first-row (* i cell-h))
                             for formula = (let ((*param-cells* param-cells))
                                             (compile-excel-formula expr global-col-map global-dnames row first-row tbl-lr))
                             do (push (list row abs-col formula) formulas))))
@@ -796,6 +830,11 @@
                 for tbl-letter-map = (loop for name in (col-names tbl)
                                            for idx from (1+ offset)
                                            collect (cons name (col->letter idx)))
+                for prms = (params tbl)
+                for param-cells = (when prms
+                                    (loop for (n . v) in prms for idx from 1
+                                          for col-num = (+ (col-count tbl) 1 idx)
+                                          collect (cons n (format nil "$~a$1" (col->letter (+ offset col-num))))))
                 do (dolist (rule (or (style-rules tbl) nil))
                      (let ((cond-node (rule-condition rule)))
                        (cond
@@ -836,18 +875,23 @@
                                                  clase-xl-expr-gte clase-xl-expr-lte
                                                  clase-xl-expr-equals clase-xl-expr-different))
                           ;; CF path — row-relative FormulaRule; color from palette
-                          (let* ((targets      (target-columns rule))
-                                 (target-ltrs  (remove nil
-                                                (loop for col in targets
-                                                      collect (cdr (assoc col tbl-letter-map
-                                                                          :test #'string-equal)))))
-                                 (formula      (compile-excel-formula
-                                                cond-node tbl-letter-map nil tbl-first tbl-first tbl-last))
-                                 (range-str    (when target-ltrs
-                                                (format nil "~a~a:~a~a"
-                                                        (first target-ltrs) tbl-first
-                                                        (car (last target-ltrs)) tbl-last)))
-                                 (color        (nth cf-cmp-idx *cf-comparison-palette*)))
+                           (let* ((cf-row-offset 0)
+                                  (targets      (target-columns rule))
+                                  (target-ltrs  (remove nil
+                                                 (loop for col in targets
+                                                       collect (cdr (assoc col tbl-letter-map
+                                                                           :test #'string-equal)))))
+                                  (formula      (let ((*param-cells* param-cells))
+                                                  (compile-excel-formula
+                                                   cond-node tbl-letter-map nil
+                                                   (+ tbl-first cf-row-offset)
+                                                   (+ tbl-first cf-row-offset)
+                                                   (+ tbl-last cf-row-offset))))
+                                  (range-str    (when target-ltrs
+                                                 (format nil "~a~a:~a~a"
+                                                         (first target-ltrs) (+ tbl-first cf-row-offset)
+                                                         (car (last target-ltrs)) (+ tbl-last cf-row-offset))))
+                                  (color        (nth cf-cmp-idx *cf-comparison-palette*)))
                             (when (and formula range-str)
                               (push (list :range range-str :formula formula
                                           :style (format nil "\"bg_color\": \"~a\"" color))

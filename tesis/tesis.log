@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.2.6)  7 JUN 2026 19:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.2.6)  8 JUN 2026 23:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -690,12 +690,12 @@ ination with the same identifier (name{page.1}) has been already used, duplicat
 e ignored
 <to be read again> 
                    \relax 
-l.184 \newpage
+l.183 \newpage
                [1] [2
 
 ]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-26.
+25.
  (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
@@ -705,10 +705,15 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
  [3
 
-] [4
-
 ]
-[5
+Overfull \hbox (1.76514pt too wide) in paragraph at lines 256--263
+[]\T1/lmr/m/n/12 (-20) Describir visualizaciones de estructuras tabulares ---ho
+rarios, calendarios, distribuciones---
+ []
+
+[4
+
+] [5
 
 ] (./tesis.toc
 LaTeX Info: Redefining \. on input line 1.
@@ -759,12 +764,11 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 ) [6
 
-])
-\tf@toc=\write4
-\openout4 = `tesis.toc'.
-
-LaTeX Info: Redefining \. on input line 325.
-LaTeX Info: Redefining \% on input line 325.
+]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 61.
+LaTeX Info: Redefining \. on input line 78.
+LaTeX Info: Redefining \% on input line 78.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -774,7 +778,22 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-3.35403pt}.
 
-[7] (./cap-intro.tex [8
+[7])
+\tf@toc=\write4
+\openout4 = `tesis.toc'.
+
+LaTeX Info: Redefining \. on input line 329.
+LaTeX Info: Redefining \% on input line 329.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 15.35403pt, for example:
+(fancyhdr)                \setlength{\headheight}{15.35403pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-3.35403pt}.
+
+[8] (./cap-intro.tex [9
 
 ]
 LaTeX Info: Redefining \. on input line 128.
@@ -788,7 +807,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[9]) (./cap1.tex
+[10]) (./cap1.tex
 LaTeX Info: Redefining \. on input line 4.
 LaTeX Info: Redefining \% on input line 4.
 
@@ -800,24 +819,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[10]
+[11]
 Cap\'{\i }tulo 1.
-[11
+[12
 
 ]
-LaTeX Info: Redefining \. on input line 126.
-LaTeX Info: Redefining \% on input line 126.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[12]
-Overfull \hbox (8.84879pt too wide) in paragraph at lines 174--176
+Overfull \hbox (8.84879pt too wide) in paragraph at lines 114--116
 []\T1/lmr/m/n/12 (-20) Nodos de es-truc-tu-ra del work-book (\T1/lmtt/m/n/12 xl
 -workbook\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12 xl-sheet\T1/lmr/m/n/12 (-20) , 
 \T1/lmtt/m/n/12 xl-region\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12 xl-table\T1/lmr
@@ -825,14 +832,21 @@ Overfull \hbox (8.84879pt too wide) in paragraph at lines 174--176
  []
 
 
-Overfull \hbox (36.41791pt too wide) in paragraph at lines 176--178
+Overfull \hbox (36.41791pt too wide) in paragraph at lines 116--118
 []\T1/lmr/m/n/12 (-20) Nodos de ex-pre-sión de cel-da (\T1/lmtt/m/n/12 xl-expr-
 column-ref\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12 xl-table-range\T1/lmr/m/n/12 (
 -20) , \T1/lmtt/m/n/12 xl-expr-countif\T1/lmr/m/n/12 (-20) ,
  []
 
-LaTeX Info: Redefining \. on input line 188.
-LaTeX Info: Redefining \% on input line 188.
+
+Overfull \hbox (80.81886pt too wide) in paragraph at lines 118--120
+[]\T1/lmr/m/n/12 (-20) Nodos de na-ve-ga-ción por fi-las (\T1/lmtt/m/n/12 xl-ex
+pr-previous-row\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12 xl-expr-next-row\T1/lmr/m
+/n/12 (-20) , \T1/lmtt/m/n/12 xl-expr-first-row\T1/lmr/m/n/12 (-20) ,
+ []
+
+LaTeX Info: Redefining \. on input line 122.
+LaTeX Info: Redefining \% on input line 122.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 15.35403pt, for example:
@@ -842,9 +856,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-3.35403pt}.
 
 [13]
-LaTeX Info: Redefining \. on input line 257.
-LaTeX Info: Redefining \% on input line 257.
+Overfull \hbox (50.86284pt too wide) in paragraph at lines 122--124
+[]\T1/lmr/m/n/12 (-20) Nodos de re-fe-ren-cia cru-za-da en-tre ho-jas (\T1/lmtt
+/m/n/12 xl-expr-cross-sheet-ref\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12 xl-expr-c
+ross-cell\T1/lmr/m/n/12 (-20) ,
+ []
 
+LaTeX Info: Redefining \. on input line 188.
+LaTeX Info: Redefining \% on input line 188.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -854,13 +873,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [14]
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <12> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 271.
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10.95> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 289.
-) (./cap2.tex
-LaTeX Info: Redefining \. on input line 4.
-LaTeX Info: Redefining \% on input line 4.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 226.
+LaTeX Info: Redefining \. on input line 248.
+LaTeX Info: Redefining \% on input line 248.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -871,6 +887,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [15]
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <14.4> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 256.
+) (./cap-estadoarte.tex
 LaTeX Info: Redefining \. on input line 4.
 LaTeX Info: Redefining \% on input line 4.
 
@@ -884,14 +903,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [16]
 Cap\'{\i }tulo 2.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 [17
 
 ]
-LaTeX Info: Redefining \. on input line 133.
-LaTeX Info: Redefining \% on input line 133.
+LaTeX Info: Redefining \. on input line 129.
+LaTeX Info: Redefining \% on input line 129.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -902,8 +918,8 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [18]
-LaTeX Info: Redefining \. on input line 203.
-LaTeX Info: Redefining \% on input line 203.
+LaTeX Info: Redefining \. on input line 187.
+LaTeX Info: Redefining \% on input line 187.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -914,8 +930,8 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [19]
-LaTeX Info: Redefining \. on input line 273.
-LaTeX Info: Redefining \% on input line 273.
+LaTeX Info: Redefining \. on input line 258.
+LaTeX Info: Redefining \% on input line 258.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -925,7 +941,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[20]) (./cap3.tex
+[20]) (./cap2.tex
 LaTeX Info: Redefining \. on input line 4.
 LaTeX Info: Redefining \% on input line 4.
 
@@ -940,144 +956,25 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 [21]
 Cap\'{\i }tulo 3.
 
-Overfull \hbox (1.01117pt too wide) in paragraph at lines 12--21
-\T1/lmr/m/it/12 (-20) qué \T1/lmr/m/n/12 (-20) debe contener el libro ---tablas
-, columnas calculadas, reglas de coloreado condicional---
- []
-
-
-Overfull \hbox (84.65065pt too wide) in paragraph at lines 28--33
-[]\T1/lmr/bx/n/12 (-20) Expansión de ma-cros. \T1/lmr/m/n/12 (-20) Ca-da for-ma
- del DSL (p.ej. \T1/lmtt/m/n/12 def-table\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12
- exists\T1/lmr/m/n/12 (-20) , \T1/lmtt/m/n/12 conditional-rendering\T1/lmr/m/n/
-12 (-20) )
- []
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [22
 
 ]
-Underfull \hbox (badness 10000) in paragraph at lines 111--113
-[]|\T1/lmtt/m/n/12 name\T1/lmr/m/n/12 (+20) , \T1/lmtt/m/n/12 regions\T1/lmr/m/
-n/12 (+20) ,
- []
+LaTeX Info: Redefining \. on input line 133.
+LaTeX Info: Redefining \% on input line 133.
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 122--126
-[]|\T1/lmtt/m/n/12 id\T1/lmr/m/n/12 (+20) , \T1/lmtt/m/n/12 col-names\T1/lmr/m/
-n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 122--126
-\T1/lmtt/m/n/12 headers\T1/lmr/m/n/12 (+20) , \T1/lmtt/m/n/12 contenido\T1/lmr/
-m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 122--126
-\T1/lmtt/m/n/12 cell-height\T1/lmr/m/n/12 (+20) ,
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 159--160
-[]|\T1/lmtt/m/n/12 table-id\T1/lmr/m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 164--165
-[]|\T1/lmtt/m/n/12 count-range\T1/lmr/m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 183--184
-[]|\T1/lmtt/m/n/12 xl-expr-and\T1/lmr/m/n/12 (+20) ,
- []
-
-
-Overfull \hbox (9.68904pt too wide) in paragraph at lines 199--200
-[]|\T1/lmtt/m/n/12 xl-expr-collect-over| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 200--201
-[]|\T1/lmtt/m/n/12 groups\T1/lmr/m/n/12 (+20) ,
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 228--232
-[]|\T1/lmtt/m/n/12 bind-var\T1/lmr/m/n/12 (+20) , \T1/lmtt/m/n/12 domain\T1/lmr
-/m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 228--232
-\T1/lmtt/m/n/12 match-keys\T1/lmr/m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 228--232
-\T1/lmtt/m/n/12 overlap-cols\T1/lmr/m/n/12 (+20) ,
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 259--261
-[]|\T1/lmtt/m/n/12 rule-condition\T1/lmr/m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 1019) in paragraph at lines 261--264
-\T1/lmr/m/n/12 (+20) nal. \T1/lmtt/m/n/12 rule-condition \T1/lmr/m/n/12 (+20) e
-s un
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 266--269
-[]|\T1/lmtt/m/n/12 table-id\T1/lmr/m/n/12 (+20) , \T1/lmtt/m/n/12 col-name\T1/l
-mr/m/n/12 (+20) ,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 269--272
-\T1/lmr/m/n/12 (+20) una ta-bla. \T1/lmtt/m/n/12 anchor-type
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 269--272
-\T1/lmr/m/n/12 (+20) es \T1/lmtt/m/n/12 :ultima-fila \T1/lmr/m/n/12 (+20) o
- []
-
-
-Overfull \hbox (17.74042pt too wide) in paragraph at lines 278--279
-[]|\T1/lmtt/m/n/12 xl-sheet-fixed-expr| 
- []
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <14.4> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 288.
-LaTeX Info: Redefining \. on input line 298.
-LaTeX Info: Redefining \% on input line 298.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 15.35403pt, for example:
-(fancyhdr)                \setlength{\headheight}{15.35403pt}.
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 
-(fancyhdr)                \addtolength{\topmargin}{-3.35403pt}.
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [23]
-LaTeX Info: Redefining \. on input line 319.
-LaTeX Info: Redefining \% on input line 319.
+LaTeX Info: Redefining \. on input line 203.
+LaTeX Info: Redefining \% on input line 203.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1088,8 +985,8 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [24]
-LaTeX Info: Redefining \. on input line 320.
-LaTeX Info: Redefining \% on input line 320.
+LaTeX Info: Redefining \. on input line 273.
+LaTeX Info: Redefining \% on input line 273.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1099,93 +996,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[25]
-LaTeX Info: Redefining \. on input line 347.
-LaTeX Info: Redefining \% on input line 347.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[26]
-Underfull \hbox (badness 10000) in paragraph at lines 376--377
-[]|\T1/lmtt/m/n/12 (trange tabla desde
- []
-
-
-Overfull \hbox (44.43137pt too wide) in paragraph at lines 402--403
-[]|\T1/lmtt/m/n/12 TEXT(TIMEVALUE(hora)+(minutos/1440),"hh:mm")\T1/lmr/m/n/12 (
--20) .| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 410--411
-[]|\T1/lmtt/m/n/12 (collect-over lista (var)
- []
-
-LaTeX Info: Redefining \. on input line 429.
-LaTeX Info: Redefining \% on input line 429.
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[27]
-LaTeX Info: Redefining \. on input line 495.
-LaTeX Info: Redefining \% on input line 495.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[28]
-LaTeX Info: Redefining \. on input line 563.
-LaTeX Info: Redefining \% on input line 563.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[29]
-LaTeX Info: Redefining \. on input line 618.
-LaTeX Info: Redefining \% on input line 618.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[30]
-LaTeX Info: Redefining \. on input line 664.
-LaTeX Info: Redefining \% on input line 664.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[31]) (./cap4.tex
+[25]) (./cap3.tex
 LaTeX Info: Redefining \. on input line 4.
 LaTeX Info: Redefining \% on input line 4.
 
@@ -1197,19 +1008,243 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[32]
+[26]
 Cap\'{\i }tulo 4.
-
-Overfull \hbox (62.73303pt too wide) in paragraph at lines 28--33
-[]\T1/lmr/m/n/12 (-20) Los mé-to-dos CLOS de la fun-ción ge-né-ri-ca \T1/lmtt/m
-/n/12 compile-excel-formula
- []
-
-[33
+[27
 
 ]
-LaTeX Info: Redefining \. on input line 130.
-LaTeX Info: Redefining \% on input line 130.
+Underfull \hbox (badness 1062) in paragraph at lines 117--119
+[]|\T1/lmr/m/n/12 (+20) Raíz del ár-bol. \T1/lmtt/m/n/12 name \T1/lmr/m/n/12 (+
+20) es el
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--208
+[]|\T1/lmtt/m/n/12 xl-expr-and\T1/lmr/m/n/12 (+20) ,
+ []
+
+
+Overfull \hbox (10.17358pt too wide) in paragraph at lines 215--216
+[]|\T1/lmtt/m/n/12 xl-expr-table-col-ref| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--230
+[]|\T1/lmtt/m/n/12 xl-expr-gt\T1/lmr/m/n/12 (+20) ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 233--234
+[]|\T1/lmtt/m/n/12 xl-expr-gte\T1/lmr/m/n/12 (+20) ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 237--238
+[]|\T1/lmtt/m/n/12 xl-expr-add\T1/lmr/m/n/12 (+20) ,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 241--242
+[]|\T1/lmtt/m/n/12 xl-expr-multiply\T1/lmr/m/n/12 (+20) ,
+ []
+
+
+Overfull \hbox (53.98901pt too wide) in paragraph at lines 247--249
+\T1/lmtt/m/n/12 TEXT(TIMEVALUE(a)+(b/1440),"hh:mm")\T1/lmr/m/n/12 (-20) .| 
+ []
+
+
+LaTeX Warning: Float too large for page by 192.81631pt on input line 256.
+
+LaTeX Info: Redefining \. on input line 256.
+LaTeX Info: Redefining \% on input line 256.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 15.35403pt, for example:
+(fancyhdr)                \setlength{\headheight}{15.35403pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-3.35403pt}.
+
+[28]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Overfull \hbox (15.37952pt too wide) in paragraph at lines 278--279
+[]|\T1/lmtt/m/n/12 xl-expr-previous-row| 
+ []
+
+
+Overfull \hbox (15.37952pt too wide) in paragraph at lines 298--299
+[]|\T1/lmtt/m/n/12 xl-expr-show-nothing| 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \hbox (badness 1009) in paragraph at lines 332--336
+[]|\T1/lmr/m/n/12 (+20) Cuantificador exis-ten-cial es-
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+LaTeX Info: Redefining \. on input line 357.
+LaTeX Info: Redefining \% on input line 357.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 15.35403pt, for example:
+(fancyhdr)                \setlength{\headheight}{15.35403pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-3.35403pt}.
+
+[29]
+Overfull \hbox (33.90453pt too wide) in paragraph at lines 367--368
+[]|\T1/lmtt/m/n/12 xl-expr-cross-sheet-ref| 
+ []
+
+
+Underfull \hbox (badness 3375) in paragraph at lines 369--372
+[]|\T1/lmr/m/n/12 (+20) Referencia a una cel-da en
+ []
+
+
+Underfull \hbox (badness 3417) in paragraph at lines 369--372
+\T1/lmr/m/n/12 (+20) otra ho-ja con nom-bre fi-jo.
+ []
+
+
+Overfull \hbox (3.02951pt too wide) in paragraph at lines 373--374
+[]|\T1/lmtt/m/n/12 xl-expr-cross-cell| 
+ []
+
+
+Underfull \hbox (badness 3375) in paragraph at lines 375--377
+[]|\T1/lmr/m/n/12 (+20) Referencia a una cel-da en
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 375--377
+\T1/lmr/m/n/12 (+20) la ho-ja li-ga-da a \T1/lmtt/m/n/12 sheet \T1/lmr/m/n/12 (
++20) en
+ []
+
+
+Overfull \hbox (3.02951pt too wide) in paragraph at lines 378--379
+[]|\T1/lmtt/m/n/12 xl-expr-source-row| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 385--387
+[]|\T1/lmr/m/n/12 (+20) Identificador ca-nó-ni-co de
+ []
+
+
+Underfull \hbox (badness 2213) in paragraph at lines 385--387
+\T1/lmr/m/n/12 (+20) la ho-ja li-ga-da a \T1/lmtt/m/n/12 sheet \T1/lmr/m/n/12 (
++20) en
+ []
+
+
+Overfull \hbox (15.37952pt too wide) in paragraph at lines 388--389
+[]|\T1/lmtt/m/n/12 xl-expr-collect-over| 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \hbox (badness 1019) in paragraph at lines 420--424
+\T1/lmr/m/n/12 (+20) nal. \T1/lmtt/m/n/12 rule-condition \T1/lmr/m/n/12 (+20) e
+s un
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 429--432
+\T1/lmr/m/n/12 (+20) una ta-bla. \T1/lmtt/m/n/12 anchor-type
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 429--432
+\T1/lmr/m/n/12 (+20) es \T1/lmtt/m/n/12 :ultima-fila \T1/lmr/m/n/12 (+20) o
+ []
+
+
+Overfull \hbox (14.89497pt too wide) in paragraph at lines 438--439
+[]|\T1/lmtt/m/n/12 xl-sheet-fixed-expr| 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+LaTeX Info: Redefining \. on input line 492.
+LaTeX Info: Redefining \% on input line 492.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[30]
+Underfull \hbox (badness 10000) in paragraph at lines 538--539
+[]|\T1/lmtt/m/n/12 (trange tabla-id desde
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Overfull \hbox (49.21942pt too wide) in paragraph at lines 567--572
+[]\T1/lmr/m/n/12 (-20) La for-ma \T1/lmtt/m/n/12 trange \T1/lmr/m/n/12 (-20) pr
+o-du-ce \T1/lmr/m/it/12 (-20) re-fe-ren-cias cross-table\T1/lmr/m/n/12 (-20) : 
+per-mi-te que una ex-pre-sión en \T1/lmtt/m/n/12 profesores-table
+ []
+
+LaTeX Info: Redefining \. on input line 584.
+LaTeX Info: Redefining \% on input line 584.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[31]
+LaTeX Info: Redefining \. on input line 645.
+LaTeX Info: Redefining \% on input line 645.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[32]
+LaTeX Info: Redefining \. on input line 708.
+LaTeX Info: Redefining \% on input line 708.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[33]
+LaTeX Info: Redefining \. on input line 771.
+LaTeX Info: Redefining \% on input line 771.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1220,14 +1255,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [34]
-Overfull \hbox (14.89081pt too wide) in paragraph at lines 156--158
-[]\T1/lmr/m/n/12 (-20) Definir un \T1/lmtt/m/n/12 defmethod \T1/lmr/m/n/12 (-20
-) de \T1/lmtt/m/n/12 compile-excel-formula \T1/lmr/m/n/12 (-20) en \T1/lmtt/m/n
-/12 generate-code-direct.lisp\T1/lmr/m/n/12 (-20) . 
- []
+LaTeX Info: Redefining \. on input line 819.
+LaTeX Info: Redefining \% on input line 819.
 
-LaTeX Info: Redefining \. on input line 183.
-LaTeX Info: Redefining \% on input line 183.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1236,9 +1266,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[35]
-LaTeX Info: Redefining \. on input line 237.
-LaTeX Info: Redefining \% on input line 237.
+[35]) (./cap4.tex
+LaTeX Info: Redefining \. on input line 4.
+LaTeX Info: Redefining \% on input line 4.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1249,23 +1279,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [36]
-Overfull \hbox (5.71727pt too wide) in paragraph at lines 249--252
-[]\T1/lmr/m/n/12 (-20) Para una re-gla con \T1/lmtt/m/n/12 :matching (dia hora)
- \T1/lmr/m/n/12 (-20) y \T1/lmtt/m/n/12 :any-overlap (tutor ... secretario)\T1/
-lmr/m/n/12 (-20) ,
- []
+LaTeX Info: Redefining \. on input line 4.
+LaTeX Info: Redefining \% on input line 4.
 
-(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2020/03/24 1.8d listings language file
-)
-Overfull \hbox (17.46774pt too wide) in paragraph at lines 285--288
-[]\T1/lmr/m/n/12 (-20) Para la re-gla de \T1/lmtt/m/n/12 profesores-table \T1/l
-mr/m/n/12 (-20) con \T1/lmtt/m/n/12 :self-in (tutor ... secretario) \T1/lmr/m/n
-/12 (-20) y \T1/lmtt/m/n/12 :matching
- []
-
-LaTeX Info: Redefining \. on input line 299.
-LaTeX Info: Redefining \% on input line 299.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1275,14 +1291,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [37]
-Overfull \hbox (37.45607pt too wide) in paragraph at lines 345--348
-[]\T1/lmr/m/n/12 (-20) La fór-mu-la re-sul-tan-te con-ca-te-na los $\OML/lmm/m/
-it/12 N$ \T1/lmr/m/n/12 (-20) tér-mi-nos con \T1/lmtt/m/n/12 & \T1/lmr/m/n/12 (
--20) y los en-vuel-ve en \T1/lmtt/m/n/12 SUBSTITUTE(TRIM(...))
- []
+LaTeX Info: Redefining \. on input line 4.
+LaTeX Info: Redefining \% on input line 4.
 
-LaTeX Info: Redefining \. on input line 355.
-LaTeX Info: Redefining \% on input line 355.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1291,7 +1302,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[38]) (./cap5.tex
+[38]
 LaTeX Info: Redefining \. on input line 4.
 LaTeX Info: Redefining \% on input line 4.
 
@@ -1317,6 +1328,126 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [40]
 Cap\'{\i }tulo 5.
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <24.88> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 4.
+
+Overfull \hbox (62.73303pt too wide) in paragraph at lines 29--34
+[]\T1/lmr/m/n/12 (-20) Los mé-to-dos CLOS de la fun-ción ge-né-ri-ca \T1/lmtt/m
+/n/12 compile-excel-formula
+ []
+
+[41
+
+]
+LaTeX Info: Redefining \. on input line 122.
+LaTeX Info: Redefining \% on input line 122.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[42]
+Overfull \hbox (14.89081pt too wide) in paragraph at lines 159--161
+[]\T1/lmr/m/n/12 (-20) Definir un \T1/lmtt/m/n/12 defmethod \T1/lmr/m/n/12 (-20
+) de \T1/lmtt/m/n/12 compile-excel-formula \T1/lmr/m/n/12 (-20) en \T1/lmtt/m/n
+/12 generate-code-direct.lisp\T1/lmr/m/n/12 (-20) . 
+ []
+
+LaTeX Info: Redefining \. on input line 182.
+LaTeX Info: Redefining \% on input line 182.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[43]
+LaTeX Info: Redefining \. on input line 238.
+LaTeX Info: Redefining \% on input line 238.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[44]
+Overfull \hbox (5.71727pt too wide) in paragraph at lines 252--255
+[]\T1/lmr/m/n/12 (-20) Para una re-gla con \T1/lmtt/m/n/12 :matching (dia hora)
+ \T1/lmr/m/n/12 (-20) y \T1/lmtt/m/n/12 :any-overlap (tutor ... secretario)\T1/
+lmr/m/n/12 (-20) ,
+ []
+
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+)
+Overfull \hbox (17.46774pt too wide) in paragraph at lines 288--291
+[]\T1/lmr/m/n/12 (-20) Para la re-gla de \T1/lmtt/m/n/12 profesores-table \T1/l
+mr/m/n/12 (-20) con \T1/lmtt/m/n/12 :self-in (tutor ... secretario) \T1/lmr/m/n
+/12 (-20) y \T1/lmtt/m/n/12 :matching
+ []
+
+LaTeX Info: Redefining \. on input line 297.
+LaTeX Info: Redefining \% on input line 297.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[45]
+Overfull \hbox (37.45607pt too wide) in paragraph at lines 348--351
+[]\T1/lmr/m/n/12 (-20) La fór-mu-la re-sul-tan-te con-ca-te-na los $\OML/lmm/m/
+it/12 N$ \T1/lmr/m/n/12 (-20) tér-mi-nos con \T1/lmtt/m/n/12 & \T1/lmr/m/n/12 (
+-20) y los en-vuel-ve en \T1/lmtt/m/n/12 SUBSTITUTE(TRIM(...))
+ []
+
+LaTeX Info: Redefining \. on input line 351.
+LaTeX Info: Redefining \% on input line 351.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[46]
+LaTeX Info: Redefining \. on input line 405.
+LaTeX Info: Redefining \% on input line 405.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[47]) (./cap5.tex
+LaTeX Info: Redefining \. on input line 4.
+LaTeX Info: Redefining \% on input line 4.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[48]
+Cap\'{\i }tulo 6.
 
 Underfull \hbox (badness 1635) in paragraph at lines 36--39
 []|\T1/lmr/m/n/12 (+20) Definición de to-das las cla-ses del AST con
@@ -1348,7 +1479,7 @@ Overfull \hbox (8.78772pt too wide) in paragraph at lines 58--62
 m-por-tan-tes: es po-si-ble car-gar \T1/lmtt/m/n/12 ast-def.lisp
  []
 
-[41
+[49
 
 ]
 LaTeX Info: Redefining \. on input line 109.
@@ -1362,7 +1493,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[42]
+[50]
 LaTeX Info: Redefining \. on input line 169.
 LaTeX Info: Redefining \% on input line 169.
 
@@ -1374,7 +1505,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[43]
+[51]
 LaTeX Info: Redefining \. on input line 222.
 LaTeX Info: Redefining \% on input line 222.
 
@@ -1386,7 +1517,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[44]
+[52]
 Overfull \hbox (7.4422pt too wide) in paragraph at lines 245--248
 []\T1/lmr/m/n/12 (-20) La co-lum-na \T1/lmtt/m/n/12 Defensas \T1/lmr/m/n/12 (-2
 0) de \T1/lmtt/m/n/12 profesores-table \T1/lmr/m/n/12 (-20) mues-tra los va-lo-
@@ -1403,7 +1534,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[45]) (./cap-conclusiones.tex
+[53]) (./cap-conclusiones.tex
 LaTeX Info: Redefining \. on input line 4.
 LaTeX Info: Redefining \% on input line 4.
 
@@ -1415,11 +1546,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[46] [47
+[54] [55
 
 ]
-LaTeX Info: Redefining \. on input line 60.
-LaTeX Info: Redefining \% on input line 60.
+LaTeX Info: Redefining \. on input line 64.
+LaTeX Info: Redefining \% on input line 64.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1429,13 +1560,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[48]) [49
+[56]) [57
 
-] [50
+] [58
 
 ]
-LaTeX Info: Redefining \. on input line 440.
-LaTeX Info: Redefining \% on input line 440.
+LaTeX Info: Redefining \. on input line 536.
+LaTeX Info: Redefining \% on input line 536.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1445,35 +1576,65 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[51] (./tesis.aux
+[59]
+LaTeX Info: Redefining \. on input line 572.
+LaTeX Info: Redefining \% on input line 572.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[60] (./tesis.aux
 LaTeX Info: Redefining \. on input line 21.
 LaTeX Info: Redefining \% on input line 21.
 )
-Package rerunfilecheck Info: File `tesis.out' has not changed.
-(rerunfilecheck)             Checksum: A6C4EEB4A4CE7F697553F7C17DCF5366;14251.
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `tesis.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `tesis.out':
+(rerunfilecheck)             Before: 3456A0478AA71BE885023AC228E0EE2D;17991
+(rerunfilecheck)             After:  3AEEE40C2C096CDDF8BAE9063455FCE7;17685.
  ) 
 Here is how much of TeX's memory you used:
- 19578 strings out of 478287
- 305160 string characters out of 5849290
- 1144101 words of memory out of 5000000
- 36717 multiletter control sequences out of 15000+600000
- 544268 words of font info for 172 fonts, out of 8000000 for 9000
+ 19710 strings out of 478287
+ 307220 string characters out of 5849290
+ 1162973 words of memory out of 5000000
+ 36777 multiletter control sequences out of 15000+600000
+ 545683 words of font info for 182 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 60i,12n,63p,1194b,2119s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/en
-c/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/s
-hare/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/public/lm
-/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texm
-f/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.
-pfb></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/
-type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb><
-/usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1
-/public/lm/lmtt12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on tesis.pdf (52 pages, 410909 bytes).
+ 60i,12n,63p,1194b,2115s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{section.2.6} has been referenced but does not exi
+st, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsection.2.4.2} has been referenced but does not 
+exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsection.2.4.1} has been referenced but does not 
+exist, replaced by a fixed one
+
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/
+dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/sha
+re/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/public/lm/l
+mbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi12.pfb></usr/share/texmf/
+fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr8.pf
+b></usr/share/texmf/fonts/type1/public/lm/lmri12.pfb></usr/share/texmf/fonts/ty
+pe1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></u
+sr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/p
+ublic/lm/lmtt12.pfb></usr/share/texmf/fonts/type1/public/lm/lmtti10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
+Output written on tesis.pdf (61 pages, 446244 bytes).
 PDF statistics:
- 1251 PDF objects out of 1440 (max. 8388607)
- 1162 compressed objects within 12 object streams
- 565 named destinations out of 1000 (max. 500000)
- 42033 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 1445 PDF objects out of 1728 (max. 8388607)
+ 1345 compressed objects within 14 object streams
+ 616 named destinations out of 1000 (max. 500000)
+ 42673 words of extra memory for PDF output out of 42996 (max. 10000000)
 

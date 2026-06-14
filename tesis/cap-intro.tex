@@ -73,10 +73,10 @@ La pregunta de investigaci\'on central de este trabajo es:
 \medskip
 \begin{center}
 \itshape
-?`Puede un lenguaje de dominio espec\'{\i}fico separar la intenci\'on
-sem\'antica del mecanismo de implementaci\'on, permitiendo generar
-hojas de c\'alculo complejas de planificaci\'on con un c\'odigo declarativo
-de nivel de abstracci\'on superior?
+?`Puede un lenguaje de dominio espec\'{\i}fico separar la descripci\'on
+sem\'antica de una estructura tabular del mecanismo concreto de su
+generaci\'on, de modo que el mismo programa declarativo sea v\'alido
+independientemente del backend de salida?
 \end{center}
 \medskip
 
@@ -87,22 +87,26 @@ de nivel de abstracci\'on superior?
 La utilizaci\'on de un lenguaje de dominio espec\'{\i}fico (DSL) interno,
 implementado mediante macros de Common Lisp y un compilador basado en el
 Sistema de Objetos de Common Lisp (CLOS), permite separar la descripci\'on
-sem\'antica de una hoja de c\'alculo de planificaci\'on ---su estructura
-tabular, sus relaciones, sus f\'ormulas y sus condiciones de coloreado--- de
-los detalles concretos de la API de generaci\'on de archivos \xlsx{}.  Esta
-separaci\'on reduce el c\'odigo necesario, facilita la reutilizaci\'on ante
-cambios en los datos y hace que el programa resultante sea legible por el
-experto del dominio sin conocimiento de la API de destino.
+sem\'antica de una estructura tabular de planificaci\'on ---sus tablas, sus
+relaciones, sus c\'omputos y sus condiciones de visualizaci\'on condicional---
+de los detalles concretos de cualquier backend de generaci\'on.  El backend
+es un componente intercambiable que traduce el \'arbol de sintaxis abstracta
+a la representaci\'on de salida deseada; el programa del DSL permanece
+inalterado al cambiar de backend.  Esta separaci\'on reduce el c\'odigo
+necesario, facilita la reutilizaci\'on ante cambios en los datos y hace que
+el programa resultante sea legible por el experto del dominio sin conocimiento
+de ning\'un sistema de salida espec\'{\i}fico.
 
 % ---------------------------------------------------------------------------
 \section*{Objetivo general}
 % ---------------------------------------------------------------------------
 
 Dise\~nar e implementar un lenguaje de dominio espec\'{\i}fico en Common Lisp
-para la declaraci\'on y generaci\'on autom\'atica de hojas de c\'alculo de
-planificaci\'on, incluyendo tablas relacionadas, columnas calculadas,
-cuantificaci\'on existencial y formato condicional persistente en el archivo
-\xlsx{}.
+para la descripci\'on declarativa de estructuras tabulares de planificaci\'on
+---tablas relacionadas, columnas calculadas, cuantificaci\'on existencial y
+reglas de visualizaci\'on condicional--- con una arquitectura que separa el
+DSL del backend de generaci\'on, y demostrar su viabilidad mediante un backend
+que produce archivos \xlsx{}.
 
 % ---------------------------------------------------------------------------
 \section*{Objetivos espec\'{\i}ficos}
@@ -125,9 +129,10 @@ cuantificaci\'on existencial y formato condicional persistente en el archivo
   \item Implementar el DSL como un conjunto de macros de Common Lisp que
     construyen nodos del AST en tiempo de expansi\'on de macros.
 
-  \item Implementar un backend de generaci\'on de c\'odigo basado en una
-    funci\'on gen\'erica CLOS que traduzca cada tipo de nodo AST a
-    instrucciones Python para la biblioteca openpyxl.
+  \item Implementar un backend de ejemplo, basado en una funci\'on gen\'erica
+    CLOS, que traduzca cada tipo de nodo AST a instrucciones Python para la
+    biblioteca openpyxl, generando archivos \xlsx{} con formato condicional
+    persistente.
 
   \item Validar el lenguaje sobre tres casos de uso reales de la Facultad
     de Matem\'atica y Computaci\'on de la Universidad de La Habana: el
@@ -156,14 +161,14 @@ satisfacer.
 
 El cap\'{\i}tulo~\ref{cap:dsl} describe el lenguaje de dominio espec\'{\i}fico
 dise\~nado.  Se presentan el \'arbol de sintaxis abstracta con sus cuatro
-familias de nodos, las formas del DSL visible al programador y su sem\'antica,
-y el flujo completo desde la declaraci\'on hasta la producci\'on del
-archivo \xlsx{}.
+familias de nodos, las formas del DSL visibles al programador y su sem\'antica,
+y el flujo completo desde la declaraci\'on hasta la entrega del AST al backend.
 
-El cap\'{\i}tulo~\ref{cap:generacion} detalla el proceso de generaci\'on de
-c\'odigo.  Se explica c\'omo el backend resuelve las coordenadas Excel, c\'omo
-compila cada tipo de expresi\'on a cadenas de f\'ormula, y c\'omo genera las
-f\'ormulas SUMPRODUCT que implementan el formato condicional persistente.
+El cap\'{\i}tulo~\ref{cap:generacion} describe el backend implementado como
+demostraci\'on: c\'omo traduce el AST a coordenadas del sistema de salida,
+c\'omo compila cada tipo de expresi\'on a cadenas de f\'ormula, y c\'omo
+genera las f\'ormulas SUMPRODUCT que implementan el formato condicional
+persistente en los archivos \xlsx{}.
 
 El cap\'{\i}tulo~\ref{cap:implementacion} describe los detalles de implementaci\'on:
 la organizaci\'on en cuatro archivos con responsabilidades separadas, la macro

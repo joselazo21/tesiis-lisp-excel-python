@@ -1,0 +1,293 @@
+% ===========================================================================
+%  Capítulo — Fundamentos del dominio y estado del arte
+% ===========================================================================
+\chapter{Fundamentos del dominio y estado del arte}
+\label{cap:estadoarte}
+
+La asignación de horarios es un área de estudio dentro de la planificación de
+recursos y la optimización que abarca múltiples contextos prácticos~\cite{babaei2015}.
+Este capítulo establece las bases conceptuales del dominio y analiza el panorama
+de soluciones existentes.
+La sección~\ref{sec:tipos-horarios} define los tipos de problemas de asignación
+de horarios y sus variantes representativas.
+La sección~\ref{sec:estadoarte-horarios} presenta el estado del arte en ambos
+dominios.
+Las secciones~\ref{sec:apps-existentes} y~\ref{sec:tecnologias-existentes}
+examinan las herramientas comerciales disponibles y las tecnologías sobre las
+que se apoyan.
+Finalmente, la sección~\ref{sec:limitaciones-arte} identifica las limitaciones
+que motivan el trabajo presentado en esta tesis.
+
+% ---------------------------------------------------------------------------
+\section{Problemas de asignaci\'on de horarios}
+\label{sec:tipos-horarios}
+% ---------------------------------------------------------------------------
+
+La asignación de horarios constituye un problema de planificación presente en
+muy diversos contextos~\cite{babaei2015}.  Consiste en organizar y distribuir
+un conjunto de actividades en determinados intervalos de tiempo, bajo un
+conjunto de restricciones que limitan las posibles asignaciones.
+
+Estas restricciones se clasifican en dos tipos.  Las \textbf{restricciones
+duras} son obligatorias: si no se cumplen, la solución no es válida ---dos
+clases no pueden compartir el mismo aula a la misma hora; un profesor no puede
+impartir dos asignaturas simultáneamente---.  Las \textbf{restricciones
+blandas} no invalidan la solución pero afectan su calidad: concentrar todas
+las clases de una asignatura en un solo día o colocar una materia de alta
+carga cognitiva en el último turno de la tarde son situaciones admisibles
+pero no deseables.
+
+Entre las restricciones más comunes se distinguen los \textbf{conflictos} y
+los \textbf{solapamientos}.  Un conflicto ocurre cuando dos o más actividades
+compiten por el uso simultáneo de un mismo recurso limitado ---un aula, un
+profesor, un canal de emisión---.  Un solapamiento se produce cuando
+actividades asignadas coinciden en el tiempo de manera incompatible,
+impidiendo su ejecución simultánea por parte de los actores involucrados.
+
+Además de estas restricciones fundamentales, es necesario gestionar la
+disponibilidad real de espacios y personas, lo que incrementa la complejidad
+del problema y restringe aún más el conjunto de soluciones viables.  El
+problema varía según el contexto: cada entorno tiene sus propias reglas y
+objetivos.  Las subsecciones siguientes describen las variantes más relevantes
+para este trabajo.
+
+% ............................................................................
+\subsection{Horario docente universitario}
+\label{ssec:horario-facultad}
+% ............................................................................
+
+Este tipo de problema consiste en asignar cursos, profesores y aulas a
+determinados períodos de tiempo cumpliendo múltiples restricciones~\cite{abdennadher2000,muller2005,babaei2015}:
+la disponibilidad de los docentes, la capacidad de las aulas y la no
+superposición de materias para un mismo grupo de estudiantes.  El objetivo
+principal es generar un horario factible que optimice el uso de los recursos
+y minimice conflictos.
+
+Por ejemplo, al programar la asignatura \textit{Álgebra} para el grupo C111
+los lunes a las 9:15~h en el aula~5, el sistema debe asegurar que el profesor
+asignado no tenga otra clase a esa misma hora, que el aula~5 no esté ocupada
+por otro grupo, y que el grupo C111 no tenga otra asignatura en ese turno.
+Las restricciones concretas varían entre instituciones: en algunas la escasez
+de aulas es la restricción dominante; en otras, los laboratorios especializados
+crean los cuellos de botella más severos.
+
+% ............................................................................
+\subsection{Planificaci\'on de defensas de tesis}
+\label{ssec:horario-defensas}
+% ............................................................................
+
+La planificación de defensas de tesis es una variante del problema de
+asignación de horarios con características propias.  Cada defensa exige la
+presencia simultánea de varios miembros de tribunal: tutor, oponente,
+presidente, vocal y secretario.  La restricción dura crítica es la ausencia
+de conflictos: un mismo miembro del tribunal no puede estar en dos defensas
+programadas en el mismo slot horario.
+
+A diferencia del horario docente, en este caso el recurso escaso no son las
+aulas sino los profesores con el perfil adecuado para cada rol~\cite{nardo2019}.
+Detectar estos conflictos de forma visual es precisamente uno de los
+requisitos que motivaron el desarrollo del DSL descrito en este trabajo.
+
+% ............................................................................
+\subsection{Programaci\'on televisiva}
+\label{ssec:horario-tv}
+% ............................................................................
+
+En la confección de la parrilla televisiva, el reto es organizar los programas
+en franjas horarias para maximizar la audiencia y cumplir los compromisos
+comerciales~\cite{bollapragada2002}.  Se consideran factores como el tipo de
+público en cada franja, la competencia con otros canales y la duración exacta
+de los programas~\cite{fernandez2008}.
+
+El programador debe, por ejemplo, evitar que un noticiero importante coincida
+con la transmisión en vivo de un evento deportivo de duración variable, o
+garantizar que un bloque infantil se emita en las mañanas de fin de semana y
+no en la franja nocturna.  A diferencia del entorno académico, el enfoque
+aquí es estratégico y comercial: las restricciones blandas ---cómo posicionar
+los programas para maximizar la cuota de pantalla--- tienen tanto peso como
+las restricciones duras.
+
+% ---------------------------------------------------------------------------
+\section{Estado del arte}
+\label{sec:estadoarte-horarios}
+% ---------------------------------------------------------------------------
+
+% ............................................................................
+\subsection{Horario docente universitario}
+\label{ssec:arte-facultad}
+% ............................................................................
+
+La investigación sobre generación automática de horarios universitarios tiene
+décadas de historia.  Abdennadher y Marte~\cite{abdennadher2000} formalizaron
+el problema mediante Reglas de Manejo de Restricciones (CHR), estableciendo
+un lenguaje declarativo de restricciones que influyó en trabajos posteriores.
+Müller~\cite{muller2005} desarrolló un sistema completo de timetabling basado
+en satisfacción de restricciones para entornos universitarios.  Reddy
+et al.~\cite{reddy2019} propusieron un modelo de coloración de grafos que
+garantiza formalmente la ausencia de conflictos pero resulta computacionalmente
+costoso en instancias reales.
+
+En la Facultad de Matemática y Computación de la Universidad de La Habana
+(MATCOM/UH) existe una línea de investigación consolidada sobre este problema.
+Portela Aguilera~\cite{portela2010} realizó la primera aproximación formal a
+la generación automática de horarios para la facultad, sentando las bases del
+problema en el contexto local.  Travieso Sosa~\cite{travieso2012} formalizó
+el conjunto de restricciones del problema e introdujo el concepto de
+``felicidad'' como medida ponderada de la calidad del horario.  Chang
+Alcover~\cite{chang2014} aplicó satisfacción de restricciones (CSP) con
+retroceso y búsqueda local.  Fernández Llanos~\cite{fernandez_llanos2014}
+desarrolló una API especializada con evaluación incremental de restricciones.
+
+Seguí Bonilla~\cite{segui2014} y Tomás López~\cite{tomaslopez2014}
+desarrollaron módulos de búsqueda automática de horarios basados en técnicas
+de optimización computacional.  Quintero Rojas~\cite{quintero2014} integró
+los módulos anteriores en un sistema completo de gestión de horarios.  Nardo
+González~\cite{nardo2019} extendió la investigación al problema de
+planificación de defensas de tesis, que comparte la estructura de conflictos
+del horario docente pero con restricciones específicas sobre los miembros de
+tribunal.  Casteleiro Wong~\cite{casteleiro2022} abordó la informatización
+de la gestión docente en el contexto de la facultad.
+
+% ............................................................................
+\subsection{Programaci\'on televisiva}
+\label{ssec:arte-tv}
+% ............................................................................
+
+En el ámbito de la radiodifusión, Bollapragada et al.~\cite{bollapragada2002}
+plantearon el problema de la programación televisiva como programación lineal
+entera mixta (MILP) orientada a maximizar la audiencia en cadenas de
+televisión comerciales.  Fernández y Salido~\cite{fernandez2008} lo modelaron
+como un CSP y propusieron técnicas de descomposición del espacio de búsqueda
+junto con métodos de búsqueda automática.
+
+A partir de 2015 la incorporación de técnicas de aprendizaje automático marcó
+una nueva dirección.  Kim et al.~\cite{kim2021} propusieron un sistema de
+aprendizaje por refuerzo profundo para la programación televisiva, publicado
+en \textit{IEEE Transactions on Broadcasting}.
+
+En ambos dominios la tendencia reciente es hacia herramientas interactivas
+que asisten al experto sin reemplazarlo: el planificador mantiene el control
+creativo mientras el sistema garantiza la viabilidad técnica frente a las
+restricciones.
+
+% ---------------------------------------------------------------------------
+\section{Aplicaciones existentes para la gesti\'on de horarios}
+\label{sec:apps-existentes}
+% ---------------------------------------------------------------------------
+
+Dada la complejidad y la gran cantidad de variables de estos problemas,
+confeccionar horarios de forma manual en herramientas básicas resulta un
+proceso lento y propenso a errores humanos~\cite{pillay2016}.  Por este
+motivo existen aplicaciones especializadas, tanto en el ámbito académico
+como en el de la radiodifusión.  Estas aplicaciones van desde soluciones de
+escritorio hasta plataformas de software como servicio (\textit{Software as
+a Service}, SaaS) accesibles desde el navegador.
+
+% ............................................................................
+\subsection{\'Ambito acad\'emico}
+\label{ssec:apps-academico}
+% ............................................................................
+
+En la gestión del \textit{Educational Timetabling Problem}
+(ETP)~\cite{babaei2015} destacan las siguientes herramientas:
+
+\begin{description}
+  \item[Coursedog y TimeEdit.] Representan el estado del arte en educación
+    superior~\cite{bass2021}.  Son plataformas SaaS que permiten a
+    coordinadores y decanos gestionar recursos en tiempo real, con interfaces
+    de validación que alertan visualmente sobre conflictos de aula o
+    solapamientos de profesores.
+
+  \item[aSc Horarios.] Una de las herramientas más extendidas para educación
+    primaria y secundaria~\cite{pillay2016}.  Destaca por su capacidad de
+    generar horarios automáticos basados en heurísticas y por su interfaz
+    interactiva de arrastrar y soltar que facilita la edición manual asistida.
+
+  \item[Syllabus Plus.] Utilizada por grandes universidades, se centra en la
+    optimización del horario desde la perspectiva del estudiante: garantiza
+    que el calendario sea viable para el cuerpo estudiantil y no solo para
+    el cuerpo docente.
+
+  \item[Horarium.ai.] Plataforma de generación automática e interactiva de
+    horarios mediante inteligencia artificial~\cite{horarium2024}.  Incorpora
+    modelos de lenguaje para asistir al planificador en la toma de decisiones
+    durante la confección del horario.
+\end{description}
+
+% ............................................................................
+\subsection{\'Ambito de radiodifusi\'on}
+\label{ssec:apps-tv}
+% ............................................................................
+
+En televisión y radiodifusión, las aplicaciones deben manejar la precisión
+temporal de la emisión junto con las restricciones comerciales:
+
+\begin{description}
+  \item[MEDIAGENIX (WHATS'On).] Estándar europeo para la gestión de canales
+    de televisión y plataformas VOD.  Permite la planificación de parrillas a
+    largo plazo, validando automáticamente los derechos de emisión y las
+    reglas de pauta publicitaria~\cite{mediagenix2024}.
+
+  \item[BroadView y Amagi.] Soluciones que integran la planificación del
+    tráfico de emisión con la automatización del \textit{playout}.  Aseguran
+    que la lista de programación se ejecute sin errores técnicos ni huecos
+    de emisión (\textit{blackouts})~\cite{matthews2018}.
+\end{description}
+
+% ---------------------------------------------------------------------------
+\section{Tecnolog\'{\i}as empleadas}
+\label{sec:tecnologias-existentes}
+% ---------------------------------------------------------------------------
+
+La arquitectura tecnológica de estas herramientas ha evolucionado hacia
+ecosistemas en capas que separan la interfaz de usuario, el motor de
+optimización y el almacenamiento:
+
+\begin{description}
+  \item[Interfaces de usuario.] La mayoría de las aplicaciones modernas
+    utilizan \textit{frameworks} de JavaScript como React.js, Vue.js o
+    Angular~\cite{garcia2024}.  Estas tecnologías permiten crear interfaces
+    reactivas donde el usuario recibe retroalimentación inmediata ---cambios
+    de color, alertas--- ante el incumplimiento de una restricción.
+
+  \item[Backend y motores de optimizaci\'on.] El procesamiento intensivo se
+    delega a servicios escritos en lenguajes de alto rendimiento como Java,
+    Go o Python.  Estos servicios ejecutan motores de satisfacción de
+    restricciones (\textit{Constraint Solvers}) como OptaPlanner o Google
+    OR-Tools, que operan de forma independiente a la interfaz de usuario.
+
+  \item[Persistencia.] Las aplicaciones utilizan bases de datos relacionales
+    como PostgreSQL o SQL Server para gestionar la concurrencia cuando varios
+    usuarios editan el horario simultáneamente y para mantener un historial
+    de auditoría de los cambios.
+
+  \item[Formatos de intercambio.] Para la exportación de datos, los sistemas
+    académicos emplean estándares como JSON e iCal (.ics).  En el ámbito
+    televisivo, el estándar predominante es el BXF (\textit{Broadcast
+    eXchange Format}), un esquema XML que permite la comunicación entre el
+    software de programación y los equipos de emisión física~\cite{smpte2021}.
+    En entornos institucionales más modestos, el formato de intercambio más
+    frecuente es la hoja de cálculo: un archivo \xlsx{} que concentra toda
+    la información del horario y que el personal puede editar sin software
+    especializado.
+\end{description}
+
+% ---------------------------------------------------------------------------
+\section{Limitaciones de los enfoques actuales}
+\label{sec:limitaciones-arte}
+% ---------------------------------------------------------------------------
+
+Los sistemas descritos resuelven bien el problema de \emph{asignación}: dado
+un conjunto de recursos, actividades y restricciones, encontrar una
+distribución factible o cercana al óptimo.  Sin embargo, presentan una
+limitación estructural cuando el requisito es producir una
+\emph{visualización} del horario resultante: la representación visual queda
+acoplada al sistema que la generó.
+
+En entornos donde la herramienta de visualización preferida es la hoja de
+cálculo ---porque es accesible sin instalación, editable por el usuario y
+fácilmente compartible--- la generación automática de ese documento exige
+código que entremezcla la lógica del problema con los detalles de la API de
+la biblioteca de salida.  Esta mezcla, descrita en detalle en la
+introducción, es la motivación central del lenguaje de dominio específico
+desarrollado en este trabajo.

@@ -20,8 +20,8 @@
 ;; estén disponibles al evaluar los ASTs generados.
 ;; =============================================================================
 
-(load "codigo-tesis.lisp")
-(load "generate-code-direct.lisp")
+(load (merge-pathnames "codigo-tesis.lisp"        *load-truename*))
+(load (merge-pathnames "generate-code-direct.lisp" *load-truename*))
 
 ;; =============================================================================
 ;; EXPRESIONES DE FLUJO Y COMPARACIÓN
@@ -57,6 +57,10 @@
 (defmacro show-nothing ()
   `(xl-expr-show-nothing))
 
+;; Vacío semántico: el backend decide cómo representarlo
+(defmacro empty ()
+  `(xl-expr-empty))
+
 ;; Comparaciones: (equals a b) (different a b) (_and a b) (_or a b)
 (defmacro equals (a b)    `(xl-expr-equals :a ,a :b ,b))
 (defmacro different (a b) `(xl-expr-different :a ,a :b ,b))
@@ -77,6 +81,11 @@
 (defmacro subtract (a b) `(xl-expr-subtract :a ,a :b ,b))
 (defmacro multiply (a b) `(xl-expr-multiply :a ,a :b ,b))
 (defmacro divide (a b)   `(xl-expr-divide :a ,a :b ,b))
+
+;; Promedio: (promedio (col n1) (col n2) ...)
+;; Compila a ((n1 + n2 + ...) / cantidad-de-columnas)
+(defmacro promedio (&rest cols)
+  `(xl-expr-promedio :cols (list ,@cols)))
 
 ;; =============================================================================
 ;; STRINGS

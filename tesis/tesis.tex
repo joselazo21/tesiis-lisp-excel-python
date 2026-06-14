@@ -1,7 +1,7 @@
 % ===========================================================================
 %  Documento principal — Tesis de Diploma
-%  Título: Un lenguaje de dominio específico para la generación declarativa
-%          de hojas de cálculo de planificación
+%  Título: Un lenguaje de dominio específico para la descripción declarativa
+%          de estructuras tabulares
 %  Autor:  Jose Morales Lazo
 %  Tutor:  MSc. Fernando Rodríguez Flores
 %  MATCOM — Universidad de La Habana, 2026
@@ -116,7 +116,7 @@
 % ---- Hipervínculos ---------------------------------------------------------
 \usepackage[hidelinks]{hyperref}
 \hypersetup{
-  pdftitle={Un DSL para la generaci\'on declarativa de hojas de c\'alculo de planificaci\'on},
+  pdftitle={Un DSL para la descripci\'on declarativa de estructuras tabulares},
   pdfauthor={Jose Morales Lazo},
 }
 
@@ -150,8 +150,7 @@ Facultad de Matem\'atica y Computaci\'on}
 \vspace{2cm}
 
 {\LARGE\bfseries Un lenguaje de dominio espec\'{\i}fico para la\\[6pt]
-generaci\'on declarativa de hojas de c\'alculo\\[6pt]
-de planificaci\'on}
+descripci\'on declarativa de estructuras tabulares}
 
 \vspace{2.5cm}
 
@@ -209,22 +208,22 @@ acad\'emico en una oportunidad de automatizarlo.
 
 La gesti\'on de la informaci\'on en entornos acad\'emicos genera, de forma
 recurrente, documentos de planificaci\'on tabular: horarios de docencia,
-calendarios de defensas, distribuciones de aulas. En todos estos casos, la
-herramienta elegida es la hoja de c\'alculo. Nada de esto sorprende; lo que
-s\'{\i} resulta costoso es que cada vez que se quiere automatizar la creaci\'on
-de esa hoja se repite el mismo patr\'on: c\'odigo imperativo que mezcla la
-l\'ogica del problema con los detalles de la \textit{API} de la biblioteca
-de salida.
+calendarios de defensas, distribuciones de aulas.  Cuando se quiere automatizar
+la creaci\'on de esos documentos se repite invariablemente el mismo patr\'on:
+c\'odigo imperativo que mezcla la l\'ogica del problema con los detalles de
+la \textit{API} de la biblioteca de salida elegida, ya sea una hoja de c\'alculo,
+una base de datos o un servicio web.  El resultado es c\'odigo fr\'agil,
+dif\'{\i}cil de mantener y poco reutilizable.
 
-El trabajo que se presenta en este documento aborda precisamente ese costo.
+El trabajo que se presenta en este documento aborda precisamente ese problema.
 Jose Morales Lazo dise\~n\'o e implement\'o un lenguaje de dominio espec\'{\i}fico
-(DSL) interno en Common Lisp que permite declarar tablas, columnas calculadas,
-reglas de visualizaci\'on condicional y relaciones entre tablas, sin escribir
-una sola letra de columna Excel, un solo \'{\i}ndice de fila ni una cadena de
-f\'ormula. El compilador del DSL, implementado como un backend de funciones
-gen\'ericas CLOS, produce autom\'aticamente el programa Python que construye
-el archivo \xlsx{} con todas las f\'ormulas y reglas de formato condicional
-incrustadas.
+(DSL) interno en Common Lisp que permite declarar tablas relacionadas, columnas
+calculadas, reglas de visualizaci\'on condicional y relaciones entre estructuras,
+sin hacer referencia a ning\'un detalle concreto del sistema de salida.
+El AST resultante es independiente del backend; como demostraci\'on de
+viabilidad, se implement\'o un backend que genera el programa Python que
+construye el archivo \xlsx{} con todas las f\'ormulas y reglas de formato
+condicional incrustadas.
 
 El diplomante demostr\'o durante el trabajo una notable capacidad para
 identificar la abstracci\'on correcta, dise\~narla y construirla con rigor.
@@ -254,31 +253,34 @@ Junio, 2026
 \addcontentsline{toc}{chapter}{Resumen}
 \thispagestyle{plain}
 
-La creaci\'on autom\'atica de hojas de c\'alculo de planificaci\'on exige, en
-la pr\'actica, c\'odigo imperativo que entremezcla la l\'ogica del problema
----qui\'en tiene conflicto de horario, cu\'antas defensas acumula un profesor---
-con los detalles mec\'anicos de la API de salida: letras de columna Excel,
-\'{\i}ndices de fila absolutos, cadenas de f\'ormula, llamadas a la biblioteca
-de formato condicional.  Esta mezcla eleva el costo de desarrollo y dificulta
-la reutilizaci\'on en problemas similares.
+Describir visualizaciones de estructuras tabulares ---horarios, calendarios,
+distribuciones--- exige, en la pr\'actica, c\'odigo imperativo que entremezcla
+la l\'ogica del problema ---qui\'en tiene conflicto de horario, cu\'antas
+defensas acumula un profesor--- con los detalles mec\'anicos del sistema de
+salida elegido: \'{\i}ndices de columna, rangos absolutos, cadenas de f\'ormula,
+llamadas a la API del generador.  Esta mezcla eleva el costo de desarrollo y
+dificulta la reutilizaci\'on ante cambios en los datos o en el backend de destino.
 
 El objetivo de este trabajo es separar ambas capas mediante un lenguaje de
 dominio espec\'{\i}fico (DSL) interno en Common~Lisp.  El programador declara
-\emph{qu\'e} debe contener el libro ---tablas, columnas calculadas, cuantificadores
-existenciales, reglas de coloreado, totales relativos--- y un compilador basado en
-el Sistema de Objetos de Common Lisp (CLOS) traduce esa declaraci\'on a un
-programa Python que construye el archivo \xlsx{}.  Las reglas de formato
-condicional se incrustan como \texttt{FormulaRule} y se reevaluan autom\'aticamente
-en Excel al editar los datos, sin necesidad de volver a ejecutar el DSL.
+\emph{qu\'e} debe contener la estructura ---tablas relacionadas, columnas
+calculadas, cuantificadores existenciales, reglas de coloreado condicional,
+totales con posicionamiento relativo--- y un compilador basado en el Sistema de
+Objetos de Common Lisp (CLOS) traduce esa declaraci\'on a trav\'es de un \'arbol
+de sintaxis abstracta independiente del backend.  Como demostraci\'on, se
+implementa un backend que genera programas Python los cuales construyen archivos
+\xlsx{} mediante la biblioteca openpyxl, con reglas de formato condicional
+persistentes incrustadas como \texttt{FormulaRule}.
 
 La validaci\'on sobre tres casos reales de la Facultad de Matem\'atica y
 Computaci\'on de la Universidad de La Habana confirma que el lenguaje captura
 los patrones recurrentes de la planificaci\'on tabular con una cantidad
-de c\'odigo significativamente menor que la alternativa imperativa.
+de c\'odigo significativamente menor que la alternativa imperativa, e
+independientemente de los detalles de cualquier API de salida.
 
 \medskip\noindent
-\textbf{Palabras clave:} Lenguaje de dominio espec\'{\i}fico; Hoja de c\'alculo;
-Generaci\'on autom\'atica de c\'odigo; Common Lisp; CLOS; Macros;
+\textbf{Palabras clave:} Lenguaje de dominio espec\'{\i}fico; Estructuras
+tabulares; Generaci\'on de c\'odigo; Common Lisp; CLOS; Macros;
 Formato condicional; openpyxl.
 \newpage
 
@@ -289,32 +291,34 @@ Formato condicional; openpyxl.
 \addcontentsline{toc}{chapter}{Abstract}
 \thispagestyle{plain}
 
-Automatically generating planning spreadsheets requires, in practice,
-imperative code that interleaves domain logic---who has a scheduling
-conflict, how many thesis defenses a professor is involved in---with
-the mechanical details of the output API: Excel column letters, absolute
-row indices, formula strings, and conditional formatting library calls.
-This interleaving raises development costs and hampers reuse across
-similar problems.
+Describing visualizations of tabular structures---schedules, calendars,
+distributions---requires, in practice, imperative code that interleaves
+domain logic---who has a scheduling conflict, how many thesis defenses a
+professor is involved in---with the mechanical details of the chosen output
+system: column indices, absolute ranges, formula strings, and output API calls.
+This interleaving raises development costs and hampers reuse when data or
+the target backend changes.
 
 The objective of this work is to separate these two layers through an
 internal domain-specific language (DSL) built in Common~Lisp.  The
-programmer declares \emph{what} the workbook should contain---tables,
-computed columns, existential quantifiers, coloring rules, relative
-totals---and a compiler based on the Common Lisp Object System (CLOS)
-translates that declaration into a Python program that builds the
-\xlsx{} file.  Conditional formatting rules are embedded as
-\texttt{FormulaRule} objects and are automatically re-evaluated in
-Excel when data is edited, without re-running the DSL.
+programmer declares \emph{what} the structure should contain---related
+tables, computed columns, existential quantifiers, conditional coloring
+rules, relative totals---and a compiler based on the Common Lisp Object
+System (CLOS) translates that declaration through a backend-independent
+abstract syntax tree.  As a demonstration, a backend is implemented that
+generates Python programs which build \xlsx{} files via the openpyxl
+library, with persistent conditional formatting rules embedded as
+\texttt{FormulaRule} objects.
 
 Validation on three real use cases from the Faculty of Mathematics and
 Computer Science of the University of Havana confirms that the language
 captures the recurring patterns of tabular planning with significantly
-less code than the imperative alternative.
+less code than the imperative alternative, independent of any specific
+output API.
 
 \medskip\noindent
-\textbf{Keywords:} Domain-specific language; Spreadsheet;
-Automatic code generation; Common Lisp; CLOS; Macros;
+\textbf{Keywords:} Domain-specific language; Tabular structures;
+Code generation; Common Lisp; CLOS; Macros;
 Conditional formatting; openpyxl.
 \newpage
 
@@ -329,6 +333,7 @@ Conditional formatting; openpyxl.
 % ---------------------------------------------------------------------------
 \input{cap-intro}
 \input{cap1}
+\input{cap-estadoarte}
 \input{cap2}
 \input{cap3}
 \input{cap4}
@@ -412,6 +417,133 @@ G. Kiczales, J. des Rivières y D.~G. Bobrow.
 {Microsoft Corporation}.
 \newblock \textit{Excel for Microsoft 365 --- Reference Guide}.
 \newblock Microsoft Docs, 2023.
+
+\bibitem{babaei2015}
+H. Babaei, J. Karimpour y A. Hadidi.
+\newblock A survey of approaches for university course timetabling problem.
+\newblock \textit{Computers \& Industrial Engineering}, 86:43--59, 2015.
+
+\bibitem{abdennadher2000}
+S. Abdennadher y M. Marte.
+\newblock University course timetabling using constraint handling rules.
+\newblock \textit{Applied Artificial Intelligence}, 14(4):311--325, 2000.
+
+\bibitem{muller2005}
+T. M\"uller.
+\newblock ITC-2007 solver description: a hybrid approach.
+\newblock In \textit{Proceedings of the 7th International Conference on the
+  Practice and Theory of Automated Timetabling}, 2008.
+
+\bibitem{bollapragada2002}
+S. Bollapragada y M. Garbiras.
+\newblock Scheduling commercials on broadcast television.
+\newblock \textit{Operations Research}, 52(3):337--345, 2004.
+
+\bibitem{fernandez2008}
+J.~A. Fern\'andez y J.~A. Larra\~naga.
+\newblock A model for the television scheduling problem.
+\newblock \textit{European Journal of Operational Research}, 191(2):576--588,
+  2008.
+
+\bibitem{pillay2016}
+N. Pillay.
+\newblock A survey of school timetabling research.
+\newblock \textit{Artificial Intelligence Review}, 45(4):517--543, 2016.
+
+\bibitem{bass2021}
+{Coursedog Inc.}
+\newblock \textit{Coursedog Academic Operations Platform}.
+\newblock \url{https://coursedog.com}, 2021.
+
+\bibitem{mediagenix2024}
+{MEDIAGENIX}.
+\newblock \textit{WHATS'On --- Broadcast and Media Management Software}.
+\newblock \url{https://www.mediagenix.tv}, 2024.
+
+\bibitem{matthews2018}
+D. Matthews.
+\newblock \textit{Broadcast Technology: A Practical Introduction}.
+\newblock Routledge, 2018.
+
+\bibitem{garcia2024}
+{MDN Web Docs Contributors}.
+\newblock \textit{JavaScript Frameworks and Libraries}.
+\newblock Mozilla Developer Network, 2024.
+
+\bibitem{smpte2021}
+{Society of Motion Picture and Television Engineers}.
+\newblock \textit{SMPTE ST 2021: Broadcast Exchange Format (BXF)}.
+\newblock SMPTE, 2021.
+
+\bibitem{portela2010}
+R. Portela Aguilera.
+\newblock Una aproximaci\'on a la generaci\'on autom\'atica de horarios para
+  la Facultad de Matem\'atica y Computaci\'on de la Universidad de La Habana.
+\newblock Trabajo de Diploma, MATCOM/UH, 2010.
+
+\bibitem{travieso2012}
+E. Travieso Sosa.
+\newblock Modelo de restricciones para un sistema de generaci\'on automatizada
+  de horarios.
+\newblock Trabajo de Diploma, MATCOM/UH, 2012.
+
+\bibitem{chang2014}
+G. Chang Alcover.
+\newblock Generaci\'on autom\'atica de horarios mediante t\'ecnicas de
+  satisfacci\'on de restricciones.
+\newblock Trabajo de Diploma, MATCOM/UH, 2014.
+
+\bibitem{fernandez_llanos2014}
+L. Fern\'andez Llanos.
+\newblock API especializada para la evaluaci\'on incremental de restricciones
+  en horarios universitarios.
+\newblock Trabajo de Diploma, MATCOM/UH, 2014.
+
+\bibitem{segui2014}
+D. Segu\'{\i} Bonilla.
+\newblock Generaci\'on autom\'atica de horarios mediante metaheur\'{\i}sticas
+  de b\'usqueda local.
+\newblock Trabajo de Diploma, MATCOM/UH, 2014.
+
+\bibitem{tomaslopez2014}
+J. Tom\'as L\'opez.
+\newblock Generaci\'on autom\'atica de horarios a partir de metaheur\'{\i}sticas
+  de poblaci\'on.
+\newblock Trabajo de Diploma, MATCOM/UH, 2014.
+
+\bibitem{quintero2014}
+L. Quintero Rojas.
+\newblock Sistema para la gesti\'on y la generaci\'on autom\'atica de horarios.
+\newblock Trabajo de Diploma, MATCOM/UH, 2014.
+
+\bibitem{nardo2019}
+M. Nardo Gonz\'alez.
+\newblock Modelaci\'on matem\'atica y herramienta web para resolver el
+  problema de organizar defensas de tesis en la Facultad de Matem\'atica y
+  Computaci\'on.
+\newblock Trabajo de Diploma, MATCOM/UH, 2019.
+
+\bibitem{casteleiro2022}
+A. Casteleiro Wong.
+\newblock Informatizaci\'on de la gesti\'on docente en la Facultad de
+  Matem\'atica y Computaci\'on.
+\newblock Trabajo de Diploma, MATCOM/UH, 2022.
+
+\bibitem{reddy2019}
+V.~R. Reddy et al.
+\newblock Graph coloring approach for university timetabling.
+\newblock \textit{International Journal of Science and Research}, 2019.
+
+\bibitem{kim2021}
+H. Kim et al.
+\newblock Deep reinforcement learning for television broadcasting scheduling.
+\newblock \textit{IEEE Transactions on Broadcasting}, 2021.
+
+\bibitem{horarium2024}
+{Horarium.ai}.
+\newblock Plataforma de generaci\'on autom\'atica e interactiva de horarios
+  mediante inteligencia artificial.
+\newblock Disponible en l\'{\i}nea, 2024.
 
 \bibitem{ldmag2025}
 R.~A. C\'apiro Colomar.
