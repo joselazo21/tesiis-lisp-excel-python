@@ -14,6 +14,7 @@
 \usepackage{tcolorbox}
 \usepackage{amsmath}
 \usepackage{array}
+\usepackage{pdflscape}
 
 \geometry{margin=2.5cm}
 
@@ -61,7 +62,16 @@
   tabsize=2,
 }
 
-\lstset{language=DSL}
+\lstset{
+  language=DSL,
+  extendedchars=true,
+  inputencoding=utf8,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+    {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {ü}{{\"u}}1 {Ü}{{\"U}}1
+    {º}{{\textordmasculine}}1
+}
 
 % ─── Cajas ────────────────────────────────────────────────────────────────────
 \tcbuselibrary{skins,breakable}
@@ -300,8 +310,11 @@ día, hora y local.
 
 Si una fila es \textbf{un profesor}, la tabla tiene tantas filas como
 profesores existen y necesita una columna calculada que cuente en cuántas
-defensas participa.  En esta tabla habrá que agregar además columnas
-para el nombre y el grado académico de cada profesor.
+defensas participa.  En esta tabla el nombre de cada profesor incluye su
+grado académico (ej.\ ``MSc.\ Fernando Raúl Rodríguez Flores''), de modo
+que las celdas coincidan exactamente con los valores de las columnas de
+tribunal en la tabla de defensas para que el \texttt{COUNTIF} pueda
+localizarlos.
 
 La aplicación necesita \emph{ambas} perspectivas.  Por ese motivo se usan
 dos tablas en la misma hoja: la tabla de defensas y la tabla de profesores
@@ -319,25 +332,25 @@ defensas} (\texttt{defensas-table}):
 \toprule
 \textbf{Columna}     & \textbf{Descripción} \\
 \midrule
-\texttt{estudiante}  & Nombre del estudiante que defiende \\
-\texttt{tutor}       & Profesor tutor \\
-\texttt{oponente}    & Profesor oponente \\
-\texttt{presidente}  & Presidente del tribunal \\
-\texttt{vocal}       & Vocal del tribunal \\
-\texttt{secretario}  & Secretario del tribunal \\
 \texttt{dia}         & Día de la defensa \\
 \texttt{hora}        & Hora de inicio \\
+\texttt{estudiante}  & Nombre del estudiante que defiende \\
+\texttt{tutor}       & Profesor tutor \\
+\texttt{presidente}  & Presidente del tribunal \\
+\texttt{secretario}  & Secretario del tribunal \\
+\texttt{vocal}       & Vocal del tribunal \\
+\texttt{oponente}    & Profesor oponente \\
 \texttt{local}       & Nombre del local \\
 \bottomrule
 \end{tabular}
 \end{center}
 
 \begin{infobox}{Por qué los cinco roles van juntos y en ese orden}
-Los roles \texttt{tutor}, \texttt{oponente}, \texttt{presidente},
-\texttt{vocal} y \texttt{secretario} son columnas consecutivas.
+Los roles \texttt{tutor}, \texttt{presidente}, \texttt{secretario},
+\texttt{vocal} y \texttt{oponente} son columnas consecutivas.
 Esta disposición permite referenciar las cinco columnas como un solo
 rango ---una secuencia continua de celdas--- mediante la expresión
-\texttt{(trange defensas-table tutor secretario)}.  Así se cuenta
+\texttt{(trange defensas-table tutor oponente)}.  Así se cuenta
 cuántas veces aparece un profesor en cualquier rol con una sola
 llamada, sin tener que hacer cinco búsquedas independientes y sumarlas.
 \end{infobox}
@@ -356,7 +369,6 @@ profesores} (\texttt{profesores-table}):
 \textbf{Columna}   & \textbf{Descripción} \\
 \midrule
 \texttt{nombre}    & Nombre del profesor \\
-\texttt{grado}     & Grado académico \\
 \texttt{defensas}  & Número de defensas en que participa (calculada) \\
 \bottomrule
 \end{tabular}
@@ -415,10 +427,10 @@ Apliquemos esta sintaxis a la tabla de defensas.
 
 \begin{lstlisting}[caption={Definicion de defensas-table.}]
 (def-table defensas-table
-  ((estudiante "") (tutor "") (oponente "") (presidente "")
-   (vocal "") (secretario "") (dia "") (hora "") (local ""))
+  ((dia "") (hora "") (estudiante "") (tutor "")
+   (presidente "") (secretario "") (vocal "") (oponente "") (local ""))
   :cell-height 1
-  :cell-width 1)
+  :cell-width  1)
 \end{lstlisting}
 
 El valor \texttt{""} en cada par es un marcador que indica que esa columna
@@ -440,12 +452,15 @@ Veamos cada una por separado, empezando por la columna calculada.
 
 \subsection{Columna calculada con \texttt{:computed}}
 
-La columna \texttt{defensas} de la tabla de profesores no se introduce a
-mano: queremos que se calcule automáticamente contando en cuántas defensas
-participa cada profesor.  En lenguaje natural sería: ``para cada profesor,
-cuenta cuántas filas de la tabla de defensas contienen su nombre en
-cualquiera de los cinco roles''.  El DSL expresa esto con una columna
-\emph{calculada}.
+    La columna \texttt{defensas} de la tabla de profesores no se introduce a
+    mano: queremos que se calcule automáticamente contando en cuántas defensas
+    participa cada profesor.  Como el nombre de cada profesor incluye su grado
+    académico (ej. ``MSc.\ Fernando Raúl Rodríguez Flores''), debe coincidir
+    exactamente con los valores que aparecen en las columnas de tribunal de la
+    tabla de defensas, por lo que el \texttt{COUNTIF} buscará el nombre completo.
+    En lenguaje natural: ``para cada profesor, cuenta cuántas filas de la tabla
+    de defensas contienen su nombre en cualquiera de los cinco roles''.
+    El DSL expresa esto con una columna \emph{calculada}.
 
 La opción \texttt{:computed} asocia columnas a \textbf{expresiones DSL},
 que son las formas que proporciona el lenguaje para describir cálculos
@@ -459,11 +474,11 @@ El código siguiente aplica esta opción a la tabla de profesores:
 
 \begin{lstlisting}[caption={Columna defensas calculada con COUNTIF.}]
 (def-table profesores-table
-  ((nombre "") (grado "") (defensas ""))
+  ((nombre "") (defensas ""))
   :cell-height 1
   :cell-width  1
   :computed
-    ((defensas (countif (trange defensas-table tutor secretario)
+    ((defensas (countif (trange defensas-table tutor oponente)
                         (col nombre)))))
 \end{lstlisting}
 
@@ -480,9 +495,9 @@ Un \emph{rango} es un bloque rectangular de celdas de una hoja de cálculo.
 \texttt{trange} (\emph{table range}) crea un rango que abarca todas las
 filas de datos de \emph{otra} tabla, desde una columna de inicio hasta una
 columna de fin.  En concreto,
-\texttt{(trange defensas-table tutor secretario)} se refiere a todas las
+\texttt{(trange defensas-table tutor oponente)} se refiere a todas las
 filas de \texttt{defensas-table} desde la columna \texttt{tutor} hasta la
-columna \texttt{secretario}.  Como las cinco columnas de tribunal son
+columna \texttt{oponente}.  Como las cinco columnas de tribunal son
 consecutivas, una sola expresión alcanza para cubrirlas a todas (de no
 ser consecutivas, harían falta varias expresiones \texttt{countif}
 sumadas).
@@ -515,17 +530,17 @@ La condición se expresa con el cuantificador \texttt{exists}.
 
 \begin{lstlisting}[caption={Formato condicional sobre profesores-table.}]
 (def-table profesores-table
-  ((nombre "") (grado "") (defensas ""))
+  ((nombre "") (defensas ""))
   :cell-height 1
   :cell-width  1
   :computed
-    ((defensas (countif (trange defensas-table tutor secretario)
+    ((defensas (countif (trange defensas-table tutor oponente)
                         (col nombre))))
   :render
     (conditional-rendering
       :condition
         (exists (r :rows-of defensas-table)
-          :self-in  (tutor oponente presidente vocal secretario)
+          :self-in  (tutor presidente secretario vocal oponente)
           :matching (dia hora))
       :target-columns (nombre)))
 \end{lstlisting}
@@ -606,45 +621,174 @@ una sublista por fila.
 
 \subsection{Formato de los datos}
 
-Cada tabla espera \textbf{tres filas de prefijo} (llamadas así porque
-se colocan delante de los datos) seguidas de las filas de datos.
-Las filas de prefijo se escriben tal cual en el archivo \texttt{data-tutorial.lisp}
-(no generan fórmulas): la primera puede llevar un identificador opcional
-(para etiquetar el bloque de datos, aunque en este tutorial se deja vacío),
-la segunda está vacía y la tercera contiene los encabezados de columna.
+Los datos reales corresponden al horario de defensas de tesis de junio
+de 2026 de la Facultad de Matemática y Computación de la Universidad de
+La Habana.  Se organizan en dos listas: una para cada tabla.
 
-\begin{lstlisting}[caption={Datos de defensas-table.}]
+Cada tabla espera dos filas de prefijo (llamadas así porque se colocan
+delante de los datos) seguidas de la fila de encabezados y luego las
+filas de datos.  Las filas de prefijo se escriben tal cual en el archivo
+\texttt{data-tutorial.lisp} y no generan fórmulas; en este tutorial se
+dejan vacías.
+
+El nombre de cada profesor incluye el grado académico (ej.\ ``MSc.\ Fernando
+Raúl Rodríguez Flores'') para que coincida exactamente con los valores
+que aparecen en las columnas de tribunal de la tabla de defensas, lo que
+permite al \texttt{COUNTIF} localizarlos correctamente.
+
+\begin{lstlisting}[caption={Datos de defensas-table (13 defensas).}]
 (defparameter *DATOS-DEFENSAS*
-  '(("" "" "" "" "" "" "" "" "")         ;; fila 1: prefijo
-    ("" "" "" "" "" "" "" "" "")         ;; fila 2: separador
-    ("Estudiante" "Tutor" "Oponente"     ;; fila 3: encabezados
-     "Presidente" "Vocal" "Secretario" "Dia" "Hora" "Local")
-    ("Juan Diaz"  "Piad"   "Garcia" "Lopez"  "Torres" "Ruiz"
-                                         "Lunes"  "10:00" "Aula 1")
-    ("Maria Vega" "Garcia" "Lopez"  "Piad"   "Soto"   "Torres"
-                                         "Lunes"  "14:00" "Aula 2")
-    ("Luis Mora"  "Lopez"  "Torres" "Garcia" "Ruiz"   "Soto"
-                                         "Martes" "10:00" "Aula 1")))
+  '(("" "" "" "" "" "" "" "" "")
+    ("" "" "" "" "" "" "" "" "")
+    ("Día" "Hora" "Estudiante" "Tutor"
+     "Presidente" "Secretario" "Vocal" "Oponente" "Local")
+    ("05/06/2026" "10:00"
+     "Angel Daniel Alonso Guevara"
+     "MSc. Carmen T. Fernández Montoto"
+     "Dr. Alberto Fernández Oliva"
+     "Lic. Alejandro Labourdette-Lantigua Soto"
+     "Lic. Dennis Daniel González Durán"
+     "MSc. Aracelys García Armenteros"
+     "Postgrado")
+    ("08/06/2026" "09:30"
+     "Adrián Hernández Castellanos"
+     "Lic. Alejandra Monzón Peña"
+     "Lic. Amanda Noris Hernández"
+     "Lic. Kevin Manzano Rodríguez"
+     "Lic. Daniel Abad Fundora"
+     "Lic. Rodrigo García Gómez"
+     "Salón decanato")
+    ("08/06/2026" "10:30"
+     "Laura Martir Beltrán"
+     "Lic. Alejandra Monzón Peña"
+     "Lic. Amanda Noris Hernández"
+     "Lic. Kevin Manzano Rodríguez"
+     "Lic. Daniel Abad Fundora"
+     "Lic. Rodrigo García Gómez"
+     "Salón decanato")
+    ("08/06/2026" "11:30"
+     "Noel Pérez Calvo"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "Lic. Rodrigo García Gómez"
+     "Lic. Lázaro Daniel González Martínez"
+     "Lic. Alejandra Monzón Peña"
+     "Lic. David Guaty Domínguez"
+     "Salón decanato")
+    ("10/06/2026" "09:30"
+     "Claudia Hernández Pérez y Joel Aparicio Tamayo"
+     "MSc. Celia T. González González"
+     "Dra. Ayme Marrero Severo"
+     "MSc. Joanna Campbell Amos"
+     "Lic. Daniel Alejandro Valdés Pérez"
+     "Lic. Alejandro Beltrán Varela"
+     "Postgrado")
+    ("10/06/2026" "11:00"
+     "Darío Hernández Cubilla"
+     "MSc. Aracelys García Armenteros"
+     "Dra. Ayme Marrero Severo"
+     "Lic. Roberto Marti Cedeño"
+     "Lic. Alejandro Beltrán Varela"
+     "Lic. Alejandro Labourdette-Lantigua Soto"
+     "Postgrado")
+    ("10/06/2026" "12:00"
+     "Richard Alejandro Matos Arderí"
+     "MSc. Celia T. González González"
+     "MSc. Wilfredo Morales Lezca"
+     "Lic. Roberto Marti Cedeño"
+     "Lic. Alejandro Beltrán Varela"
+     "MSc. Aracelys García Armenteros"
+     "Postgrado")
+    ("10/06/2026" "09:30"
+     "Melani Forsythe Matos"
+     "DraC. Marta Lourdes Baguer Díaz-Romañach"
+     "DrC. Alejandro Sánchez Castellanos"
+     "Lic. Ana Paula González Muñoz"
+     "Lic. Dennis Daniel González Durán"
+     "Lic. Javier Rodríguez Sánchez"
+     "Francofonía")
+    ("10/06/2026" "10:30"
+     "Mauro Eduardo Campver Barrios"
+     "DraC. Marta Lourdes Baguer Díaz-Romañach"
+     "DrC. Alejandro Piad Morfis"
+     "Lic. Ana Paula González Muñoz"
+     "Lic. Dennis Daniel González Durán"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "Francofonía")
+    ("10/06/2026" "13:30"
+     "José Miguel Leyva De La Cruz"
+     "Lic. Alejandro Beltrán Varela"
+     "Lic. Amanda Noris Hernández"
+     "Lic. Juan Miguel Pérez Martínez"
+     "Dr. Gabriel Fundora"
+     "MSc. Aracelys García Armenteros"
+     "Francofonía")
+    ("10/06/2026" "11:30"
+     "Jossué Arteche Muñoz"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "DrC. Alejandro Piad Morfis"
+     "Lic. Rodrigo García Gómez"
+     "Lic. Daniel Abad Fundora"
+     "Lic. Ariel González Gómez"
+     "Salón decanato")
+    ("10/06/2026" "12:30"
+     "Amalia Beatriz Valiente Hinojosa"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "Lic. Javier Rodríguez Sánchez"
+     "Lic. Rocío Ortiz Gancedo"
+     "Lic. Merling Sabater Ramírez"
+     "Lic. Alejandra Monzón Peña"
+     "Salón decanato")
+    ("10/06/2026" "13:30"
+     "Luis Ernesto Amat Cárdenas"
+     "Lic. Roberto Marti Cedeño"
+     "DrC. Alejandro Piad Morfis"
+     "Lic. Carlos David Muñiz Chall"
+     "Lic. Alejandro Labourdette-Lantigua Soto"
+     "Lic. Daniel Toledo Martínez"
+     "Salón decanato")))
 \end{lstlisting}
 
-Las celdas que corresponden a columnas calculadas se marcan con
-\texttt{*empty*} (o simplemente se dejan como \texttt{""}) en el archivo
-de datos: el generador las sobreescribe con la fórmula correspondiente.
-La ventaja de usar \texttt{*empty*} es que hace explícita la intención:
-``esta celda no está vacía por accidente, sino porque su valor lo
-determinará una fórmula''.
+Las celdas que corresponden a columnas calculadas se marcan como
+\texttt{""} en el archivo de datos: el generador las sobreescribe con
+la fórmula correspondiente.
 
-\begin{lstlisting}[caption={Datos de profesores-table.}]
+\begin{lstlisting}[caption={Datos de profesores-table (32 profesores).}]
 (defparameter *DATOS-PROFESORES*
-  '(("" "" "")
-    ("" "" "")
-    ("Nombre" "Grado" "Defensas")
-    ("Piad"   "Dr"    "")     ;; "Defensas" se calcula con COUNTIF
-    ("Garcia" "Dr"    "")
-    ("Lopez"  "Msc"   "")
-    ("Torres" "Msc"   "")
-    ("Ruiz"   "Lic"   "")
-    ("Soto"   "Msc"   "")))
+  '(("" "")
+    ("" "")
+    ("Nombre" "Defensas")
+    ("Dr. Alberto Fernández Oliva" "")
+    ("Dr. Gabriel Fundora" "")
+    ("DrC. Alejandro Piad Morfis" "")
+    ("DrC. Alejandro Sánchez Castellanos" "")
+    ("Dra. Ayme Marrero Severo" "")
+    ("DraC. Marta Lourdes Baguer Díaz-Romañach" "")
+    ("Lic. Alejandra Monzón Peña" "")
+    ("Lic. Alejandro Beltrán Varela" "")
+    ("Lic. Alejandro Labourdette-Lantigua Soto" "")
+    ("Lic. Amanda Noris Hernández" "")
+    ("Lic. Ana Paula González Muñoz" "")
+    ("Lic. Ariel González Gómez" "")
+    ("Lic. Carlos David Muñiz Chall" "")
+    ("Lic. Daniel Abad Fundora" "")
+    ("Lic. Daniel Alejandro Valdés Pérez" "")
+    ("Lic. Daniel Toledo Martínez" "")
+    ("Lic. David Guaty Domínguez" "")
+    ("Lic. Dennis Daniel González Durán" "")
+    ("Lic. Javier Rodríguez Sánchez" "")
+    ("Lic. Juan Miguel Pérez Martínez" "")
+    ("Lic. Kevin Manzano Rodríguez" "")
+    ("Lic. Lázaro Daniel González Martínez" "")
+    ("Lic. Merling Sabater Ramírez" "")
+    ("Lic. Roberto Marti Cedeño" "")
+    ("Lic. Rocío Ortiz Gancedo" "")
+    ("Lic. Rodrigo García Gómez" "")
+    ("MSc. Aracelys García Armenteros" "")
+    ("MSc. Carmen T. Fernández Montoto" "")
+    ("MSc. Celia T. González González" "")
+    ("MSc. Fernando Raúl Rodríguez Flores" "")
+    ("MSc. Joanna Campbell Amos" "")
+    ("MSc. Wilfredo Morales Lezca" "")))
 \end{lstlisting}
 
 Una vez que tenemos las tablas definidas y los datos listos, el siguiente
@@ -660,7 +804,6 @@ con tres macros: \texttt{libro}, \texttt{hoja} y \texttt{tabla}.
 \begin{sintaxisbox}{libro / hoja / tabla}
 \begin{lstlisting}
 (libro nombre-app
-  :filename "salida.xlsx"
   :hojas (list
     (hoja "Nombre hoja"
       (tabla plantilla1 :data *DATOS-1*)
@@ -671,10 +814,8 @@ con tres macros: \texttt{libro}, \texttt{hoja} y \texttt{tabla}.
 \end{lstlisting}
 \end{sintaxisbox}
 
-La clave \texttt{:filename} indica el nombre del archivo de salida y es
-propia de los backends que exportan a un fichero (como el backend Excel
-que acompaña al DSL); un generador diferente para, por ejemplo, HTML
-o PDF, usaría otros mecanismos para producir la salida.
+El nombre del archivo de salida lo define internamente el generador (por
+defecto \texttt{Archivo-Excel.xlsx}); no hace falta indicarlo en el DSL.
 
 La macro \texttt{def-table} define una \textbf{plantilla} reutilizable
 (el equivalente a declarar una clase sin instanciarla): describe la
@@ -698,19 +839,18 @@ posición relativa a la última o primera fila de una tabla.
 
 \begin{lstlisting}[caption={Aplicación completa con totales de pie de tabla.}]
 (libro horario-tesis
-  :filename "Horario_Tesis.xlsx"
   :hojas (list
     (hoja "Defensas"
       (tabla defensas-table   :data *DATOS-DEFENSAS*)
       (tabla profesores-table :data *DATOS-PROFESORES*)
       :fixed-expressions
-        (((nav (ultima-fila defensas-table estudiante) abajo 1)
+        (((nav (ultima-fila defensas-table dia) abajo 1)
           (str "Total defensas:"))
-         ((nav (ultima-fila defensas-table estudiante) abajo 1 derecha 1)
+         ((nav (ultima-fila defensas-table dia) abajo 1 derecha 2)
           (counta (trange defensas-table estudiante)))
          ((nav (ultima-fila profesores-table nombre) abajo 1)
           (str "Total profesores:"))
-         ((nav (ultima-fila profesores-table nombre) abajo 1 derecha 2)
+         ((nav (ultima-fila profesores-table nombre) abajo 1 derecha 1)
           (sum-range (trange profesores-table defensas)))))))
 \end{lstlisting}
 
@@ -805,25 +945,149 @@ conforman el programa.
 (defparameter *DATOS-DEFENSAS*
   '(("" "" "" "" "" "" "" "" "")
     ("" "" "" "" "" "" "" "" "")
-    ("Estudiante" "Tutor" "Oponente" "Presidente" "Vocal"
-     "Secretario" "Dia" "Hora" "Local")
-    ("Juan Diaz"  "Piad"   "Garcia" "Lopez"  "Torres" "Ruiz"
-                                   "Lunes"  "10:00" "Aula 1")
-    ("Maria Vega" "Garcia" "Lopez"  "Piad"   "Soto"   "Torres"
-                                   "Lunes"  "14:00" "Aula 2")
-    ("Luis Mora"  "Lopez"  "Torres" "Garcia" "Ruiz"   "Soto"
-                                   "Martes" "10:00" "Aula 1")))
+    ("Día" "Hora" "Estudiante" "Tutor"
+     "Presidente" "Secretario" "Vocal" "Oponente" "Local")
+    ("05/06/2026" "10:00"
+     "Angel Daniel Alonso Guevara"
+     "MSc. Carmen T. Fernández Montoto"
+     "Dr. Alberto Fernández Oliva"
+     "Lic. Alejandro Labourdette-Lantigua Soto"
+     "Lic. Dennis Daniel González Durán"
+     "MSc. Aracelys García Armenteros"
+     "Postgrado")
+    ("08/06/2026" "09:30"
+     "Adrián Hernández Castellanos"
+     "Lic. Alejandra Monzón Peña"
+     "Lic. Amanda Noris Hernández"
+     "Lic. Kevin Manzano Rodríguez"
+     "Lic. Daniel Abad Fundora"
+     "Lic. Rodrigo García Gómez"
+     "Salón decanato")
+    ("08/06/2026" "10:30"
+     "Laura Martir Beltrán"
+     "Lic. Alejandra Monzón Peña"
+     "Lic. Amanda Noris Hernández"
+     "Lic. Kevin Manzano Rodríguez"
+     "Lic. Daniel Abad Fundora"
+     "Lic. Rodrigo García Gómez"
+     "Salón decanato")
+    ("08/06/2026" "11:30"
+     "Noel Pérez Calvo"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "Lic. Rodrigo García Gómez"
+     "Lic. Lázaro Daniel González Martínez"
+     "Lic. Alejandra Monzón Peña"
+     "Lic. David Guaty Domínguez"
+     "Salón decanato")
+    ("10/06/2026" "09:30"
+     "Claudia Hernández Pérez y Joel Aparicio Tamayo"
+     "MSc. Celia T. González González"
+     "Dra. Ayme Marrero Severo"
+     "MSc. Joanna Campbell Amos"
+     "Lic. Daniel Alejandro Valdés Pérez"
+     "Lic. Alejandro Beltrán Varela"
+     "Postgrado")
+    ("10/06/2026" "11:00"
+     "Darío Hernández Cubilla"
+     "MSc. Aracelys García Armenteros"
+     "Dra. Ayme Marrero Severo"
+     "Lic. Roberto Marti Cedeño"
+     "Lic. Alejandro Beltrán Varela"
+     "Lic. Alejandro Labourdette-Lantigua Soto"
+     "Postgrado")
+    ("10/06/2026" "12:00"
+     "Richard Alejandro Matos Arderí"
+     "MSc. Celia T. González González"
+     "MSc. Wilfredo Morales Lezca"
+     "Lic. Roberto Marti Cedeño"
+     "Lic. Alejandro Beltrán Varela"
+     "MSc. Aracelys García Armenteros"
+     "Postgrado")
+    ("10/06/2026" "09:30"
+     "Melani Forsythe Matos"
+     "DraC. Marta Lourdes Baguer Díaz-Romañach"
+     "DrC. Alejandro Sánchez Castellanos"
+     "Lic. Ana Paula González Muñoz"
+     "Lic. Dennis Daniel González Durán"
+     "Lic. Javier Rodríguez Sánchez"
+     "Francofonía")
+    ("10/06/2026" "10:30"
+     "Mauro Eduardo Campver Barrios"
+     "DraC. Marta Lourdes Baguer Díaz-Romañach"
+     "DrC. Alejandro Piad Morfis"
+     "Lic. Ana Paula González Muñoz"
+     "Lic. Dennis Daniel González Durán"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "Francofonía")
+    ("10/06/2026" "13:30"
+     "José Miguel Leyva De La Cruz"
+     "Lic. Alejandro Beltrán Varela"
+     "Lic. Amanda Noris Hernández"
+     "Lic. Juan Miguel Pérez Martínez"
+     "Dr. Gabriel Fundora"
+     "MSc. Aracelys García Armenteros"
+     "Francofonía")
+    ("10/06/2026" "11:30"
+     "Jossué Arteche Muñoz"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "DrC. Alejandro Piad Morfis"
+     "Lic. Rodrigo García Gómez"
+     "Lic. Daniel Abad Fundora"
+     "Lic. Ariel González Gómez"
+     "Salón decanato")
+    ("10/06/2026" "12:30"
+     "Amalia Beatriz Valiente Hinojosa"
+     "MSc. Fernando Raúl Rodríguez Flores"
+     "Lic. Javier Rodríguez Sánchez"
+     "Lic. Rocío Ortiz Gancedo"
+     "Lic. Merling Sabater Ramírez"
+     "Lic. Alejandra Monzón Peña"
+     "Salón decanato")
+    ("10/06/2026" "13:30"
+     "Luis Ernesto Amat Cárdenas"
+     "Lic. Roberto Marti Cedeño"
+     "DrC. Alejandro Piad Morfis"
+     "Lic. Carlos David Muñiz Chall"
+     "Lic. Alejandro Labourdette-Lantigua Soto"
+     "Lic. Daniel Toledo Martínez"
+     "Salón decanato")))
 
 (defparameter *DATOS-PROFESORES*
-  `(("" "" ,*empty*)
-    ("" "" ,*empty*)
-    ("Nombre" "Grado" "Defensas")
-    ("Piad"   "Dr"    ,*empty*)     ;; "Defensas" se calcula con COUNTIF
-    ("Garcia" "Dr"    ,*empty*)
-    ("Lopez"  "Msc"   ,*empty*)
-    ("Torres" "Msc"   ,*empty*)
-    ("Ruiz"   "Lic"   ,*empty*)
-    ("Soto"   "Msc"   ,*empty*)))
+  '(("" "")
+    ("" "")
+    ("Nombre" "Defensas")
+    ("Dr. Alberto Fernández Oliva" "")
+    ("Dr. Gabriel Fundora" "")
+    ("DrC. Alejandro Piad Morfis" "")
+    ("DrC. Alejandro Sánchez Castellanos" "")
+    ("Dra. Ayme Marrero Severo" "")
+    ("DraC. Marta Lourdes Baguer Díaz-Romañach" "")
+    ("Lic. Alejandra Monzón Peña" "")
+    ("Lic. Alejandro Beltrán Varela" "")
+    ("Lic. Alejandro Labourdette-Lantigua Soto" "")
+    ("Lic. Amanda Noris Hernández" "")
+    ("Lic. Ana Paula González Muñoz" "")
+    ("Lic. Ariel González Gómez" "")
+    ("Lic. Carlos David Muñiz Chall" "")
+    ("Lic. Daniel Abad Fundora" "")
+    ("Lic. Daniel Alejandro Valdés Pérez" "")
+    ("Lic. Daniel Toledo Martínez" "")
+    ("Lic. David Guaty Domínguez" "")
+    ("Lic. Dennis Daniel González Durán" "")
+    ("Lic. Javier Rodríguez Sánchez" "")
+    ("Lic. Juan Miguel Pérez Martínez" "")
+    ("Lic. Kevin Manzano Rodríguez" "")
+    ("Lic. Lázaro Daniel González Martínez" "")
+    ("Lic. Merling Sabater Ramírez" "")
+    ("Lic. Roberto Marti Cedeño" "")
+    ("Lic. Rocío Ortiz Gancedo" "")
+    ("Lic. Rodrigo García Gómez" "")
+    ("MSc. Aracelys García Armenteros" "")
+    ("MSc. Carmen T. Fernández Montoto" "")
+    ("MSc. Celia T. González González" "")
+    ("MSc. Fernando Raúl Rodríguez Flores" "")
+    ("MSc. Joanna Campbell Amos" "")
+    ("MSc. Wilfredo Morales Lezca" "")))
 \end{lstlisting}
 
 \subsection{\texttt{tutorial-horario.lisp}}
@@ -833,47 +1097,46 @@ conforman el programa.
 (load "data-tutorial.lisp")
 
 ;; TABLA 1: defensas
-;; Nueve columnas: cinco roles consecutivos (tutor...secretario),
-;; dia, hora, local.  Sin coloreado propio.
+;; Nueve columnas: dia, hora, estudiante, cinco roles consecutivos
+;; (tutor...oponente), local.  Sin coloreado propio.
 (def-table defensas-table
-  ((estudiante "") (tutor "") (oponente "") (presidente "")
-   (vocal "") (secretario "") (dia "") (hora "") (local ""))
+  ((dia "") (hora "") (estudiante "") (tutor "")
+   (presidente "") (secretario "") (vocal "") (oponente "") (local ""))
   :cell-height 1
-  :cell-width 1)
+  :cell-width  1)
 
 ;; TABLA 2: profesores
-;; Columna "defensas" calculada con COUNTIF.
+;; Columna "defensas" calculada con COUNTIF sobre el rango tutor..oponente.
 ;; Coloreado condicional: nombre en rojo si el profesor tiene conflicto.
 (def-table profesores-table
-  ((nombre "") (grado "") (defensas ""))
+  ((nombre "") (defensas ""))
   :cell-height 1
   :cell-width  1
   :computed
-    ((defensas (countif (trange defensas-table tutor secretario)
+    ((defensas (countif (trange defensas-table tutor oponente)
                         (col nombre))))
   :render
     (conditional-rendering
       :condition
         (exists (r :rows-of defensas-table)
-          :self-in  (tutor oponente presidente vocal secretario)
+          :self-in  (tutor presidente secretario vocal oponente)
           :matching (dia hora))
       :target-columns (nombre)))
 
 ;; WORKBOOK
 (libro horario-tesis
-  :filename "Horario_Tesis.xlsx"
   :hojas (list
     (hoja "Defensas"
       (tabla defensas-table   :data *DATOS-DEFENSAS*)
       (tabla profesores-table :data *DATOS-PROFESORES*)
       :fixed-expressions
-        (((nav (ultima-fila defensas-table estudiante) abajo 1)
+        (((nav (ultima-fila defensas-table dia) abajo 1)
           (str "Total defensas:"))
-         ((nav (ultima-fila defensas-table estudiante) abajo 1 derecha 1)
+         ((nav (ultima-fila defensas-table dia) abajo 1 derecha 2)
           (counta (trange defensas-table estudiante)))
          ((nav (ultima-fila profesores-table nombre) abajo 1)
           (str "Total profesores:"))
-         ((nav (ultima-fila profesores-table nombre) abajo 1 derecha 2)
+         ((nav (ultima-fila profesores-table nombre) abajo 1 derecha 1)
           (sum-range (trange profesores-table defensas)))))))
 
 (xl-generate horario-tesis "horario-tesis.py")
@@ -892,22 +1155,89 @@ El programa genera \texttt{Horario\_Tesis.xlsx} con la siguiente estructura:
 \toprule
 \textbf{Rango} & \textbf{Contenido} \\
 \midrule
-Columnas A--I, filas 4--6 & \texttt{defensas-table}: tres defensas \\
-Columna J                 & Separador en blanco \\
-Columnas K--M, filas 4--9 & \texttt{profesores-table}: seis profesores \\
-Columna M, filas 4--9     & Fórmulas \texttt{COUNTIF} generadas \\
-Fila 7 (cols.\ A--B)      & Totales de defensas (\texttt{COUNTA}) \\
-Fila 11 (cols.\ K, M)     & Totales de profesores (\texttt{SUM}) \\
-Rango K4:K9               & \texttt{FormulaRule}: nombres en rojo
+Columnas A--I, filas 4--16 & \texttt{defensas-table}: 13 defensas \\
+Columna J                  & Oculto (separador) \\
+Columnas K--L, filas 4--35 & \texttt{profesores-table}: 32 profesores \\
+Columna L, filas 4--35     & Fórmulas \texttt{COUNTIF} generadas \\
+Columna M                  & Oculto (separador) \\
+Fila 17 (cols.\ A, C)      & Totales de defensas (\texttt{COUNTA}) \\
+Fila 36 (cols.\ K, L)      & Total profesores (\texttt{SUM}) \\
+Rango K4:K35               & \texttt{FormulaRule}: nombres en rojo
                             si hay conflicto \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Con los datos de ejemplo, las defensas de ``Juan Díaz'' y ``Luis Mora''
-comparten el slot \texttt{Lunes 10:00} con roles solapados, por lo que
-los profesores Piad, García, López, Torres, Ruiz y Soto aparecen
-resaltados en rojo.
+A continuación se muestran las dos tablas como ejemplo de la estructura
+que se genera; por limitaciones de espacio se redujo el número de filas
+y, en el caso de la tabla de defensas, también el de columnas:
+
+\medskip
+
+\noindent\hspace*{-2cm}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{llllll}
+\toprule
+\textbf{Día} & \textbf{Hora} & \textbf{Estudiante} & \textbf{Tutor} &
+\textbf{Presidente} & \textbf{Local} \\
+\midrule
+05/06/2026 & 10:00
+  & Angel Daniel Alonso Guevara
+  & MSc. Carmen T. Fernández Montoto
+  & Dr. Alberto Fernández Oliva
+  & Postgrado \\
+08/06/2026 & 09:30
+  & Adrián Hernández Castellanos
+  & Lic. Alejandra Monzón Peña
+  & Lic. Amanda Noris Hernández
+  & Salón decanato \\
+08/06/2026 & 10:30
+  & Laura Martir Beltrán
+  & Lic. Alejandra Monzón Peña
+  & Lic. Amanda Noris Hernández
+  & Salón decanato \\
+10/06/2026 & 09:30
+  & Claudia Hernández Pérez y Joel A. Tamayo
+  & MSc. Celia T. González González
+  & Dra. Ayme Marrero Severo
+  & Postgrado \\
+10/06/2026 & 09:30
+  & Melani Forsythe Matos
+  & DraC. Marta Lourdes Baguer Díaz-Romañach
+  & DrC. Alejandro Sánchez Castellanos
+  & Francofonía \\
+10/06/2026 & 11:30
+  & Jossué Arteche Muñoz
+  & MSc. Fernando Raúl Rodríguez Flores
+  & DrC. Alejandro Piad Morfis
+  & Salón decanato \\
+\bottomrule
+\multicolumn{6}{l}{\scriptsize\textit{defensas-table} (6 de 13 filas) —
+                     por espacio se omitieron las columnas
+                     Secretario, Vocal y Oponente} \\
+\end{tabular}
+
+
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{lr}
+\toprule
+\textbf{Nombre} & \textbf{Defensas} \\
+\midrule
+DrC. Alejandro Piad Morfis               & 5 \\
+Dra. Ayme Marrero Severo                 & 3 \\
+Lic. Alejandra Monzón Peña               & 4 \\
+MSc. Celia T. González González          & 2 \\
+MSc. Fernando Raúl Rodríguez Flores       & 6 \\
+Lic. Dennis Daniel González Durán        & 4 \\
+Lic. Rodrigo García Gómez                & 3 \\
+\bottomrule
+\multicolumn{2}{l}{\scriptsize\textit{profesores-table} (7 de 32 filas)} \\
+\end{tabular}
+\end{center}
+
+\medskip
+
 
 % ══════════════════════════════════════════════════════════════════════════════
 \section{Traza del diseño}
@@ -927,7 +1257,7 @@ Una fila por defensa con tribunal completo
   & Granularidad natural; agrupa todas las columnas de tribunal \\
 Los cinco roles en columnas consecutivas
   & orden en \texttt{def-table}
-  & Permite \texttt{trange tutor secretario} para contar roles \\
+  & Permite \texttt{trange tutor oponente} para contar roles \\
 Contar defensas por profesor
   & columna \texttt{computed}
   & \texttt{countif} sobre el rango de roles de \texttt{defensas-table} \\
@@ -966,7 +1296,7 @@ Totales dinámicos al pie de tabla
 (str "texto")                    & Literal de texto \\
 (nav (ultima-fila t c) dir N)    & Posición relativa a última fila \\
 (nav (primera-fila t c) dir N)   & Posición relativa a primera fila \\
-(libro nom :filename :hojas)     & Define la aplicación completa \\
+(libro nom :hojas)               & Define la aplicación completa \\
 (hoja nom tablas :fixed-expressions)
                                  & Define una hoja de la aplicación \\
 (tabla plantilla :data datos)    & Instancia una plantilla con datos \\
@@ -1001,7 +1331,7 @@ fórmula''.  Para este segundo caso existen dos formas:
   (\texttt{:computed}, \texttt{\_if}, etc.).  El backend decide
   la representación concreta. \\
 \texttt{*empty*} & Constante para usar en datos y cabeceras:
-  \texttt{(columna *empty*)} o \texttt{("Piad" "Dr" *empty*)}.
+  \texttt{(columna *empty*)} o \texttt{("Nombre" *empty*)}.
   Hace explícito que la celda se rellenará con una fórmula. \\
 \bottomrule
 \end{tabular}

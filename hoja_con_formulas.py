@@ -724,9 +724,19 @@ def _process_formulas(ws, sheet_cfg: dict) -> None:
 
 
 def _process_column_widths(ws, sheet_cfg: dict) -> None:
-    """Etapa 5: Anchos de columna."""
-    for col_idx, width in sheet_cfg.get("column_widths", {}).items():
-        ws.column_dimensions[get_column_letter(col_idx)].width = width
+    """Etapa 5: Anchos de columna con auto-ajuste al contenido más largo."""
+    hidden = {i for i, w in sheet_cfg.get("column_widths", {}).items() if w == 0}
+    for col_idx in range(1, ws.max_column + 1):
+        col_letter = get_column_letter(col_idx)
+        if col_idx in hidden:
+            ws.column_dimensions[col_letter].hidden = True
+            continue
+        max_len = 0
+        for row in ws.iter_rows(min_col=col_idx, max_col=col_idx):
+            for cell in row:
+                if cell.value is not None:
+                    max_len = max(max_len, len(str(cell.value)))
+        ws.column_dimensions[col_letter].width = max(max_len + 2, 8)
 
 
 def _process_legacy_conditional_formatting(ws, sheet_cfg: dict) -> None:

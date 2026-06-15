@@ -867,28 +867,25 @@
                          ((typep cond-node '(or clase-xl-expr-gt  clase-xl-expr-lt
                                                  clase-xl-expr-gte clase-xl-expr-lte
                                                  clase-xl-expr-equals clase-xl-expr-different))
-                          ;; CF path — row-relative FormulaRule; color from palette
-                           (let* ((cf-row-offset 0)
-                                  (targets      (target-columns rule))
-                                  (target-ltrs  (remove nil
-                                                 (loop for col in targets
-                                                       collect (cdr (assoc col tbl-letter-map
-                                                                           :test #'string-equal)))))
-                                  (formula      (let ((*param-cells* param-cells))
-                                                  (compile-excel-formula
-                                                   cond-node tbl-letter-map nil
-                                                   (+ tbl-first cf-row-offset)
-                                                   (+ tbl-first cf-row-offset)
-                                                   (+ tbl-last cf-row-offset))))
-                                  (range-str    (when target-ltrs
-                                                 (format nil "~a~a:~a~a"
-                                                         (first target-ltrs) (+ tbl-first cf-row-offset)
-                                                         (car (last target-ltrs)) (+ tbl-last cf-row-offset))))
-                                  (color        (nth cf-cmp-idx *cf-comparison-palette*)))
-                            (when (and formula range-str)
-                              (push (list :range range-str :formula formula
-                                          :style (format nil "\"bg_color\": \"~a\"" color))
-                                    all-cf)
+                          ;; CF path — row-relative FormulaRule; color from palette.
+                          ;; One entry per target column so Excel doesn't shift the
+                          ;; formula's column references across a multi-column range.
+                          (let* ((targets      (target-columns rule))
+                                 (target-ltrs  (remove nil
+                                                (loop for col in targets
+                                                      collect (cdr (assoc col tbl-letter-map
+                                                                          :test #'string-equal)))))
+                                 (formula      (let ((*param-cells* param-cells))
+                                                 (compile-excel-formula
+                                                  cond-node tbl-letter-map nil
+                                                  tbl-first tbl-first tbl-last)))
+                                 (color        (nth cf-cmp-idx *cf-comparison-palette*)))
+                            (when (and formula target-ltrs)
+                              (dolist (ltr target-ltrs)
+                                (push (list :range  (format nil "~a~a:~a~a" ltr tbl-first ltr tbl-last)
+                                            :formula formula
+                                            :style   (format nil "\"bg_color\": \"~a\"" color))
+                                      all-cf))
                               (incf cf-cmp-idx))))
                          (t
                           ;; static path — colores generados row a row

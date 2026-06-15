@@ -49,14 +49,13 @@
   :render
     (conditional-rendering
       :condition (gt (col promedio) (param nota-minima))
-      :target-columns (nombre)))
+      :target-columns (nombre nota1)))
 
 ;; ─────────────────────────────────────────────────────────────────────
 ;; LIBRO
 ;; ─────────────────────────────────────────────────────────────────────
 
 (libro tutorial-basico
-  :filename "Tutorial_Basico.xlsx"
   :hojas (list
     (hoja "Notas"
       (tabla tabla-notas
@@ -66,4 +65,4 @@
 (xl-generate tutorial-basico "tutorial-basico.py")
 (xl-run-generated "tutorial-basico.py")
 
-(format t "~%Hecho: Tutorial_Basico.xlsx~%")
+(format t "~%Hecho: Archivo-Excel.xlsx~%")

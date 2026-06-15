@@ -473,16 +473,15 @@
 ;; =============================================================================
 ;;
 ;; (libro nombre-workbook
-;;   :filename "archivo.xlsx"
 ;;   :hojas (list (hoja "H1" ...) (hoja "H2" ...) ...))
 ;;
 ;; Define el símbolo nombre-workbook con el objeto xl-workbook generado.
+;; El nombre del archivo de salida lo define el generador (por defecto
+;; "Archivo-Excel.xlsx").
 
 (defmacro libro (name &body body)
-  (let* ((filename    (or (getf body :filename)
-                          (concatenate 'string (string-downcase (symbol-name name)) ".xlsx")))
-         (hojas-form  (getf body :hojas)))
-    `(let ((wb (xl-workbook :name ,filename :sheets ,hojas-form)))
+  (let* ((hojas-form  (getf body :hojas)))
+    `(let ((wb (xl-workbook :name "Archivo-Excel.xlsx" :sheets ,hojas-form)))
        (defparameter ,name wb)
        (format t "Libro ~a creado con ~a hojas~%" ',name (length ,hojas-form))
        wb)))

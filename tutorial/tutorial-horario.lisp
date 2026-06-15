@@ -75,7 +75,6 @@
 ;; =====================================================================
 
 (libro horario-tesis
-  :filename "Horario_Tesis.xlsx"
   :hojas (list
     (hoja "Defensas"
       (tabla defensas-table   :data *DATOS-DEFENSAS*)
@@ -93,4 +92,4 @@
 (xl-generate horario-tesis "horario-tesis.py")
 (xl-run-generated "horario-tesis.py")
 
-(format t "~%Hecho: Horario_Tesis.xlsx~%")
+(format t "~%Hecho: Archivo-Excel.xlsx~%")
