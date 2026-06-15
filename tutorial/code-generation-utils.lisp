@@ -403,19 +403,20 @@
             (dolist (l si-ltrs)
               (format s "~a($~a$~a:$~a$~a=~a)" sep l d-first l d-last self-ref)
               (setf sep "+")))
-           ;; conflicto: el mismo profesor aparece en >1 defensa con igual slot
-           (format s ")*(")
-           (let ((sep ""))
-             (dolist (l si-ltrs)
-               (format s "~a(COUNTIFS(" sep)
-               (let ((sep2 ""))
-                 (dolist (k key-ltrs)
-                   (format s "~a$~a$~a:$~a$~a,$~a$~a:$~a$~a"
-                           sep2 k d-first k d-last k d-first k d-last)
-                   (setf sep2 ","))
-                 (format s ",$~a$~a:$~a$~a,~a)>1)" l d-first l d-last self-ref))
-               (setf sep "+"))
-           (format s "))>0"))))
+           ;; conflicto: el profesor aparece en >1 defensa del mismo slot
+          ;; (suma de roles antes de comparar, para detectar tutor+oponente, etc.)
+          (format s ")*((")
+          (let ((sep ""))
+            (dolist (l si-ltrs)
+              (format s "~aCOUNTIFS(" sep)
+              (let ((sep2 ""))
+                (dolist (k key-ltrs)
+                  (format s "~a$~a$~a:$~a$~a,$~a$~a:$~a$~a"
+                          sep2 k d-first k d-last k d-first k d-last)
+                  (setf sep2 ","))
+                (format s ",$~a$~a:$~a$~a,~a)" l d-first l d-last self-ref))
+              (setf sep "+")))
+          (format s ")>1))>0")))
       ;; ── Same-table: SUMPRODUCT con exclusión de fila actual y overlap check ──
       (let* ((key-ltrs (loop for k in (match-keys exists-node)
                              for l = (cdr (assoc k letter-map :test #'string-equal))
